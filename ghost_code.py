@@ -284,6 +284,9 @@ def unify_postconds(raw_postcondition: source.ExprT[source.HumanVarName],
         conversion_map[source.ExprVar(eret.typ, name)] = gret
 
     def f(v: source.ExprVarT[source.HumanVarName]) -> source.ExprT[source.VarNameKind]:
+        if v not in conversion_map:
+            for key, value in conversion_map.items():
+                print(key)
         return conversion_map[v]
 
     return source.convert_expr_vars(f, raw_postcondition)

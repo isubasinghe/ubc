@@ -98,6 +98,9 @@ def ensure_using_latest_incarnation(func: dsa.Function, path: Collection[source.
                     #              from the entry node
                     assert inc == latest_incarnations[prog_var], f'{inc} {latest_incarnations[prog_var]}'
             elif prog_var in latest_incarnations:
+                if inc != latest_incarnations[prog_var]:
+                    print(inc)
+                    print(latest_incarnations[prog_var])
                 assert inc == latest_incarnations[prog_var], f"{prog_var=} {n=} {path=}"
 
             # we don't assert that inc == 1 otherwise, because prog_var:1
@@ -136,6 +139,10 @@ def assert_expr_equals_mod_dsa(lhs: source.ExprT[source.ProgVarName | nip.GuardV
         assert len(lhs.arguments) == len(rhs.arguments)
         for i in range(len(lhs.arguments)):
             assert_expr_equals_mod_dsa(lhs.arguments[i], rhs.arguments[i])
+    elif isinstance(lhs, source.ExprOld):
+        assert isinstance(rhs, source.ExprVar)
+        assert_expr_equals_mod_dsa(lhs.var, rhs)
+        # assert False, "not sure what the correctness condition for this is"
     else:
         assert_never(lhs)
 

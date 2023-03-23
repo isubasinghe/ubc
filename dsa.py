@@ -132,6 +132,11 @@ def apply_incarnations(
         ))
     elif isinstance(root, source.ExprFunction):
         return source.ExprFunction(root.typ, root.function_name, tuple(apply_incarnations(context, arg) for arg in root.arguments))
+    elif isinstance(root, source.ExprOld):
+        # looking at the old value means the old value has to be defined
+        assert root.var in context
+        dsa_name = Incarnation(root.var.name, IncarnationNum(int(context[root.var] - 1)))
+        return source.ExprVar(root.var.typ, dsa_name)
     assert_never(root)
 
 

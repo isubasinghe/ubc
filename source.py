@@ -374,6 +374,10 @@ class ExprOp(ABCExpr[TypeKind, VarNameKind]):
     operator: Operator
     operands: tuple[Expr[TypeKind, VarNameKind], ...]
 
+@dataclass(frozen=True)
+class ExprOld(ABCExpr[TypeKind, VarNameKind]):
+    var: ExprVar[TypeKind, VarNameKind]
+
 
 ExprOpT: TypeAlias = ExprOp[Type, VarNameKind]
 
@@ -385,6 +389,7 @@ Expr: TypeAlias = \
     | ExprOp[TypeKind, VarNameKind] \
     | ExprFunction[TypeKind, VarNameKind] \
     | ExprSymbol[TypeKind] \
+    | ExprOld[TypeKind, VarNameKind] \
 
 ExprT: TypeAlias = Expr[Type, VarNameKind]
 
@@ -411,6 +416,8 @@ def visit_expr(expr: ExprT[VarNameKind], visitor: Callable[[ExprT[VarNameKind]],
     elif isinstance(expr, ExprFunction):
         for arg in expr.arguments:
             visit_expr(arg, visitor)
+    elif isinstance(expr, ExprOld):
+        visit_expr(expr.var, visitor)
     elif not isinstance(expr, ExprVar
                         | ExprNum | ExprType | ExprSymbol):
         assert_never(expr)
@@ -461,6 +468,8 @@ def pretty_expr_ascii(expr: ExprT[VarNameKind]) -> str:
             return f'{expr.operator.value}({", ".join(pretty_expr_ascii(operand) for operand in expr.operands)})'
     elif isinstance(expr, ExprFunction):
         return f'{expr.function_name} {" ".join(pretty_expr_ascii(arg) for arg in expr.arguments)}'
+    elif isinstance(expr, ExprOld):
+        return f'old{expr.var}'
     assert_never(expr)
 
 
@@ -508,6 +517,10 @@ def convert_expr_vars(f: Callable[[ExprVar[TypeKind, VarNameKind]], Expr[TypeKin
     elif isinstance(expr, ExprFunction):
         args = tuple(convert_expr_vars(f, arg) for arg in expr.arguments)
         return ExprFunction(expr.typ, expr.function_name, args)
+    elif isinstance(expr, ExprOld):
+        new_v = convert_expr_vars(f, expr.var)
+        assert isinstance(new_v, ExprVar)
+        return ExprOld(typ=expr.typ, var=new_v)
     assert_never(expr)
 
 
@@ -667,7 +680,7 @@ def condition_to_evaluate_subexpr_in_expr(expr: ExprT[VarNameKind], sub: ExprT[V
             cond = expr_or(cond, op)
         return cond
 
-    elif isinstance(expr, ExprType | ExprSymbol):
+    elif isinstance(expr, ExprType | ExprSymbol | ExprOld):
         assert False, "I'm not sure what this is suppose to mean"
     assert_never(expr)
 

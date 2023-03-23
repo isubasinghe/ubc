@@ -244,6 +244,8 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
         assert False, "what do i do with this?"
     elif isinstance(expr, source.ExprFunction):
         return SMTLIB(f'({expr.function_name} {" ".join(emit_expr(arg) for arg in expr.arguments)})')
+    elif isinstance(expr, source.ExprOld):
+        assert False, "didn't expect to see old statement here"
     assert_never(expr)
 
 
