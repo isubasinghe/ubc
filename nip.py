@@ -9,21 +9,28 @@ short circuiting: a && b won't evaluate b is a is true. So the statement
     prove (a_defined && (a || (b_defined && b)))   ; but for now we do
     prove a_defined && b_defined && a && b
 """
-
 from __future__ import annotations
 
 import dataclasses
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import reduce
-from typing import (Any, Callable, Iterator, Mapping, NewType, Sequence, Set,
-                    TypeAlias, overload)
+from typing import Any
+from typing import Callable
+from typing import Iterator
+from typing import Mapping
+from typing import NewType
+from typing import overload
+from typing import Sequence
+from typing import Set
+from typing import TypeAlias
 
 from typing_extensions import assert_never
 
 import abc_cfg
 import source
-from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE, is_global_smt
+from global_smt_variables import is_global_smt
+from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 
 
 class GuardVarName(str):

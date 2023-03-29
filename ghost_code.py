@@ -12,12 +12,19 @@ insert_loop_invariant()
             insert NodeLoopInvariantProofObligation between p-lh
         insert NodeLoopInvariantAssumption
 """
-
 import dataclasses
 from dataclasses import dataclass
-from enum import Enum, unique
-from typing import (Any, Callable, Dict, Iterable, Iterator, Mapping,
-                    NamedTuple, Sequence, Tuple)
+from enum import Enum
+from enum import unique
+from typing import Any
+from typing import Callable
+from typing import Dict
+from typing import Iterable
+from typing import Iterator
+from typing import Mapping
+from typing import NamedTuple
+from typing import Sequence
+from typing import Tuple
 
 from typing_extensions import assert_never
 
@@ -26,7 +33,8 @@ import ghost_data
 import nip
 import source
 import syntax
-from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE, is_global_smt
+from global_smt_variables import is_global_smt
+from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 
 
 @dataclass(frozen=True)

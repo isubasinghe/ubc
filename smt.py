@@ -4,9 +4,16 @@ import re
 import subprocess
 import textwrap
 from enum import Enum
-from typing import Any, Iterator, Literal, Mapping, Sequence, TypeAlias
+from typing import Any
+from typing import Iterator
+from typing import Literal
+from typing import Mapping
+from typing import Sequence
+from typing import TypeAlias
 
-from typing_extensions import NamedTuple, NewType, assert_never
+from typing_extensions import assert_never
+from typing_extensions import NamedTuple
+from typing_extensions import NewType
 
 import assume_prove
 import source
