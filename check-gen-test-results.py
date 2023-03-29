@@ -4,9 +4,9 @@ from typing_extensions import assert_never
 
 
 class State(enum.Enum):
-    FRESH = 'FRESH'
-    EXPECTING_SAT = 'EXPECTING_SAT'
-    EXPECTING_UNSAT = 'EXPECTING_UNSAT'
+    FRESH = "FRESH"
+    EXPECTING_SAT = "EXPECTING_SAT"
+    EXPECTING_UNSAT = "EXPECTING_UNSAT"
 
 
 s = State.FRESH
@@ -14,9 +14,9 @@ s = State.FRESH
 
 def check(s: State, i: int, line: str) -> State:
     if s is State.FRESH:
-        if line == '"should be sat"' or line == 'should be sat':
+        if line == '"should be sat"' or line == "should be sat":
             return State.EXPECTING_SAT
-        elif line == '"should be unsat"' or line == 'should be unsat':
+        elif line == '"should be unsat"' or line == "should be unsat":
             return State.EXPECTING_UNSAT
         else:
             raise ValueError(f"unknown content on line {i}, {line!r}")
@@ -40,4 +40,4 @@ num_lines = 0
 for i, line in enumerate(sys.stdin):
     s = check(s, i, line.strip())
     num_lines += 1
-print(f'{num_lines // 2} tests passed')
+print(f"{num_lines // 2} tests passed")
