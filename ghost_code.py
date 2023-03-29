@@ -67,26 +67,24 @@ class NodeAssumePostCondFnCall(source.NodeAssume[source.VarNameKind]):
     pass
 
 
-NodeGhostCode = (
-    NodePostConditionProofObligation[source.VarNameKind]
-    | NodePreconditionAssumption[source.VarNameKind]
-    | NodeLoopInvariantAssumption[source.VarNameKind]
-    | NodeLoopInvariantProofObligation[source.VarNameKind]
-    | NodePrecondObligationFnCall[source.VarNameKind]
-    | NodeAssumePostCondFnCall[source.VarNameKind]
-)
+NodeGhostCode = (NodePostConditionProofObligation[source.VarNameKind]
+                 | NodePreconditionAssumption[source.VarNameKind]
+                 | NodeLoopInvariantAssumption[source.VarNameKind]
+                 | NodeLoopInvariantProofObligation[source.VarNameKind]
+                 | NodePrecondObligationFnCall[source.VarNameKind]
+                 | NodeAssumePostCondFnCall[source.VarNameKind])
 
 
-class GenericFunction(nip.GenericFunction[source.VarNameKind, source.VarNameKind2]):
+class GenericFunction(nip.GenericFunction[source.VarNameKind,
+                                          source.VarNameKind2]):
     """
     Function pre conditions, post condition, and loop invariants inserted in
     the CFG
     """
 
 
-Function = GenericFunction[
-    source.ProgVarName | nip.GuardVarName, source.ProgVarName | nip.GuardVarName
-]
+Function = GenericFunction[source.ProgVarName | nip.GuardVarName,
+                           source.ProgVarName | nip.GuardVarName]
 
 
 @unique
@@ -115,13 +113,14 @@ def no_insertion_on_same_edge(insertions: Sequence[Insertion]) -> bool:
 
 
 def insert_single_succ_node_on_edge(
-    nodes: dict[source.NodeName, source.Node[source.ProgVarName | nip.GuardVarName]],
+    nodes: dict[source.NodeName,
+                source.Node[source.ProgVarName | nip.GuardVarName]],
     after_name: source.NodeName,
     before_name: source.NodeName,
-    constructor: Callable[
-        [source.NodeName],
-        tuple[source.NodeName, source.Node[source.ProgVarName | nip.GuardVarName]],
-    ],
+    constructor: Callable[[source.NodeName],
+                          tuple[source.NodeName,
+                                source.Node[source.ProgVarName
+                                            | nip.GuardVarName]], ],
 ) -> None:
     """
     constructor :: NodeName -> (NodeName, Node)
@@ -148,21 +147,23 @@ def insert_single_succ_node_on_edge(
     # make edge 1
     after = nodes[after_name]
     if isinstance(
-        after,
-        source.NodeEmpty
-        | source.NodeAssume
-        | source.NodeBasic
-        | source.NodeCall
-        | source.NodeAssert,
+            after,
+            source.NodeEmpty
+            | source.NodeAssume
+            | source.NodeBasic
+            | source.NodeCall
+            | source.NodeAssert,
     ):
         # just for type safety (dataclasses.replace isn't type checked)
         after.succ
         nodes[after_name] = dataclasses.replace(after, succ=new_node_name)
     elif isinstance(after, source.NodeCond):
         if after.succ_then == before_name:
-            nodes[after_name] = dataclasses.replace(after, succ_then=new_node_name)
+            nodes[after_name] = dataclasses.replace(after,
+                                                    succ_then=new_node_name)
         elif after.succ_else == before_name:
-            nodes[after_name] = dataclasses.replace(after, succ_else=new_node_name)
+            nodes[after_name] = dataclasses.replace(after,
+                                                    succ_else=new_node_name)
         else:
             assert False, "that must mean that the edge isn't valid"
     else:
@@ -171,7 +172,8 @@ def insert_single_succ_node_on_edge(
 
 def apply_insertions(
     func: nip.Function, insertions: Sequence[Insertion]
-) -> Mapping[source.NodeName, source.Node[source.ProgVarName | nip.GuardVarName]]:
+) -> Mapping[source.NodeName, source.Node[source.ProgVarName
+                                          | nip.GuardVarName]]:
     # Inserting multiple nodes on the same edge ie.
     #
     #   [insert (after=a, before=b, ...), insert(after=a, before=b, ...), ...]
@@ -180,37 +182,38 @@ def apply_insertions(
     # observations, it seems like it can never occur.
     assert no_insertion_on_same_edge(insertions), (
         "not to worry, just need to handle inserting multiple nodes on the same edge. "
-        "Pay close attention of the intended order of the inserted nodes"
-    )
+        "Pay close attention of the intended order of the inserted nodes")
 
     def make_constructor(
         ins: Insertion,
-    ) -> Callable[
-        [source.NodeName],
-        tuple[source.NodeName, source.Node[source.ProgVarName | nip.GuardVarName]],
-    ]:
+    ) -> Callable[[source.NodeName], tuple[source.NodeName,
+                                           source.Node[source.ProgVarName
+                                                       | nip.GuardVarName]], ]:
+
         def constructor(
             succ: source.NodeName,
-        ) -> tuple[source.NodeName, source.Node[source.ProgVarName | nip.GuardVarName]]:
+        ) -> tuple[source.NodeName, source.Node[source.ProgVarName
+                                                | nip.GuardVarName]]:
             # the value of kind of class of the node
             if ins.kind is K.POST_CONDITION_PROOF_OBLIGATION:
                 return ins.node_name, NodePostConditionProofObligation(
-                    ins.expr, succ_then=succ, succ_else=source.NodeNameErr
-                )
+                    ins.expr, succ_then=succ, succ_else=source.NodeNameErr)
 
             if ins.kind is K.PRECONDITION_ASSUMPTION:
-                return ins.node_name, NodePreconditionAssumption(ins.expr, succ)
+                return ins.node_name, NodePreconditionAssumption(
+                    ins.expr, succ)
 
             if ins.kind is K.NODE_LOOP_INVARIANT_ASSUMPTION:
-                return ins.node_name, NodeLoopInvariantAssumption(ins.expr, succ)
+                return ins.node_name, NodeLoopInvariantAssumption(
+                    ins.expr, succ)
 
             if ins.kind is K.NODE_LOOP_INVARIANT_PROOF_OBLIGATION:
                 return ins.node_name, NodeLoopInvariantProofObligation(
-                    ins.expr, succ_then=succ, succ_else=source.NodeNameErr
-                )
+                    ins.expr, succ_then=succ, succ_else=source.NodeNameErr)
 
             if ins.kind is K.NODE_PRE_CONDITION_OBLIGATION_FNCALL:
-                return ins.node_name, NodePrecondObligationFnCall(ins.expr, succ)
+                return ins.node_name, NodePrecondObligationFnCall(
+                    ins.expr, succ)
 
             if ins.kind is K.NODE_ASSUME_POST_CONDITION_FNCALL:
                 return ins.node_name, NodeAssumePostCondFnCall(ins.expr, succ)
@@ -221,9 +224,8 @@ def apply_insertions(
 
     new_nodes = dict(func.nodes)
     for ins in insertions:
-        insert_single_succ_node_on_edge(
-            new_nodes, ins.after, ins.before, make_constructor(ins)
-        )
+        insert_single_succ_node_on_edge(new_nodes, ins.after, ins.before,
+                                        make_constructor(ins))
 
     return new_nodes
 
@@ -244,8 +246,7 @@ def sprinkle_precondition(func: nip.Function) -> Iterable[Insertion]:
 def sprinkle_postcondition(func: nip.Function) -> Iterable[Insertion]:
     assert len(func.cfg.all_preds[source.NodeNameRet]) == 1, (
         "not to worry, just need to handle the case "
-        "where the Err node has multiple predecessors"
-    )
+        "where the Err node has multiple predecessors")
     pred = func.cfg.all_preds[source.NodeNameRet][0]
     yield Insertion(
         node_name=source.NodeName("post_condition"),
@@ -256,9 +257,8 @@ def sprinkle_postcondition(func: nip.Function) -> Iterable[Insertion]:
     )
 
 
-def sprinkle_loop_invariant(
-    func: nip.Function, lh: source.LoopHeaderName
-) -> Iterable[Insertion]:
+def sprinkle_loop_invariant(func: nip.Function,
+                            lh: source.LoopHeaderName) -> Iterable[Insertion]:
     # TODO
     # ----
     #
@@ -334,30 +334,28 @@ def unify_preconds(
     raw_precondition: source.ExprT[source.HumanVarName],
     args: Tuple[source.ExprT[source.VarNameKind], ...],
     expected_args: Tuple[source.ExprVarT[source.ProgVarName], ...],
-) -> Tuple[
-    Dict[source.ExprVarT[source.HumanVarName], source.ExprT[source.VarNameKind]],
-    source.ExprT[source.VarNameKind],
-]:
-    conversion_map: Dict[
-        source.ExprVarT[source.HumanVarName], source.ExprT[source.VarNameKind]
-    ] = {}
+) -> Tuple[Dict[source.ExprVarT[source.HumanVarName],
+                source.ExprT[source.VarNameKind]],
+           source.ExprT[source.VarNameKind], ]:
+    conversion_map: Dict[source.ExprVarT[source.HumanVarName],
+                         source.ExprT[source.VarNameKind]] = {}
 
     assert len(expected_args) == len(args)
 
     for garg, earg in zip(args, expected_args):
         assert garg.typ == earg.typ
-        conversion_map[
-            source.ExprVar(
-                earg.typ,
-                source.HumanVarName(
-                    source.HumanVarNameSubject(earg.name.split("___")[0]),
-                    path=(),
-                    use_guard=False,
-                ),
-            )
-        ] = garg
+        conversion_map[source.ExprVar(
+            earg.typ,
+            source.HumanVarName(
+                source.HumanVarNameSubject(earg.name.split("___")[0]),
+                path=(),
+                use_guard=False,
+            ),
+        )] = garg
 
-    def f(v: source.ExprVarT[source.HumanVarName]) -> source.ExprT[source.VarNameKind]:
+    def f(
+        v: source.ExprVarT[source.HumanVarName]
+    ) -> source.ExprT[source.VarNameKind]:
         if isinstance(v.name.subject, str) and is_global_smt(v.name.subject):
             e = source.ExprVar(
                 source.TypeBitVec(PLATFORM_CONTEXT_BIT_SIZE),
@@ -380,9 +378,8 @@ def unify_postconds(
     raw_postcondition: source.ExprT[source.HumanVarName],
     rets: Tuple[source.ExprT[source.VarNameKind], ...],
     expected_rets: Tuple[source.ExprVarT[source.ProgVarName], ...],
-    conversion_map: Dict[
-        source.ExprVarT[source.HumanVarName], source.ExprT[source.VarNameKind]
-    ],
+    conversion_map: Dict[source.ExprVarT[source.HumanVarName],
+                         source.ExprT[source.VarNameKind]],
 ) -> source.ExprT[source.VarNameKind]:
     assert len(rets) == len(expected_rets)
 
@@ -390,19 +387,21 @@ def unify_postconds(
     num_rets = 0
     for gret, eret in zip(rets, expected_rets):
         if is_special_return_variable(eret.name):
-            name = source.HumanVarName(
-                source.HumanVarNameSpecial.RET, path=(), use_guard=False
-            )
+            name = source.HumanVarName(source.HumanVarNameSpecial.RET,
+                                       path=(),
+                                       use_guard=False)
             num_rets += 1
         else:
-            name = source.HumanVarName(
-                source.HumanVarNameSubject(eret.name), path=(), use_guard=False
-            )
+            name = source.HumanVarName(source.HumanVarNameSubject(eret.name),
+                                       path=(),
+                                       use_guard=False)
         conversion_map[source.ExprVar(eret.typ, name)] = gret
 
     assert num_rets <= 1, "multiple return variables were found"
 
-    def f(v: source.ExprVarT[source.HumanVarName]) -> source.ExprT[source.VarNameKind]:
+    def f(
+        v: source.ExprVarT[source.HumanVarName]
+    ) -> source.ExprT[source.VarNameKind]:
         # HACK for deliverable
         if isinstance(v.name.subject, str) and is_global_smt(v.name.subject):
             e = source.ExprVar(
@@ -420,9 +419,8 @@ def sprinkle_handlerloop(fn: Function) -> Function:
     pre_after_name = source.NodeName(handler_loop_node)
     post_before_name = source.NodeName(handler_loop_node)
 
-    def get_pre_insertion(
-        node_name: source.NodeName, before: source.NodeName
-    ) -> Insertion:
+    def get_pre_insertion(node_name: source.NodeName,
+                          before: source.NodeName) -> Insertion:
         pre_expr = ghost_data.handler_loop_iter_pre()
         return Insertion(
             after=pre_after_name,
@@ -432,9 +430,8 @@ def sprinkle_handlerloop(fn: Function) -> Function:
             node_name=node_name,
         )
 
-    def get_post_insertion(
-        node_name: source.NodeName, after: source.NodeName
-    ) -> Insertion:
+    def get_post_insertion(node_name: source.NodeName,
+                           after: source.NodeName) -> Insertion:
         post_expr = ghost_data.handler_loop_iter_post()
         return Insertion(
             after=after,
@@ -504,12 +501,11 @@ def sprinkle_call_conditions(
         raw_postcondition = source.expr_true if ghost is None else ghost.postcondition
         call_target = ctx[node.fname]
         assert call_target is not None
-        conversion_map, precondition = unify_preconds(
-            raw_precondition, node.args, call_target.arguments
-        )
-        postcondition = unify_postconds(
-            raw_postcondition, node.rets, call_target.returns, conversion_map
-        )
+        conversion_map, precondition = unify_preconds(raw_precondition,
+                                                      node.args,
+                                                      call_target.arguments)
+        postcondition = unify_postconds(raw_postcondition, node.rets,
+                                        call_target.returns, conversion_map)
         yield from sprinkle_call_assert_preconditions(fn, name, precondition)
         yield sprinkle_call_assume_postcondition(name, node, postcondition)
 
@@ -518,9 +514,8 @@ def sprinkle_call_conditions(
 # descriptive one I could think of
 
 
-def sprinkle_ghost_code_prime(
-    filename: str, func: nip.Function, ctx: Dict[str, syntax.Function]
-) -> Function:
+def sprinkle_ghost_code_prime(filename: str, func: nip.Function,
+                              ctx: Dict[str, syntax.Function]) -> Function:
     new_ctx: dict[str, source.FunctionSignature[source.ProgVarName]] = {}
     for fname, syn_func in ctx.items():
         new_ctx[fname] = source.convert_function_metadata(syn_func)
@@ -550,13 +545,10 @@ def sprinkle_ghost_code_prime(
     )
 
 
-def sprinkle_ghost_code(
-    filename: str, func: nip.Function, ctx: Dict[str, syntax.Function]
-) -> Function:
+def sprinkle_ghost_code(filename: str, func: nip.Function,
+                        ctx: Dict[str, syntax.Function]) -> Function:
     fn = sprinkle_ghost_code_prime(filename, func, ctx)
-    if (
-        filename != "tests/libsel4cp_trunc.txt"
-        and func.name != "libsel4cp.handler_loop"
-    ):
+    if (filename != "tests/libsel4cp_trunc.txt"
+            and func.name != "libsel4cp.handler_loop"):
         return fn
     return sprinkle_handlerloop(fn)

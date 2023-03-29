@@ -47,7 +47,6 @@ class HumanVarName(NamedTuple):
 
     path: HumanVarNamePath
     """ Right now paths aren't supported """
-
     """ for example foo """
     use_guard: bool
     """ if set to true, this will evaluate to foo#assigned """
@@ -138,15 +137,13 @@ class TypeWordArray:
     """
 
 
-Type = (
-    TypeStruct
-    | TypeBitVec
-    | TypePtr
-    | TypeArray
-    | TypeFloatingPoint
-    | TypeBuiltin
-    | TypeWordArray
-)
+Type = (TypeStruct
+        | TypeBitVec
+        | TypePtr
+        | TypeArray
+        | TypeFloatingPoint
+        | TypeBuiltin
+        | TypeWordArray)
 
 
 def pretty_type_ascii(typ: Type) -> str:
@@ -401,15 +398,12 @@ class ExprOp(ABCExpr[TypeKind, VarNameKind]):
 
 ExprOpT: TypeAlias = ExprOp[Type, VarNameKind]
 
-
-Expr: TypeAlias = (
-    ExprVar[TypeKind, VarNameKind]
-    | ExprNum[TypeKind]
-    | ExprType[TypeKind]
-    | ExprOp[TypeKind, VarNameKind]
-    | ExprFunction[TypeKind, VarNameKind]
-    | ExprSymbol[TypeKind]
-)
+Expr: TypeAlias = (ExprVar[TypeKind, VarNameKind]
+                   | ExprNum[TypeKind]
+                   | ExprType[TypeKind]
+                   | ExprOp[TypeKind, VarNameKind]
+                   | ExprFunction[TypeKind, VarNameKind]
+                   | ExprSymbol[TypeKind])
 ExprT: TypeAlias = Expr[Type, VarNameKind]
 
 ProgVar: TypeAlias = ExprVarT[ProgVarName]
@@ -427,9 +421,8 @@ expr5: ExprVarT[str] = ExprVar(type_bool, "bar")  # pass
 # expr5: Expr[int, bool] = ExprOp(type_bool, Operator.AND, ())  # fail
 
 
-def visit_expr(
-    expr: ExprT[VarNameKind], visitor: Callable[[ExprT[VarNameKind]], None]
-) -> None:
+def visit_expr(expr: ExprT[VarNameKind],
+               visitor: Callable[[ExprT[VarNameKind]], None]) -> None:
     visitor(expr)
     if isinstance(expr, ExprOp):
         for operand in expr.operands:
@@ -481,9 +474,8 @@ def pretty_expr_ascii(expr: ExprT[VarNameKind]) -> str:
             return f"({pretty_expr_ascii(expr.operands[0])} {pretty_binary_operators_ascii[expr.operator]} {pretty_expr_ascii(expr.operands[1])})"
         elif expr.operator == Operator.IF_THEN_ELSE:
             assert len(expr.operands) == 3
-            cond, then, otherwise = (
-                pretty_expr_ascii(operand) for operand in expr.operands
-            )
+            cond, then, otherwise = (pretty_expr_ascii(operand)
+                                     for operand in expr.operands)
             return f"({cond} ? {then} : {otherwise})"
         else:
             return f'{expr.operator.value}({", ".join(pretty_expr_ascii(operand) for operand in expr.operands)})'
@@ -529,7 +521,8 @@ VarNameKind2 = TypeVar("VarNameKind2", covariant=True)
 
 
 def convert_expr_vars(
-    f: Callable[[ExprVar[TypeKind, VarNameKind]], Expr[TypeKind, VarNameKind2]],
+    f: Callable[[ExprVar[TypeKind, VarNameKind]], Expr[TypeKind,
+                                                       VarNameKind2]],
     expr: Expr[TypeKind, VarNameKind],
 ) -> Expr[TypeKind, VarNameKind2]:
     if isinstance(expr, ExprNum):
@@ -547,13 +540,15 @@ def convert_expr_vars(
     assert_never(expr)
 
 
-def expr_eq(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+def expr_eq(lhs: ExprT[VarNameKind],
+            rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     """equate"""
     assert lhs.typ == rhs.typ
     return ExprOp(type_bool, Operator.EQUALS, (lhs, rhs))
 
 
-def expr_neq(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+def expr_neq(lhs: ExprT[VarNameKind],
+             rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     """equate"""
     assert lhs.typ == rhs.typ
     return expr_negate(expr_eq(lhs, rhs))
@@ -562,7 +557,9 @@ def expr_neq(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameK
 def mk_binary_bitvec_operation(
     op: Operator,
 ) -> Callable[[ExprT[VarNameKind], ExprT[VarNameKind]], ExprT[VarNameKind]]:
-    def f(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+
+    def f(lhs: ExprT[VarNameKind],
+          rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
         assert lhs.typ == rhs.typ
         assert isinstance(lhs.typ, TypeBitVec)
         return ExprOp(lhs.typ, op, (lhs, rhs))
@@ -573,7 +570,9 @@ def mk_binary_bitvec_operation(
 def mk_binary_bitvec_relation(
     op: Operator,
 ) -> Callable[[ExprT[VarNameKind], ExprT[VarNameKind]], ExprT[VarNameKind]]:
-    def f(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+
+    def f(lhs: ExprT[VarNameKind],
+          rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
         assert lhs.typ == rhs.typ
         assert isinstance(lhs.typ, TypeBitVec)
         return ExprOp(type_bool, op, (lhs, rhs))
@@ -594,9 +593,8 @@ expr_shift_right = mk_binary_bitvec_operation(Operator.SHIFT_RIGHT)
 # don't implement expr_sdiv (cparser will never generate signed division)
 
 
-def expr_ite(
-    cond: ExprT[VarNameKind], yes: ExprT[VarNameKind], no: ExprT[VarNameKind]
-) -> ExprT[VarNameKind]:
+def expr_ite(cond: ExprT[VarNameKind], yes: ExprT[VarNameKind],
+             no: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     assert yes.typ == no.typ
     assert cond.typ == type_bool
     return ExprOp(yes.typ, Operator.IF_THEN_ELSE, (cond, yes, no))
@@ -614,10 +612,11 @@ def expr_negate(expr: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     if expr == expr_false:
         return expr_true
 
-    return ExprOp(type_bool, Operator.NOT, (expr,))
+    return ExprOp(type_bool, Operator.NOT, (expr, ))
 
 
-def expr_or(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+def expr_or(lhs: ExprT[VarNameKind],
+            rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     assert lhs.typ == type_bool
     assert rhs.typ == type_bool
 
@@ -631,7 +630,8 @@ def expr_or(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKi
     return ExprOp(type_bool, Operator.OR, (lhs, rhs))
 
 
-def expr_and(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+def expr_and(lhs: ExprT[VarNameKind],
+             rhs: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     assert lhs.typ == type_bool
     assert rhs.typ == type_bool
 
@@ -645,15 +645,15 @@ def expr_and(lhs: ExprT[VarNameKind], rhs: ExprT[VarNameKind]) -> ExprT[VarNameK
     return ExprOp(type_bool, Operator.AND, (lhs, rhs))
 
 
-def expr_implies(
-    antecedent: ExprT[VarNameKind], consequent: ExprT[VarNameKind]
-) -> ExprT[VarNameKind]:
+def expr_implies(antecedent: ExprT[VarNameKind],
+                 consequent: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     assert antecedent.typ == type_bool
     assert consequent.typ == type_bool
     return ExprOp(type_bool, Operator.IMPLIES, (antecedent, consequent))
 
 
-def expr_split_conjuncts(expr: ExprT[VarNameKind]) -> Iterator[ExprT[VarNameKind]]:
+def expr_split_conjuncts(
+        expr: ExprT[VarNameKind]) -> Iterator[ExprT[VarNameKind]]:
     if isinstance(expr, ExprOp) and expr.operator == Operator.AND:
         yield from expr_split_conjuncts(expr.operands[0])
         yield from expr_split_conjuncts(expr.operands[1])
@@ -662,8 +662,8 @@ def expr_split_conjuncts(expr: ExprT[VarNameKind]) -> Iterator[ExprT[VarNameKind
 
 
 def condition_to_evaluate_subexpr_in_expr(
-    expr: ExprT[VarNameKind], sub: ExprT[VarNameKind]
-) -> ExprT[VarNameKind]:
+        expr: ExprT[VarNameKind],
+        sub: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     # traverse down the if, building up the condition to reach a particular variable
     if isinstance(expr, ExprNum):
         if expr == sub:
@@ -686,8 +686,8 @@ def condition_to_evaluate_subexpr_in_expr(
             return expr_false
 
         if expr.operator is Operator.IF_THEN_ELSE and reachability_condition != [
-            expr_true,
-            expr_true,
+                expr_true,
+                expr_true,
         ]:
             assert len(expr.operands) == 3
             cond, then, otherwise = expr.operands
@@ -696,15 +696,11 @@ def condition_to_evaluate_subexpr_in_expr(
             # sub expression is used in the condition, so there is no escaping anything
             if reachability_condition[0] == expr_true:
                 return expr_true
-            if (
-                reachability_condition[0] == expr_false
-                and reachability_condition[1] == expr_false
-            ):
+            if (reachability_condition[0] == expr_false
+                    and reachability_condition[1] == expr_false):
                 return expr_and(expr_negate(cond), reachability_condition[2])
-            if (
-                reachability_condition[0] == expr_false
-                and reachability_condition[2] == expr_false
-            ):
+            if (reachability_condition[0] == expr_false
+                    and reachability_condition[2] == expr_false):
                 return expr_and(cond, reachability_condition[1])
 
             # subexpr used in condition
@@ -728,7 +724,8 @@ def condition_to_evaluate_subexpr_in_expr(
         return cond
     elif isinstance(expr, ExprFunction):
         conditions = [
-            condition_to_evaluate_subexpr_in_expr(arg, sub) for arg in expr.arguments
+            condition_to_evaluate_subexpr_in_expr(arg, sub)
+            for arg in expr.arguments
         ]
         cond = expr_false
         for op in conditions:
@@ -807,14 +804,12 @@ class NodeAssert(Generic[VarNameKind]):
     succ: NodeName
 
 
-Node = (
-    NodeBasic[VarNameKind]
-    | NodeCall[VarNameKind]
-    | NodeCond[VarNameKind]
-    | NodeEmpty
-    | NodeAssume[VarNameKind]
-    | NodeAssert[VarNameKind]
-)
+Node = (NodeBasic[VarNameKind]
+        | NodeCall[VarNameKind]
+        | NodeCond[VarNameKind]
+        | NodeEmpty
+        | NodeAssume[VarNameKind]
+        | NodeAssert[VarNameKind])
 
 LoopHeaderName = NewType("LoopHeaderName", NodeName)
 
@@ -898,23 +893,18 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
         """A loop latch is a node which jumps (not necessarily back) to the loop header (LLVM terminology)"""
         return any(
             self.is_loop_header(succ) is not None
-            for succ in self.cfg.all_succs[node_name]
-        )
+            for succ in self.cfg.all_succs[node_name])
 
     def acyclic_preds_of(self, node_name: NodeName) -> Iterator[NodeName]:
         """returns all the direct predecessors, removing the ones that would follow back edges"""
-        return (
-            p
-            for p in self.cfg.all_preds[node_name]
-            if (p, node_name) not in self.cfg.back_edges
-        )
+        return (p for p in self.cfg.all_preds[node_name]
+                if (p, node_name) not in self.cfg.back_edges)
 
     def traverse_topologically_bottom_up(self) -> Iterator[NodeName]:
         q: list[NodeName] = [
-            n
-            for n, succs in self.cfg.all_succs.items()
-            if len([succ for succ in succs if (n, succ) not in self.cfg.back_edges])
-            == 0
+            n for n, succs in self.cfg.all_succs.items() if len([
+                succ for succ in succs if (n, succ) not in self.cfg.back_edges
+            ]) == 0
         ]
         visited: set[NodeName] = set()
 
@@ -923,11 +913,8 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
             if n in visited:
                 continue
 
-            if any(
-                succ not in visited
-                for succ in self.cfg.all_succs[n]
-                if (n, succ) not in self.cfg.back_edges
-            ):
+            if any(succ not in visited for succ in self.cfg.all_succs[n]
+                   if (n, succ) not in self.cfg.back_edges):
                 continue
 
             visited.add(n)
@@ -937,14 +924,14 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
                 if (pred, n) not in self.cfg.back_edges:
                     q.append(pred)
 
-        assert len(visited - {NodeNameErr, NodeNameRet}) == len(self.nodes), visited
+        assert len(visited - {NodeNameErr, NodeNameRet}) == len(
+            self.nodes), visited
 
-    def traverse_topologically(
-        self, skip_err_and_ret: bool = False
-    ) -> Iterator[NodeName]:
+    def traverse_topologically(self,
+                               skip_err_and_ret: bool = False
+                               ) -> Iterator[NodeName]:
         q: list[NodeName] = [
-            n
-            for n, preds in self.cfg.all_preds.items()
+            n for n, preds in self.cfg.all_preds.items()
             if len([p for p in self.acyclic_preds_of(n)]) == 0
         ]
         visited: set[NodeName] = set()
@@ -971,7 +958,8 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
         all_vars.update(self.signature.arguments)
         for n, node in self.nodes.items():
             all_vars.update(used_variables_in_node(node))
-            all_vars.update(assigned_variables_in_node(self, n, with_loop_targets=True))
+            all_vars.update(
+                assigned_variables_in_node(self, n, with_loop_targets=True))
         return all_vars
 
     def with_ghost(
@@ -981,11 +969,11 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
             ghost = Ghost(
                 precondition=expr_true,
                 postcondition=expr_true,
-                loop_invariants={lh: expr_true for lh in self.loops.keys()},
+                loop_invariants={lh: expr_true
+                                 for lh in self.loops.keys()},
             )
-        assert (
-            self.loops.keys() == ghost.loop_invariants.keys()
-        ), "loop invariants don't match"
+        assert (self.loops.keys() == ghost.loop_invariants.keys()
+                ), "loop invariants don't match"
         return GenericFunction(
             name=self.name,
             nodes=self.nodes,
@@ -1012,19 +1000,15 @@ Function = GenericFunction[ProgVarName, HumanVarName]
 
 
 def is_loop_counter_name(var: str) -> bool:
-    return (
-        var.startswith("loop#")
-        and var.endswith("#count")
-        and all(
-            map(
-                lambda c: ord("0") <= ord(c) and ord(c) <= ord("9"),
-                var[len("loop#") : -len("#count")],
-            )
-        )
-    )
+    return (var.startswith("loop#") and var.endswith("#count") and all(
+        map(
+            lambda c: ord("0") <= ord(c) and ord(c) <= ord("9"),
+            var[len("loop#"):-len("#count")],
+        )))
 
 
-def used_variables_in_node(node: Node[VarNameKind]) -> Set[ExprVarT[VarNameKind]]:
+def used_variables_in_node(
+        node: Node[VarNameKind]) -> Set[ExprVarT[VarNameKind]]:
     used_variables: set[ExprVarT[VarNameKind]] = set()
     if isinstance(node, NodeBasic):
         for upd in node.upds:
@@ -1040,8 +1024,8 @@ def used_variables_in_node(node: Node[VarNameKind]) -> Set[ExprVarT[VarNameKind]
 
 
 def assigned_variables_in_node(
-    func: GhostlessFunction[VarNameKind, Any], n: NodeName, *, with_loop_targets: bool
-) -> Set[ExprVarT[VarNameKind]]:
+        func: GhostlessFunction[VarNameKind, Any], n: NodeName, *,
+        with_loop_targets: bool) -> Set[ExprVarT[VarNameKind]]:
     if n in (NodeNameRet, NodeNameErr):
         return set()
 
@@ -1086,15 +1070,12 @@ def convert_function_nodes(
                 for var, expr in node.upds:
                     upds.append(
                         Update(
-                            var=ExprVarT[ProgVarName](
-                                convert_type(var[1]), ProgVarName(var[0])
-                            ),
+                            var=ExprVarT[ProgVarName](convert_type(var[1]),
+                                                      ProgVarName(var[0])),
                             expr=convert_expr(expr),
-                        )
-                    )
-                safe_nodes[name] = NodeBasic(
-                    upds=tuple(upds), succ=NodeName(str(node.cont))
-                )
+                        ))
+                safe_nodes[name] = NodeBasic(upds=tuple(upds),
+                                             succ=NodeName(str(node.cont)))
         elif node.kind == "Call":
             node.args
             safe_nodes[name] = NodeCall(
@@ -1103,8 +1084,7 @@ def convert_function_nodes(
                 args=tuple(convert_expr(arg) for arg in node.args),
                 rets=tuple(
                     ExprVar(convert_type(typ), ProgVarName(name))
-                    for name, typ in node.rets
-                ),
+                    for name, typ in node.rets),
             )
         elif node.kind == "Cond":
             safe_nodes[name] = NodeCond(
@@ -1123,25 +1103,30 @@ class FunctionSignature(Generic[VarNameKind]):
     returns: Tuple[ExprVarT[ProgVarName], ...]
 
 
-def convert_function_metadata(func: syntax.Function) -> FunctionSignature[ProgVarName]:
+def convert_function_metadata(
+        func: syntax.Function) -> FunctionSignature[ProgVarName]:
     args = tuple(
-        ExprVar(convert_type(typ), ProgVarName(name)) for name, typ in func.inputs
-    )
+        ExprVar(convert_type(typ), ProgVarName(name))
+        for name, typ in func.inputs)
     rets = tuple(
-        ExprVar(convert_type(typ), ProgVarName(name)) for name, typ in func.outputs
-    )
+        ExprVar(convert_type(typ), ProgVarName(name))
+        for name, typ in func.outputs)
     return FunctionSignature(args, rets)
 
 
-def convert_function(func: syntax.Function) -> GhostlessFunction[ProgVarName, Any]:
+def convert_function(
+        func: syntax.Function) -> GhostlessFunction[ProgVarName, Any]:
     safe_nodes = convert_function_nodes(func.nodes)
     all_succs = abc_cfg.compute_all_successors_from_nodes(safe_nodes)
     assert func.entry is not None
-    cfg = abc_cfg.compute_cfg_from_all_succs(all_succs, NodeName(str(func.entry)))
+    cfg = abc_cfg.compute_cfg_from_all_succs(all_succs,
+                                             NodeName(str(func.entry)))
     loops = abc_cfg.compute_loops(safe_nodes, cfg)
 
     metadata = convert_function_metadata(func)
 
-    return GhostlessFunction(
-        cfg=cfg, nodes=safe_nodes, loops=loops, signature=metadata, name=func.name
-    )
+    return GhostlessFunction(cfg=cfg,
+                             nodes=safe_nodes,
+                             loops=loops,
+                             signature=metadata,
+                             name=func.name)

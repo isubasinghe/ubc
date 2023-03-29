@@ -67,17 +67,17 @@ HTD = SMTLIB("HTD")
 #                       + - / * = % ? ! . $ _ ~ & ˆ < > @ that does not start
 #                       with a digit
 RE_VALID_SMTLIB_SIMPLE_SYMBOL_STR = (
-    r"[a-zA-Z+\-/*=%?!.$_~<>@][a-zA-Z+\-/*=%?!.$_~<>@0-9]*"
-)
-RE_VALID_SMTLIB_SIMPLE_SYMBOL = re.compile(
-    "^" + RE_VALID_SMTLIB_SIMPLE_SYMBOL_STR + "$"
-)
+    r"[a-zA-Z+\-/*=%?!.$_~<>@][a-zA-Z+\-/*=%?!.$_~<>@0-9]*")
+RE_VALID_SMTLIB_SIMPLE_SYMBOL = re.compile("^" +
+                                           RE_VALID_SMTLIB_SIMPLE_SYMBOL_STR +
+                                           "$")
 
 Identifier = NewType("Identifier", str)
 
 
 def word_array(typ: source.TypeWordArray) -> SMTLIB:
-    return SMTLIB(f"(Array (_ BitVec {typ.index_bits}) (_ BitVec {typ.value_bits}))")
+    return SMTLIB(
+        f"(Array (_ BitVec {typ.index_bits}) (_ BitVec {typ.value_bits}))")
 
 
 def identifier(illegal_name: assume_prove.VarName) -> Identifier:
@@ -87,8 +87,7 @@ def identifier(illegal_name: assume_prove.VarName) -> Identifier:
     ), "# are replaced with @, but some name already contains a @, which might result on conflicts"
     renamed = illegal_name.replace("#", "@")
     assert RE_VALID_SMTLIB_SIMPLE_SYMBOL.match(
-        renamed
-    ), f"identifier {illegal_name!r} isn't valid"
+        renamed), f"identifier {illegal_name!r} isn't valid"
     return Identifier(renamed)
 
 
@@ -133,16 +132,13 @@ class CmdComment(NamedTuple):
 
 EmptyLine = CmdComment("")
 
-Cmd = (
-    CmdDeclareFun
-    | CmdDefineFun
-    | CmdAssert
-    | CmdCheckSat
-    | CmdComment
-    | CmdSetLogic
-    | CmdDeclareSort
-)
-
+Cmd = (CmdDeclareFun
+       | CmdDefineFun
+       | CmdAssert
+       | CmdCheckSat
+       | CmdComment
+       | CmdSetLogic
+       | CmdDeclareSort)
 
 ModelResponse: TypeAlias = CmdDefineFun
 
@@ -192,9 +188,8 @@ def smt_extract(
     return SMTLIB(f"((_ extract {msb_idx} {lsb_idx}) {emit_expr(lhs)})")
 
 
-def smt_zero_extend(
-    num_extra_bits: int, lhs: source.ExprT[assume_prove.VarName]
-) -> SMTLIB:
+def smt_zero_extend(num_extra_bits: int,
+                    lhs: source.ExprT[assume_prove.VarName]) -> SMTLIB:
     # ((_ zero_extend 0) t) stands for t
     # ((_ zero_extend i) t) abbreviates (concat ((_ repeat i) #b0) t)
 
@@ -202,9 +197,8 @@ def smt_zero_extend(
     return SMTLIB(f"((_ zero_extend {num_extra_bits}) {emit_expr(lhs)})")
 
 
-def smt_sign_extend(
-    num_extra_bits: int, lhs: source.ExprT[assume_prove.VarName]
-) -> SMTLIB:
+def smt_sign_extend(num_extra_bits: int,
+                    lhs: source.ExprT[assume_prove.VarName]) -> SMTLIB:
     # ((_ sign_extend 0) t) stands for t
     # ((_ sign_extend i) t) abbreviates
     #   (concat ((_ repeat i) ((_ extract |m-1| |m-1|) t)) t)
@@ -215,9 +209,8 @@ def smt_sign_extend(
 
 def emit_num_with_correct_type(expr: source.ExprNumT) -> SMTLIB:
     if isinstance(expr.typ, source.TypeBitVec):
-        assert (
-            -(2**expr.typ.size) <= expr.num < 2**expr.typ.size
-        ), f"{expr.num=} doesn't fit in the type {expr.typ=}"
+        assert (-(2**expr.typ.size) <= expr.num < 2**expr.typ.size
+                ), f"{expr.num=} doesn't fit in the type {expr.typ=}"
         if expr.num >= 0:
             num = expr.num
         else:
@@ -228,7 +221,8 @@ def emit_num_with_correct_type(expr: source.ExprNumT) -> SMTLIB:
 
 def emit_bitvec_cast(
     target_typ: source.TypeBitVec,
-    operator: Literal[source.Operator.WORD_CAST, source.Operator.WORD_CAST_SIGNED],
+    operator: Literal[source.Operator.WORD_CAST,
+                      source.Operator.WORD_CAST_SIGNED],
     lhs: source.ExprT[assume_prove.VarName],
 ) -> SMTLIB:
     assert isinstance(lhs.typ, source.TypeBitVec)
@@ -246,9 +240,11 @@ def emit_bitvec_cast(
 
     assert lhs.typ.size < target_typ.size
     if operator == source.Operator.WORD_CAST:
-        return smt_zero_extend(num_extra_bits=target_typ.size - lhs.typ.size, lhs=lhs)
+        return smt_zero_extend(num_extra_bits=target_typ.size - lhs.typ.size,
+                               lhs=lhs)
     elif operator == source.Operator.WORD_CAST_SIGNED:
-        return smt_sign_extend(num_extra_bits=target_typ.size - lhs.typ.size, lhs=lhs)
+        return smt_sign_extend(num_extra_bits=target_typ.size - lhs.typ.size,
+                               lhs=lhs)
 
     assert_never(operator)
 
@@ -261,16 +257,14 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
         if expr.operator == source.Operator.WORD_CAST:
             assert len(expr.operands) == 1
             assert isinstance(expr.typ, source.TypeBitVec)
-            return emit_bitvec_cast(
-                expr.typ, source.Operator.WORD_CAST, expr.operands[0]
-            )
+            return emit_bitvec_cast(expr.typ, source.Operator.WORD_CAST,
+                                    expr.operands[0])
 
         if expr.operator == source.Operator.WORD_CAST_SIGNED:
             assert len(expr.operands) == 1
             assert isinstance(expr.typ, source.TypeBitVec)
-            return emit_bitvec_cast(
-                expr.typ, source.Operator.WORD_CAST_SIGNED, expr.operands[0]
-            )
+            return emit_bitvec_cast(expr.typ, source.Operator.WORD_CAST_SIGNED,
+                                    expr.operands[0])
 
         if expr.operator in source.nulary_operators:
             return SMTLIB(ops_to_smt[expr.operator])
@@ -281,17 +275,18 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
             assert isinstance(typ, source.ExprType), typ
             if isinstance(val, source.ExprSymbol):
                 return statically_infered_must_be_true
-            raise NotImplementedError("PAlignValid for non symbols isn't supported")
+            raise NotImplementedError(
+                "PAlignValid for non symbols isn't supported")
         if expr.operator is source.Operator.MEM_ACC:
             assert len(expr.operands) == 2
             mem, symb_or_addr = expr.operands
             if not isinstance(symb_or_addr, source.ExprSymbol):
-                raise NotImplementedError("MemAcc for non symbols isn't supported")
+                raise NotImplementedError(
+                    "MemAcc for non symbols isn't supported")
 
             as_fn_call = f"{symb_or_addr.name}"
             return SMTLIB(
-                f"({ops_to_smt[expr.operator]} {emit_expr(mem)} {as_fn_call})"
-            )
+                f"({ops_to_smt[expr.operator]} {emit_expr(mem)} {as_fn_call})")
 
         return SMTLIB(
             f'({ops_to_smt[expr.operator]} {" ".join(emit_expr(op) for op in expr.operands)})'
@@ -341,16 +336,13 @@ def emit_cmd(cmd: Cmd) -> SMTLIB:
         # (define-fun func_name ((a T1) (b T2) ...) T (body))
 
         assert RE_VALID_SMTLIB_SIMPLE_SYMBOL.match(
-            cmd.symbol
-        ), f"function name {cmd.symbol!r} isn't valid"
+            cmd.symbol), f"function name {cmd.symbol!r} isn't valid"
         for arg in cmd.args:
             assert RE_VALID_SMTLIB_SIMPLE_SYMBOL.match(
-                cmd.symbol
-            ), f"argument {cmd.symbol!r} isn't valid"
+                cmd.symbol), f"argument {cmd.symbol!r} isn't valid"
 
-        args = " ".join(
-            f"({identifier(arg.name)} {emit_sort(arg.typ)})" for arg in cmd.args
-        )
+        args = " ".join(f"({identifier(arg.name)} {emit_sort(arg.typ)})"
+                        for arg in cmd.args)
         return SMTLIB(
             f"(define-fun {cmd.symbol} ({args}) {emit_sort(cmd.ret_sort)} {emit_expr(cmd.term)})"
         )
@@ -365,14 +357,11 @@ def emit_cmd(cmd: Cmd) -> SMTLIB:
     assert_never(cmd)
 
 
-def cmd_assert_eq(
-    name: assume_prove.VarName, rhs: source.ExprT[assume_prove.VarName]
-) -> Cmd:
+def cmd_assert_eq(name: assume_prove.VarName,
+                  rhs: source.ExprT[assume_prove.VarName]) -> Cmd:
     return CmdAssert(
-        source.ExprOp(
-            rhs.typ, source.Operator.EQUALS, (source.ExprVar(rhs.typ, name), rhs)
-        )
-    )
+        source.ExprOp(rhs.typ, source.Operator.EQUALS,
+                      (source.ExprVar(rhs.typ, name), rhs)))
 
 
 def merge_smtlib(it: Iterator[SMTLIB]) -> SMTLIB:
@@ -382,8 +371,10 @@ def merge_smtlib(it: Iterator[SMTLIB]) -> SMTLIB:
 def emit_prelude() -> Sequence[Cmd]:
     pms = CmdDeclareSort(Identifier(str(PMS)), 0)
     htd = CmdDeclareSort(Identifier(str(HTD)), 0)
-    mem_var = source.ExprVar(typ=source.type_mem, name=assume_prove.VarName("mem"))
-    addr_var = source.ExprVar(typ=source.type_word61, name=assume_prove.VarName("addr"))
+    mem_var = source.ExprVar(typ=source.type_mem,
+                             name=assume_prove.VarName("mem"))
+    addr_var = source.ExprVar(typ=source.type_word61,
+                              name=assume_prove.VarName("addr"))
     mem_acc = CmdDefineFun(
         Identifier(str("mem-acc")),
         [mem_var, addr_var],
@@ -396,9 +387,9 @@ def emit_prelude() -> Sequence[Cmd]:
     )
 
     # DEADLINE HACK
-    sel4cp_internal_badge = CmdDeclareFun(
-        Identifier(str("badge")), arg_sorts=[], ret_sort=source.type_word61
-    )
+    sel4cp_internal_badge = CmdDeclareFun(Identifier(str("badge")),
+                                          arg_sorts=[],
+                                          ret_sort=source.type_word61)
     prelude: Sequence[Cmd] = [pms, htd, mem_acc, sel4cp_internal_badge]
     return prelude
 
@@ -413,7 +404,8 @@ def make_smtlib(p: assume_prove.AssumeProveProg) -> SMTLIB:
 
     # emit all auxilary variable declaration (declare-fun node_x_ok () Bool)
     for node_ok_name in p.nodes_script:
-        cmds.append(CmdDeclareFun(identifier(node_ok_name), (), source.type_bool))
+        cmds.append(
+            CmdDeclareFun(identifier(node_ok_name), (), source.type_bool))
         emited_identifiers.add(identifier(node_ok_name))
         emited_variables.add(node_ok_name)
 
@@ -444,8 +436,8 @@ def make_smtlib(p: assume_prove.AssumeProveProg) -> SMTLIB:
 
     cmds.append(CmdCheckSat())
     cmds.append(
-        CmdAssert(source.expr_negate(source.ExprVar(source.type_bool, p.entry)))
-    )
+        CmdAssert(source.expr_negate(source.ExprVar(source.type_bool,
+                                                    p.entry))))
 
     cmds.append(CmdCheckSat())
 
@@ -486,9 +478,9 @@ def send_smtlib_to_z3(smtlib: SMTLIB) -> Iterator[CheckSatResult]:
         f.write(smtlib)
         f.close()
 
-        p = subprocess.Popen(
-            ["z3", "-file:" + fullpath], stderr=subprocess.PIPE, stdout=subprocess.PIPE
-        )
+        p = subprocess.Popen(["z3", "-file:" + fullpath],
+                             stderr=subprocess.PIPE,
+                             stdout=subprocess.PIPE)
         p.wait()
 
     assert p.stderr is not None
