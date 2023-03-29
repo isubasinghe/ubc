@@ -11,25 +11,19 @@ short circuiting: a && b won't evaluate b is a is true. So the statement
 """
 
 from __future__ import annotations
+
+import dataclasses
 from collections import defaultdict
 from dataclasses import dataclass
-import dataclasses
 from functools import reduce
-import abc_cfg
-from typing import (
-    Any,
-    Callable,
-    Iterator,
-    Mapping,
-    NewType,
-    Sequence,
-    Set,
-    TypeAlias,
-    overload,
-)
+from typing import (Any, Callable, Iterator, Mapping, NewType, Sequence, Set,
+                    TypeAlias, overload)
+
 from typing_extensions import assert_never
-from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE, is_global_smt
+
+import abc_cfg
 import source
+from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE, is_global_smt
 
 
 class GuardVarName(str):

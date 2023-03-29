@@ -1,14 +1,16 @@
 from __future__ import annotations
-from enum import Enum
+
+import re
 import subprocess
+import textwrap
+from enum import Enum
 from typing import Any, Iterator, Literal, Mapping, Sequence, TypeAlias
+
 from typing_extensions import NamedTuple, NewType, assert_never
 
-import textwrap
 import assume_prove
-from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 import source
-import re
+from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 from utils import open_temp_file
 
 SMTLIB = NewType("SMTLIB", str)

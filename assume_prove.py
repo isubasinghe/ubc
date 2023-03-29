@@ -1,12 +1,14 @@
 from functools import reduce
-from typing import Mapping, NamedTuple, NewType, Sequence, TypeAlias, cast, overload
+from typing import (Mapping, NamedTuple, NewType, Sequence, TypeAlias, cast,
+                    overload)
+
 from typing_extensions import assert_never
+
 import dsa
-from global_smt_variables import is_global_arbitrary, is_global_smt
+import ghost_code
 import nip
 import source
-import ghost_code
-
+from global_smt_variables import is_global_arbitrary, is_global_smt
 
 VarName = NewType("VarName", str)
 NodeOkName = NewType("NodeOkName", VarName)

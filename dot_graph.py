@@ -1,24 +1,23 @@
 """ standalone file to visualize graph lang
 """
 
-import dsa
-import logic
+import os
+import subprocess
+import sys
+import tempfile
 from collections.abc import Callable
 from io import IOBase
-import subprocess
 from typing import Any, TypeVar
-import tempfile
 
-import sys
-import os
-import source
-import nip
-
-
-import syntax
 from typing_extensions import assert_never
+
 import assume_prove
+import dsa
 import ghost_code
+import logic
+import nip
+import source
+import syntax
 
 
 def pretty_name(name: Any) -> str:
