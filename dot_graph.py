@@ -40,16 +40,16 @@ def _pretty_name(name: str) -> str:
         return name
     # return name
 
-    name, type_info = name.split('__', maxsplit=1)
+    name, type_info = name.split("__", maxsplit=1)
     dsa_num = None
-    some_num = ''
-    if ':' in type_info:
-        type_info, dsa_num = type_info.rsplit(':', maxsplit=1)
-    if '.' in type_info:
-        type_info, some_num = type_info.split('.', maxsplit=1)
-        some_num = '.' + some_num
+    some_num = ""
+    if ":" in type_info:
+        type_info, dsa_num = type_info.rsplit(":", maxsplit=1)
+    if "." in type_info:
+        type_info, some_num = type_info.split(".", maxsplit=1)
+        some_num = "." + some_num
 
-    return name + some_num + (f'<sub>{dsa_num}</sub>' if dsa_num else '')
+    return name + some_num + (f"<sub>{dsa_num}</sub>" if dsa_num else "")
 
 
 # not complete
@@ -64,8 +64,7 @@ pretty_opers = {
     "And": "and",
 }
 
-known_typ_change = set(
-    ["ROData", "MemAcc", "IfThenElse", "WordArrayUpdate", "MemDom"])
+known_typ_change = set(["ROData", "MemAcc", "IfThenElse", "WordArrayUpdate", "MemDom"])
 
 
 def pretty_expr(expr: syntax.Expr, print_type: bool = False) -> str:
@@ -116,15 +115,14 @@ def pretty_safe_expr(expr: source.ExprT[Any], print_type: bool = False) -> str:
             vals = [pretty_safe_expr(v) for v in expr.operands]
         else:
             vals = [
-                pretty_safe_expr(
-                    v, print_type=print_type and v.typ != expr.typ)
+                pretty_safe_expr(v, print_type=print_type and v.typ != expr.typ)
                 for v in expr.operands
             ]
         return "{}({})".format(expr.operator.value, ", ".join(vals))
     elif isinstance(expr, source.ExprFunction):
         return f"[smt]{expr.function_name.replace('<', '&lt;').replace('>', '&gt;')}({', '.join(pretty_safe_expr(arg) for arg in expr.arguments)})"
     else:
-        return str(expr).replace('<', '&lt;').replace('>', '&gt;')
+        return str(expr).replace("<", "&lt;").replace(">", "&gt;")
 
 
 def pretty_updates(update: tuple[tuple[str, syntax.Type], syntax.Expr]) -> str:
@@ -152,37 +150,37 @@ def viz(t: Callable[[IOBase, P], R]) -> Callable[[P], R]:
         # So instead, we have to use this raw tmp folder, which I can't even
         # hide with a ., doesn't get to live just in memory nor gets
         # automatically cleaned up by the OS
-        tmp_dir = os.path.expanduser('~/tmp.ubc/')
+        tmp_dir = os.path.expanduser("~/tmp.ubc/")
         os.makedirs(tmp_dir, exist_ok=True)
         fd, filepath = tempfile.mkstemp(dir=tmp_dir, suffix=".gv")
-        r = t(os.fdopen(fd, 'w'), arg)
+        r = t(os.fdopen(fd, "w"), arg)
         make_and_open_image(filepath)
         return r
+
     return func
 
 
-ErrNodeName = 'Err'
+ErrNodeName = "Err"
 
 
 @viz
 def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
-    puts: Callable[...,
-                   None] = lambda *args, **kwargs: print(*args, file=file, **kwargs)
+    puts: Callable[..., None] = lambda *args, **kwargs: print(
+        *args, file=file, **kwargs
+    )
 
     puts("digraph grph {")
     puts("  node[shape=box]")
     puts("  graph[ranksep=0.3]")
-    args = ', '.join(pretty_name(arg.name)
-                     for arg in fun.signature.arguments)
-    rets = ', '.join(pretty_name(ret.name)
-                     for ret in fun.signature.returns)
+    args = ", ".join(pretty_name(arg.name) for arg in fun.signature.arguments)
+    rets = ", ".join(pretty_name(ret.name) for ret in fun.signature.returns)
     font = '[fontname=monospace; fontsize="10px"]'
     # font = '[fontname=monospace]'
 
     main_label = f"{rets} = <b>{fun.name}</b>({args})"
 
     # puts(f'  label=<<u>{fun.name}</u><BR ALIGN="LEFT"/><BR ALIGN="LEFT"/>Arguments:<BR ALIGN="LEFT"/>{args}<BR ALIGN="LEFT"/><BR ALIGN="LEFT"/>Returns:<BR ALIGN="LEFT"/>{rets}<BR ALIGN="LEFT"/>>')
-    puts(f'  label=<{main_label}>')
+    puts(f"  label=<{main_label}>")
     puts(f'  labelloc="t"')
     puts(f'  fontsize="10px"')
     puts(f'  fontname="monospace"')
@@ -190,31 +188,39 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
     #     f'  subgraph func_label {{FunctionName [label=<<u>{fun.name}</u><BR ALIGN="LEFT"/><BR ALIGN="LEFT"/>Arguments:<BR ALIGN="LEFT"/>{args}<BR ALIGN="LEFT"/><BR ALIGN="LEFT"/>Returns:<BR ALIGN="LEFT"/>{rets}<BR ALIGN="LEFT"/>>] [shape=plaintext] {font}}}')
     # puts()
 
-    dom = '[penwidth=3.0 color=darkblue]'
+    dom = "[penwidth=3.0 color=darkblue]"
     non_dom = '[color="#888"]'
     weights: dict[source.NodeName, int] = {}
     for idx in fun.traverse_topologically(skip_err_and_ret=True):
         node = fun.nodes[idx]
-        weights[idx] = max((weights[p]
-                            for p in fun.acyclic_preds_of(idx)), default=1)
-        if isinstance(node, source.NodeBasic | source.NodeCall | source.NodeEmpty | source.NodeAssume | source.NodeAssert):
+        weights[idx] = max((weights[p] for p in fun.acyclic_preds_of(idx)), default=1)
+        if isinstance(
+            node,
+            source.NodeBasic
+            | source.NodeCall
+            | source.NodeEmpty
+            | source.NodeAssume
+            | source.NodeAssert,
+        ):
             puts(
-                f"  {idx} -> {node.succ} {dom if (idx, node.succ) in fun.cfg.back_edges else non_dom}")
+                f"  {idx} -> {node.succ} {dom if (idx, node.succ) in fun.cfg.back_edges else non_dom}"
+            )
         elif isinstance(node, source.NodeCond):
             puts(
-                f"  {idx} -> {node.succ_then} [label=T] {font} {dom if (idx, node.succ_then) in fun.cfg.back_edges else non_dom}")
+                f"  {idx} -> {node.succ_then} [label=T] {font} {dom if (idx, node.succ_then) in fun.cfg.back_edges else non_dom}"
+            )
             if not HIDE_ERROR_NODE or node.succ_else != ErrNodeName:
                 puts(
-                    f"  {idx} -> {node.succ_else} [label=F] {font} {dom if (idx, node.succ_else) in fun.cfg.back_edges else non_dom}")
+                    f"  {idx} -> {node.succ_else} [label=F] {font} {dom if (idx, node.succ_else) in fun.cfg.back_edges else non_dom}"
+                )
         else:
             assert_never(node)
 
         if isinstance(node, source.NodeBasic):
-            content = '<BR/>'.join(pretty_safe_update(upd)
-                                   for upd in node.upds)
+            content = "<BR/>".join(pretty_safe_update(upd) for upd in node.upds)
         elif isinstance(node, source.NodeCall):
             # TODO: node.rets[0] might be empty
-            content = ''
+            content = ""
             if len(node.rets):
                 content += f"{', '.join(pretty_name(r.name) for r in node.rets)} := "
             content += "{}({})".format(
@@ -226,31 +232,27 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
                 ),
             )
         elif isinstance(node, source.NodeCond):
-
             if HIDE_ERROR_NODE and node.succ_else == ErrNodeName:
                 operands = list(source.expr_split_conjuncts(node.expr))
                 content = "<b>assert</b>&nbsp;" + pretty_safe_expr(operands[0])
                 for operand in operands[1:]:
-                    content += "<BR/><b>and</b>&nbsp;" + \
-                        pretty_safe_expr(operand)
+                    content += "<BR/><b>and</b>&nbsp;" + pretty_safe_expr(operand)
             else:
                 content = pretty_safe_expr(node.expr)
         elif isinstance(node, source.NodeEmpty):
-            content = '&lt;empty&gt;'
+            content = "&lt;empty&gt;"
         elif isinstance(node, source.NodeAssume):
             operands = list(source.expr_split_conjuncts(node.expr))
 
-            content = '<b>assume</b>&nbsp;'
+            content = "<b>assume</b>&nbsp;"
             content += pretty_safe_expr(operands[0])
             for operand in operands[1:]:
-                content += "<BR/><b>and</b>&nbsp;" + \
-                    pretty_safe_expr(operand)
+                content += "<BR/><b>and</b>&nbsp;" + pretty_safe_expr(operand)
         elif isinstance(node, source.NodeAssert):
             if isinstance(node, ghost_code.NodePrecondObligationFnCall):
-                content = '<b>[hacked assert]</b>&nbsp;' + \
-                    pretty_safe_expr(node.expr)
+                content = "<b>[hacked assert]</b>&nbsp;" + pretty_safe_expr(node.expr)
             else:
-                content = '<b>assert</b>&nbsp;' + pretty_safe_expr(node.expr)
+                content = "<b>assert</b>&nbsp;" + pretty_safe_expr(node.expr)
         else:
             assert_never(node)
 
@@ -267,13 +269,13 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
 
 @viz
 def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
-    puts: Callable[...,
-                   None] = lambda *args, **kwargs: print(*args, file=file, **kwargs)
+    puts: Callable[..., None] = lambda *args, **kwargs: print(
+        *args, file=file, **kwargs
+    )
 
     puts("digraph grph {")
     puts("  node[shape=box]")
-    puts(
-        f"  FunctionDescription [label=<<u>{fun.name}</u>>] [shape=plaintext]")
+    puts(f"  FunctionDescription [label=<<u>{fun.name}</u>>] [shape=plaintext]")
     puts()
     for idx, node in fun.nodes.items():
         if node.kind == "Basic" or node.kind == "Call":
@@ -285,14 +287,13 @@ def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
 
         if node.kind == "Basic":
             content = (
-                "<BR/>".join(pretty_updates(u)
-                             for u in node.upds) or "<i>empty</i>"
+                "<BR/>".join(pretty_updates(u) for u in node.upds) or "<i>empty</i>"
             )
         elif node.kind == "Call":
             # weird: what is this ghost assertion?
             # TODO: node.rets[0] might be empty
             rets = [r[0] for r in node.rets]
-            content = ''
+            content = ""
             if len(rets):
                 content += f"{', '.join(rets)} := "
             content += "{}({})".format(
@@ -304,7 +305,6 @@ def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
                 ),
             )
         elif node.kind == "Cond":
-
             if node.right == "Err":
                 operands = logic.split_conjuncts(node.cond)
                 content = "<b>assert</b> " + pretty_expr(operands[0])
@@ -321,8 +321,9 @@ def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
 
 @viz
 def viz_successor_graph(file: IOBase, all_succs: dict[str, list[str]]) -> None:
-    puts: Callable[...,
-                   None] = lambda *args, **kwargs: print(*args, file=file, **kwargs)
+    puts: Callable[..., None] = lambda *args, **kwargs: print(
+        *args, file=file, **kwargs
+    )
     puts("digraph grph {")
     puts("  node[shape=box]")
     puts()
@@ -343,11 +344,13 @@ def make_and_open_image(filepath: str) -> None:
     assert p.stderr is not None
 
     if p.returncode != 0:
-        print(
-            f"ERROR: generated invalid dot graph ({filepath=}):", file=sys.stderr)
+        print(f"ERROR: generated invalid dot graph ({filepath=}):", file=sys.stderr)
         print()
-        print("   ", "\n    ".join(p.stderr.read().decode(
-            'utf-8').splitlines()), file=sys.stderr)
+        print(
+            "   ",
+            "\n    ".join(p.stderr.read().decode("utf-8").splitlines()),
+            file=sys.stderr,
+        )
         exit(3)
 
     assert p.returncode == 0, (p.returncode, p.stderr.read())
@@ -388,25 +391,20 @@ if __name__ == "__main__":
         assert False
 
     with open(file_name) as f:
-        structs, functions, const_globals = syntax.parse_and_install_all(
-            f, None
-        )
+        structs, functions, const_globals = syntax.parse_and_install_all(f, None)
 
     if not function_name or function_name not in functions:
         if function_name:
-            print("unknown function {!r}".format(
-                function_name), file=sys.stderr)
+            print("unknown function {!r}".format(function_name), file=sys.stderr)
         print("Functions defined in the file: ")
         print(" ", "\n  ".join(functions.keys()), file=sys.stderr)
         exit(2)
 
     # viz_raw_function(functions[function_name])
     # viz_function(source.convert_function(functions[function_name]))
-    func = source.convert_function(
-        functions[function_name]).with_ghost(None)
+    func = source.convert_function(functions[function_name]).with_ghost(None)
     nip_func = nip.nip(func)
     ghost_func = ghost_code.sprinkle_ghost_code(file_name, nip_func, functions)
     dsa_func = dsa.dsa(ghost_func)
     viz_function(dsa_func)
-    assume_prove.pretty_print_prog(
-        assume_prove.make_prog(dsa_func))
+    assume_prove.pretty_print_prog(assume_prove.make_prog(dsa_func))

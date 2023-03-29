@@ -37,11 +37,11 @@ def compute_all_path(cfg: abc_cfg.CFG) -> Sequence[Sequence[source.NodeName]]:
     return all_paths
 
 
-def ensure_assigned_at_most_once(func: dsa.Function, path: Collection[source.NodeName]) -> None:
-    """ Ensure that each variable (name, typ) is assigned at most once
-    """
-    assigned_variables: list[dsa.Var[source.ProgVarName |
-                                     nip.GuardVarName]] = []
+def ensure_assigned_at_most_once(
+    func: dsa.Function, path: Collection[source.NodeName]
+) -> None:
+    """Ensure that each variable (name, typ) is assigned at most once"""
+    assigned_variables: list[dsa.Var[source.ProgVarName | nip.GuardVarName]] = []
     for n in path:
         # note that we don't use source.assigned_variables_in_node because it
         # returns a set. That is, if there are duplicates, it will hide them
@@ -54,7 +54,10 @@ def ensure_assigned_at_most_once(func: dsa.Function, path: Collection[source.Nod
             assigned_variables.extend(upd.var for upd in node.upds)
         elif isinstance(node, source.NodeCall):
             assigned_variables.extend(ret for ret in node.rets)
-        elif not isinstance(node, source.NodeEmpty | source.NodeCond | source.NodeAssume | source.NodeAssert):
+        elif not isinstance(
+            node,
+            source.NodeEmpty | source.NodeCond | source.NodeAssume | source.NodeAssert,
+        ):
             assert_never(node)
 
         if loop_header := func.is_loop_header(n):
@@ -63,9 +66,12 @@ def ensure_assigned_at_most_once(func: dsa.Function, path: Collection[source.Nod
     assert len(assigned_variables) == len(set(assigned_variables))
 
 
-def ensure_using_latest_incarnation(func: dsa.Function, path: Sequence[source.NodeName]) -> None:
-    latest_incarnations: dict[source.ExprVarT[source.ProgVarName |
-                                              nip.GuardVarName], dsa.IncarnationNum] = {}
+def ensure_using_latest_incarnation(
+    func: dsa.Function, path: Sequence[source.NodeName]
+) -> None:
+    latest_incarnations: dict[
+        source.ExprVarT[source.ProgVarName | nip.GuardVarName], dsa.IncarnationNum
+    ] = {}
 
     # TODO: globals
     for arg in func.signature.arguments:
@@ -92,15 +98,25 @@ def ensure_using_latest_incarnation(func: dsa.Function, path: Sequence[source.No
                     latest_incarnations[prog_var] = inc
 
             prog_var, inc = dsa.unpack_dsa_var(dsa_var)
-            if isinstance(func.nodes[n], ghost_code.NodePostConditionProofObligation) and False:
-                if any(prog_var == dsa.unpack_dsa_var(dsa_var)[0] for dsa_var in func.signature.arguments):
-                    assert inc == entry_incarnations[prog_var], f'{inc} {entry_incarnations[prog_var]}'
+            if (
+                isinstance(func.nodes[n], ghost_code.NodePostConditionProofObligation)
+                and False
+            ):
+                if any(
+                    prog_var == dsa.unpack_dsa_var(dsa_var)[0]
+                    for dsa_var in func.signature.arguments
+                ):
+                    assert (
+                        inc == entry_incarnations[prog_var]
+                    ), f"{inc} {entry_incarnations[prog_var]}"
                 elif prog_var in latest_incarnations:
                     # FIXME: we shouldn't need this condition here
                     #        this is only because of the assert False node
                     #        TODO: skip this test if the start node isn't reachable
                     #              from the entry node
-                    assert inc == latest_incarnations[prog_var], f'{inc} {latest_incarnations[prog_var]}'
+                    assert (
+                        inc == latest_incarnations[prog_var]
+                    ), f"{inc} {latest_incarnations[prog_var]}"
             elif prog_var in latest_incarnations:
                 assert inc == latest_incarnations[prog_var], f"{prog_var=} {n=} {path=}"
 
@@ -108,7 +124,9 @@ def ensure_using_latest_incarnation(func: dsa.Function, path: Sequence[source.No
             # might be used on some other path that joins with our own(and so
             # inc would be 2 for example)
 
-        for dsa_var in source.assigned_variables_in_node(func, n, with_loop_targets=True):
+        for dsa_var in source.assigned_variables_in_node(
+            func, n, with_loop_targets=True
+        ):
             prog_var, inc = dsa.unpack_dsa_var(dsa_var)
             latest_incarnations[prog_var] = inc
 
@@ -120,7 +138,10 @@ def ensure_valid_dsa(dsa_func: dsa.Function) -> None:
         ensure_using_latest_incarnation(dsa_func, path)
 
 
-def assert_expr_equals_mod_dsa(lhs: source.ExprT[source.ProgVarName | nip.GuardVarName], rhs: source.ExprT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]) -> None:
+def assert_expr_equals_mod_dsa(
+    lhs: source.ExprT[source.ProgVarName | nip.GuardVarName],
+    rhs: source.ExprT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
+) -> None:
     assert lhs.typ == rhs.typ
 
     if isinstance(lhs, source.ExprNum | source.ExprSymbol | source.ExprType):
@@ -144,21 +165,25 @@ def assert_expr_equals_mod_dsa(lhs: source.ExprT[source.ProgVarName | nip.GuardV
         assert_never(lhs)
 
 
-def assert_var_equals_mod_dsa(prog: source.ExprVarT[source.ProgVarName | nip.GuardVarName], var: dsa.Var[source.ProgVarName | nip.GuardVarName]) -> None:
+def assert_var_equals_mod_dsa(
+    prog: source.ExprVarT[source.ProgVarName | nip.GuardVarName],
+    var: dsa.Var[source.ProgVarName | nip.GuardVarName],
+) -> None:
     assert prog == dsa.unpack_dsa_var(var)[0]
 
 
-def assert_node_equals_mod_dsa(prog: source.Node[source.ProgVarName | nip.GuardVarName], node: source.Node[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]) -> None:
+def assert_node_equals_mod_dsa(
+    prog: source.Node[source.ProgVarName | nip.GuardVarName],
+    node: source.Node[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
+) -> None:
     if isinstance(prog, source.NodeBasic):
         assert isinstance(node, source.NodeBasic)
 
         assert len(prog.upds) == len(node.upds)
         for i in range(len(prog.upds)):
-            assert_var_equals_mod_dsa(
-                prog.upds[i].var, node.upds[i].var)
+            assert_var_equals_mod_dsa(prog.upds[i].var, node.upds[i].var)
 
-            assert_expr_equals_mod_dsa(
-                prog.upds[i].expr, node.upds[i].expr)
+            assert_expr_equals_mod_dsa(prog.upds[i].expr, node.upds[i].expr)
 
     elif isinstance(prog, source.NodeCall):
         assert isinstance(node, source.NodeCall)
@@ -185,7 +210,9 @@ def assert_node_equals_mod_dsa(prog: source.Node[source.ProgVarName | nip.GuardV
         assert_never(prog)
 
 
-def assert_is_join_node(node: source.Node[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]) -> None:
+def assert_is_join_node(
+    node: source.Node[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
+) -> None:
     assert isinstance(node, dsa.NodeJoiner)
     for upd in node.upds:
         # ensure every update is of the form A.X = A.Y
@@ -196,7 +223,9 @@ def assert_is_join_node(node: source.Node[dsa.Incarnation[source.ProgVarName | n
         assert lhs_name == rhs_name
 
 
-def ensure_correspondence(prog_func: ghost_code.Function, dsa_func: dsa.Function) -> None:
+def ensure_correspondence(
+    prog_func: ghost_code.Function, dsa_func: dsa.Function
+) -> None:
     assert set(prog_func.nodes.keys()).issubset(dsa_func.nodes.keys())
 
     join_node_names: list[source.NodeName] = []
@@ -209,7 +238,7 @@ def ensure_correspondence(prog_func: ghost_code.Function, dsa_func: dsa.Function
 
         if node_name not in prog_func.nodes:
             assert_is_join_node(dsa_node)
-            assert node_name.startswith('j')  # not required semantically
+            assert node_name.startswith("j")  # not required semantically
             join_node_names.append(node_name)
         else:
             prog_node = prog_func.nodes[node_name]
@@ -241,24 +270,29 @@ def ensure_correspondence(prog_func: ghost_code.Function, dsa_func: dsa.Function
 
 
 def ensure_valid_contexts(func: dsa.Function) -> None:
-    new_contexts: dict[source.NodeName, dict[source.ExprVarT[source.ProgVarName |
-                                                             nip.GuardVarName], dsa.IncarnationNum]] = {}
-    new_contexts[func.cfg.entry] = {dsa.get_base_var(
-        var): dsa.IncarnationBase for var in func.signature.arguments}
+    new_contexts: dict[
+        source.NodeName,
+        dict[
+            source.ExprVarT[source.ProgVarName | nip.GuardVarName], dsa.IncarnationNum
+        ],
+    ] = {}
+    new_contexts[func.cfg.entry] = {
+        dsa.get_base_var(var): dsa.IncarnationBase for var in func.signature.arguments
+    }
     assert new_contexts[func.cfg.entry] == func.contexts[func.cfg.entry]
 
     for n in func.traverse_topologically(skip_err_and_ret=True):
         if n == func.cfg.entry:
             continue
-        assert n not in new_contexts, f'{n=}'
+        assert n not in new_contexts, f"{n=}"
 
-        conflicting_vars: set[source.ExprVarT[source.ProgVarName |
-                                              nip.GuardVarName]] = set()
+        conflicting_vars: set[
+            source.ExprVarT[source.ProgVarName | nip.GuardVarName]
+        ] = set()
         new_contexts[n] = {}
         for p in func.acyclic_preds_of(n):
-            assert p in new_contexts, f'{n=} {p=}'
+            assert p in new_contexts, f"{n=} {p=}"
             for var, inc in new_contexts[p].items():
-
                 if var in new_contexts[n] and new_contexts[n][var] != inc:
                     conflicting_vars.add(var)
 
@@ -270,7 +304,10 @@ def ensure_valid_contexts(func: dsa.Function) -> None:
             new_contexts[n][dsa.get_base_var(v)] = v.name.inc
 
         # HACK: disable special behaviour for proof obligation node
-        if isinstance(func.nodes[n], ghost_code.NodePostConditionProofObligation) and False:
+        if (
+            isinstance(func.nodes[n], ghost_code.NodePostConditionProofObligation)
+            and False
+        ):
             assert isinstance(func.nodes[n], source.NodeCond)
             # in the post condition, when referencing function arguments, you
             # use initial incarnations.
@@ -280,27 +317,31 @@ def ensure_valid_contexts(func: dsa.Function) -> None:
 
         if new_contexts[n] != func.contexts[n]:
             diff = set(new_contexts[n].items()) ^ set(func.contexts[n].items())
-            print('reference:', [(v.name, inc)
-                                 for v, inc in new_contexts[n].items()])
-            print('actual:   ', [(v.name, inc)
-                                 for v, inc in func.contexts[n].items()])
-            print('diff:     ', [(v.name, inc) for v, inc in diff])
+            print("reference:", [(v.name, inc) for v, inc in new_contexts[n].items()])
+            print("actual:   ", [(v.name, inc) for v, inc in func.contexts[n].items()])
+            print("diff:     ", [(v.name, inc) for v, inc in diff])
             assert False, f"context aren't the same for node {n=}"
 
     assert new_contexts == func.contexts
 
 
 def ensure_valid_variables(func: dsa.Function) -> None:
-    """ Ensure that each variable only ever has one type """
-    var_types: dict[dsa.Incarnation[source.ProgVarName |
-                                    nip.GuardVarName], source.Type] = {}
+    """Ensure that each variable only ever has one type"""
+    var_types: dict[
+        dsa.Incarnation[source.ProgVarName | nip.GuardVarName], source.Type
+    ] = {}
 
-    def add_or_ensure_same_typ(var_name: dsa.Incarnation[source.ProgVarName | nip.GuardVarName], typ: source.Type) -> None:
+    def add_or_ensure_same_typ(
+        var_name: dsa.Incarnation[source.ProgVarName | nip.GuardVarName],
+        typ: source.Type,
+    ) -> None:
         if var_name in var_types:
             assert var_types[var_name] == typ
         var_types[var_name] = typ
 
-    def check_expr_visitor(expr: source.ExprT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]) -> None:
+    def check_expr_visitor(
+        expr: source.ExprT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
+    ) -> None:
         if isinstance(expr, source.ExprVar):
             add_or_ensure_same_typ(expr.name, expr.typ)
 
