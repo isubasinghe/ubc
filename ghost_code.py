@@ -13,27 +13,20 @@ insert_loop_invariant()
         insert NodeLoopInvariantAssumption
 """
 
-from dataclasses import dataclass
 import dataclasses
+from dataclasses import dataclass
 from enum import Enum, unique
-from typing import (
-    Callable,
-    Iterable,
-    Mapping,
-    NamedTuple,
-    Sequence,
-    Tuple,
-    Any,
-    Iterator,
-    Dict,
-)
+from typing import (Any, Callable, Dict, Iterable, Iterator, Mapping,
+                    NamedTuple, Sequence, Tuple)
+
 from typing_extensions import assert_never
+
 import abc_cfg
-from global_smt_variables import is_global_smt, PLATFORM_CONTEXT_BIT_SIZE
-import source
-import nip
 import ghost_data
+import nip
+import source
 import syntax
+from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE, is_global_smt
 
 
 @dataclass(frozen=True)

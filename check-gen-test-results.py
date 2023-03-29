@@ -1,5 +1,6 @@
-import sys
 import enum
+import sys
+
 from typing_extensions import assert_never
 
 

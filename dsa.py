@@ -1,13 +1,14 @@
 import dataclasses
-from typing import Generic, Mapping, NewType, Set, TypeAlias, TypeVar
-from typing_extensions import assert_never
-import abc_cfg
-import source
-import nip
-import ghost_code
-from utils import set_union
 from dataclasses import dataclass
+from typing import Generic, Mapping, NewType, Set, TypeAlias, TypeVar
 
+from typing_extensions import assert_never
+
+import abc_cfg
+import ghost_code
+import nip
+import source
+from utils import set_union
 
 IncarnationNum = NewType("IncarnationNum", int)
 IncarnationBase = IncarnationNum(1)

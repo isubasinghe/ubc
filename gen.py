@@ -1,6 +1,6 @@
+import math
 import sys
 from collections.abc import Sequence
-import math
 from typing import Iterable, NamedTuple
 
 EMIT_TESTS = len(sys.argv) >= 2 and sys.argv[1] == "--test"

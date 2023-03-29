@@ -2,25 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum, unique
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Iterator,
-    Literal,
-    Mapping,
-    NamedTuple,
-    NewType,
-    Sequence,
-    Set,
-    TypeAlias,
-    TypeVar,
-    Tuple,
-)
+from typing import (Any, Callable, Generic, Iterator, Literal, Mapping,
+                    NamedTuple, NewType, Sequence, Set, Tuple, TypeAlias,
+                    TypeVar)
+
 from typing_extensions import assert_never
-from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 
 import syntax
+from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 
 
 class ProgVarName(str):

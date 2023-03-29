@@ -1,10 +1,12 @@
 from typing import Collection, Sequence, Set
+
 from typing_extensions import assert_never
+
 import abc_cfg
-import source
-import nip
-import ghost_code
 import dsa
+import ghost_code
+import nip
+import source
 
 
 def compute_all_path(cfg: abc_cfg.CFG) -> Sequence[Sequence[source.NodeName]]:

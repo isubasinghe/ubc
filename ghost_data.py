@@ -2,6 +2,7 @@ from functools import reduce
 from math import prod
 from sys import platform
 from typing import Callable
+
 import source
 from global_smt_variables import PLATFORM_CONTEXT_BIT_SIZE
 
