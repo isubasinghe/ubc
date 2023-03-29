@@ -398,14 +398,18 @@ def recv_postcondition(rv: source.ExprT[source.HumanVarName], arg_lc: source.Exp
                        rv_when_ppcall, rv_when_unknown)
     lc_prime = NextRecv_case(oracle, lc_when_notification,
                              lc_when_ppcall, lc_when_unknown)
-    
-    mem = source.ExprVar(source.type_mem, source.HumanVarName(source.HumanVarNameSubject('Mem'), path=(),use_guard=False))
-    gbadge = source.ExprFunction(source.type_word61, source.FunctionName('badge'), [])
-    mem_condition = source.ExprFunction(source.type_word64, source.FunctionName("mem-acc"), [mem, gbadge])
+
+    mem = source.ExprVar(source.type_mem, source.HumanVarName(
+        source.HumanVarNameSubject('Mem'), path=(), use_guard=False))
+    gbadge = source.ExprFunction(
+        source.type_word61, source.FunctionName('badge'), [])
+    mem_condition = source.ExprFunction(
+        source.type_word64, source.FunctionName("mem-acc"), [mem, gbadge])
 
     recv_oracle_kernel = source.ExprFunction(
         Prod_MsgInfo_SeL4_Ntfn, source.FunctionName('recv_oracle_kernel'), [])
-    recv_badge = source.ExprFunction(SeL4_Ntfn, source.FunctionName('Prod_MsgInfo_SeL4_Ntfn.snd'), [recv_oracle_kernel])
+    recv_badge = source.ExprFunction(SeL4_Ntfn, source.FunctionName(
+        'Prod_MsgInfo_SeL4_Ntfn.snd'), [recv_oracle_kernel])
 
     return conjs(
         eq(
@@ -413,7 +417,7 @@ def recv_postcondition(rv: source.ExprT[source.HumanVarName], arg_lc: source.Exp
                 MsgInfo, C_msg_info_to_SMT_msg_info, [i64ret]),
             rv
         ),
-        eq(ret_value(lc), lc_prime), 
+        eq(ret_value(lc), lc_prime),
         eq(mem_condition, recv_badge)
     )
 
@@ -874,7 +878,6 @@ handle_loop_pre_unhandled_reply = source.ExprFunction(
 
 recv_oracle_kernel = source.ExprFunction(
     Prod_MsgInfo_SeL4_Ntfn, source.FunctionName('recv_oracle_kernel'), [])
-
 
 
 def wf_handler_pre_unhandled_reply_with_set_ghost() -> source.ExprT[source.ProgVarName]:
