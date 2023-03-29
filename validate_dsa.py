@@ -1,4 +1,6 @@
-from typing import Collection, Sequence, Set
+from typing import Collection
+from typing import Sequence
+from typing import Set
 
 from typing_extensions import assert_never
 

@@ -1,13 +1,13 @@
 """ standalone file to visualize graph lang
 """
-
 import os
 import subprocess
 import sys
 import tempfile
 from collections.abc import Callable
 from io import IOBase
-from typing import Any, TypeVar
+from typing import Any
+from typing import TypeVar
 
 from typing_extensions import assert_never
 

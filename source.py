@@ -1,10 +1,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum, unique
-from typing import (Any, Callable, Generic, Iterator, Literal, Mapping,
-                    NamedTuple, NewType, Sequence, Set, Tuple, TypeAlias,
-                    TypeVar)
+from enum import Enum
+from enum import unique
+from typing import Any
+from typing import Callable
+from typing import Generic
+from typing import Iterator
+from typing import Literal
+from typing import Mapping
+from typing import NamedTuple
+from typing import NewType
+from typing import Sequence
+from typing import Set
+from typing import Tuple
+from typing import TypeAlias
+from typing import TypeVar
 
 from typing_extensions import assert_never
 

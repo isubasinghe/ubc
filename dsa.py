@@ -1,6 +1,11 @@
 import dataclasses
 from dataclasses import dataclass
-from typing import Generic, Mapping, NewType, Set, TypeAlias, TypeVar
+from typing import Generic
+from typing import Mapping
+from typing import NewType
+from typing import Set
+from typing import TypeAlias
+from typing import TypeVar
 
 from typing_extensions import assert_never
 
