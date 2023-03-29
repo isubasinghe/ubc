@@ -52,13 +52,13 @@ def node_ok_ap_var(n: source.NodeName) -> APVar:
 
 
 def convert_dsa_var_to_ap_var(
-    var: dsa.Incarnation[source.ProgVarName | nip.GuardVarName],
-) -> VarName:
+    var: dsa.Incarnation[source.ProgVarName | nip.GuardVarName], ) -> VarName:
     return VarName(f"{var.base}~{var.inc}")
 
 
 def convert_expr_var(
-    expr: source.ExprVarT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
+    expr: source.ExprVarT[dsa.Incarnation[source.ProgVarName
+                                          | nip.GuardVarName]],
 ) -> APVar:
     return source.ExprVar(expr.typ, name=convert_dsa_var_to_ap_var(expr.name))
 
@@ -69,7 +69,8 @@ def convert_expr_var(
 
 @overload
 def convert_expr_dsa_vars_to_ap(
-    expr: source.ExprVarT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
+    expr: source.ExprVarT[dsa.Incarnation[source.ProgVarName
+                                          | nip.GuardVarName]],
 ) -> source.ExprVarT[VarName]:
     ...
 
@@ -93,8 +94,8 @@ def convert_expr_dsa_vars_to_ap(
             expr.typ,
             source.Operator(expr.operator),
             operands=tuple(
-                convert_expr_dsa_vars_to_ap(operand) for operand in expr.operands
-            ),
+                convert_expr_dsa_vars_to_ap(operand)
+                for operand in expr.operands),
         )
     elif isinstance(expr, source.ExprType | source.ExprSymbol):
         return expr
@@ -120,8 +121,7 @@ def make_assume(
 
 # TODO: rename to base var to ap var
 def prog_var_to_ap_var(
-    v: source.ExprVarT[source.ProgVarName | nip.GuardVarName],
-) -> APVar:
+    v: source.ExprVarT[source.ProgVarName | nip.GuardVarName], ) -> APVar:
     return source.ExprVar(v.typ, VarName(v.name))
 
 
@@ -129,10 +129,12 @@ def get_loop_count_target_var(
     loop: source.Loop[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]],
 ) -> source.ExprVarT[dsa.Incarnation[source.ProgVarName]]:
     for target in loop.targets:
-        if target.name.base.startswith("loop#") and target.name.base.endswith("#count"):
+        if target.name.base.startswith("loop#") and target.name.base.endswith(
+                "#count"):
             assert isinstance(target.name.base, source.ProgVarName)
             # mypy isn't smart enough to not need this cast
-            return cast(source.ExprVarT[dsa.Incarnation[source.ProgVarName]], target)
+            return cast(source.ExprVarT[dsa.Incarnation[source.ProgVarName]],
+                        target)
     assert (
         False
     ), "loop doesn't have a loop a counter automatically inserted by the c parser"
@@ -173,13 +175,14 @@ def apply_incarnation_for_node(
     # of a, then it will hold for all concrete values during execution.
 
     if prog_var not in func.contexts[n]:
-        return source.ExprVar(
-            prog_var.typ, VarName(f"{prog_var.name}_arbitrary#node{n}")
-        )
-    return convert_expr_var(dsa.make_dsa_var(prog_var, func.contexts[n][prog_var]))
+        return source.ExprVar(prog_var.typ,
+                              VarName(f"{prog_var.name}_arbitrary#node{n}"))
+    return convert_expr_var(
+        dsa.make_dsa_var(prog_var, func.contexts[n][prog_var]))
 
 
-def make_assume_prove_script_for_node(func: dsa.Function, n: source.NodeName) -> Script:
+def make_assume_prove_script_for_node(func: dsa.Function,
+                                      n: source.NodeName) -> Script:
     node = func.nodes[n]
 
     script: list[Instruction] = []
@@ -192,17 +195,12 @@ def make_assume_prove_script_for_node(func: dsa.Function, n: source.NodeName) ->
         if (n, node.succ_then) not in func.cfg.back_edges:
             script.append(
                 InstructionProve(
-                    source.expr_implies(cond, node_ok_ap_var(node.succ_then))
-                )
-            )
+                    source.expr_implies(cond, node_ok_ap_var(node.succ_then))))
         if (n, node.succ_else) not in func.cfg.back_edges:
             script.append(
                 InstructionProve(
-                    source.expr_implies(
-                        source.expr_negate(cond), node_ok_ap_var(node.succ_else)
-                    )
-                )
-            )
+                    source.expr_implies(source.expr_negate(cond),
+                                        node_ok_ap_var(node.succ_else))))
 
     elif isinstance(node, source.NodeBasic):
         # BasicNode(upds, succ)
@@ -229,7 +227,8 @@ def make_assume_prove_script_for_node(func: dsa.Function, n: source.NodeName) ->
         if (n, node.succ) not in func.cfg.back_edges:
             script.append(InstructionProve(node_ok_ap_var(node.succ)))
     elif isinstance(node, source.NodeAssume):
-        script.append(InstructionAssume(convert_expr_dsa_vars_to_ap(node.expr)))
+        script.append(InstructionAssume(convert_expr_dsa_vars_to_ap(
+            node.expr)))
         # proves successors are correct, ignoring back edges
         if (n, node.succ) not in func.cfg.back_edges:
             script.append(InstructionProve(node_ok_ap_var(node.succ)))
@@ -244,9 +243,8 @@ def make_assume_prove_script_for_node(func: dsa.Function, n: source.NodeName) ->
                 is_equal_arbitrary = (
                     isinstance(conj, source.ExprOp)
                     and conj.operator == source.Operator.EQUALS
-                    and isinstance(conj.operands[1], source.ExprVar)
-                    and is_global_arbitrary(conj.operands[1].name.split("~")[0])
-                )
+                    and isinstance(conj.operands[1], source.ExprVar) and
+                    is_global_arbitrary(conj.operands[1].name.split("~")[0]))
                 if is_equal_arbitrary:
                     assumptions.append(conj)
                 else:
@@ -263,10 +261,12 @@ def make_assume_prove_script_for_node(func: dsa.Function, n: source.NodeName) ->
                 return reduce(source.expr_and, xs)  # type: ignore
 
             if assumptions != []:
-                asm: source.ExprT[VarName] = mk_conjs(assumptions)  # type: ignore
+                asm: source.ExprT[VarName] = mk_conjs(
+                    assumptions)  # type: ignore
                 script.append(InstructionAssume(asm))
             if proof_obligations != []:
-                obl: source.ExprT[VarName] = mk_conjs(proof_obligations)  # type: ignore
+                obl: source.ExprT[VarName] = mk_conjs(
+                    proof_obligations)  # type: ignore
                 script.append(InstructionProve(obl))
 
             if (n, node.succ) not in func.cfg.back_edges:
@@ -276,11 +276,8 @@ def make_assume_prove_script_for_node(func: dsa.Function, n: source.NodeName) ->
         cond = convert_expr_dsa_vars_to_ap(node.expr)
         script.append(
             InstructionProve(
-                source.expr_implies(
-                    source.expr_negate(cond), node_ok_ap_var(source.NodeNameErr)
-                )
-            )
-        )
+                source.expr_implies(source.expr_negate(cond),
+                                    node_ok_ap_var(source.NodeNameErr))))
         if (n, node.succ) not in func.cfg.back_edges:
             script.append(InstructionProve(node_ok_ap_var(node.succ)))
     else:
@@ -293,9 +290,8 @@ def condition_to_take_path(
     func: dsa.Function, path: source.Path
 ) -> source.ExprT[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]:
     assert False, "TODO: remove dead code"
-    cond: source.ExprT[
-        dsa.Incarnation[source.ProgVarName | nip.GuardVarName]
-    ] = source.expr_true
+    cond: source.ExprT[dsa.Incarnation[source.ProgVarName
+                                       | nip.GuardVarName]] = source.expr_true
     for i in range(len(path)):
         node = func.nodes[path[i]]
         if isinstance(node, source.NodeCond):
@@ -311,8 +307,7 @@ def condition_to_take_path(
             else:
                 assert False, "conditional node not jumping to following node"
         elif not isinstance(
-            node, source.NodeBasic | source.NodeEmpty | source.NodeCall
-        ):
+                node, source.NodeBasic | source.NodeEmpty | source.NodeCall):
             assert_never(node)
     return cond
 
@@ -326,11 +321,13 @@ def make_prog(func: dsa.Function) -> AssumeProveProg:
 
     nodes_script: dict[NodeOkName, Script] = {
         node_ok_name(source.NodeNameErr): [
-            InstructionProve(source.ExprOp(source.type_bool, source.Operator.FALSE, ()))
+            InstructionProve(
+                source.ExprOp(source.type_bool, source.Operator.FALSE, ()))
         ],
         # we don't have a post condition yet
         node_ok_name(source.NodeNameRet): [
-            InstructionProve(source.ExprOp(source.type_bool, source.Operator.TRUE, ()))
+            InstructionProve(
+                source.ExprOp(source.type_bool, source.Operator.TRUE, ()))
         ],
     }
 
@@ -339,15 +336,16 @@ def make_prog(func: dsa.Function) -> AssumeProveProg:
         if n in (source.NodeNameErr, source.NodeNameRet):
             continue
 
-        nodes_script[node_ok_name(n)] = make_assume_prove_script_for_node(func, n)
+        nodes_script[node_ok_name(n)] = make_assume_prove_script_for_node(
+            func, n)
 
     for script in nodes_script.values():
         assert all(ins.expr.typ == source.type_bool for ins in script)
 
     args = tuple(convert_expr_var(arg) for arg in func.signature.arguments)
-    return AssumeProveProg(
-        nodes_script=nodes_script, entry=node_ok_name(func.cfg.entry), arguments=args
-    )
+    return AssumeProveProg(nodes_script=nodes_script,
+                           entry=node_ok_name(func.cfg.entry),
+                           arguments=args)
 
 
 def pretty_instruction_ascii(ins: Instruction) -> str:
@@ -359,14 +357,8 @@ def pretty_instruction_ascii(ins: Instruction) -> str:
 
 
 def pretty_print_prog(prog: AssumeProveProg) -> None:
-    m = max(
-        *(
-            len(var.name)
-            for script in prog.nodes_script.values()
-            for ins in script
-            for var in source.all_vars_in_expr(ins.expr)
-        )
-    )
+    m = max(*(len(var.name) for script in prog.nodes_script.values()
+              for ins in script for var in source.all_vars_in_expr(ins.expr)))
     m = max(m, len("X_ok"))
     print("Entry node:", prog.entry)
     print(f'{"X_ok".ljust(m)}: {source.pretty_type_ascii(source.type_bool)}')
@@ -376,7 +368,9 @@ def pretty_print_prog(prog: AssumeProveProg) -> None:
         for ins in script:
             for var in source.all_vars_in_expr(ins.expr):
                 if var.name not in seen_vars:
-                    print(f"{var.name.ljust(m)}: {source.pretty_type_ascii(var.typ)}")
+                    print(
+                        f"{var.name.ljust(m)}: {source.pretty_type_ascii(var.typ)}"
+                    )
                     seen_vars.add(var.name)
 
     m = max(*(len(str(n)) for n in prog.nodes_script)) + 2
@@ -400,9 +394,8 @@ def apply_weakest_precondition(script: Script) -> source.ExprT[VarName]:
     # so, we use recursion + copy because the performance won't matter
     # but the correctness is much clearer that way
 
-    def wp_single(
-        ins: Instruction, post: source.ExprT[VarName]
-    ) -> source.ExprT[VarName]:
+    def wp_single(ins: Instruction,
+                  post: source.ExprT[VarName]) -> source.ExprT[VarName]:
         if isinstance(ins, InstructionProve):
             if post == source.expr_true:
                 return ins.expr
@@ -414,7 +407,8 @@ def apply_weakest_precondition(script: Script) -> source.ExprT[VarName]:
             return source.expr_implies(ins.expr, post)
         assert_never(ins)
 
-    def wp(script: Script, post: source.ExprT[VarName]) -> source.ExprT[VarName]:
+    def wp(script: Script,
+           post: source.ExprT[VarName]) -> source.ExprT[VarName]:
         if len(script) == 0:
             return post
 

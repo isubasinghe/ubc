@@ -17,7 +17,8 @@ class ExternType(NamedTuple):
     #     return math.ceil(math.log2(self.num_elements))
 
 
-def gen_set_type(ext_type: ExternType, over_arrays: bool = False) -> ExternType:
+def gen_set_type(ext_type: ExternType,
+                 over_arrays: bool = False) -> ExternType:
     set_type = ExternType(f"{ext_type.name}_set", 2**ext_type.bit_size)
     singleton = f"{ext_type.name}_set_singleton"
     empty = f"{ext_type.name}_set_empty"
@@ -32,13 +33,16 @@ def gen_set_type(ext_type: ExternType, over_arrays: bool = False) -> ExternType:
         raise NotImplementedError
 
     else:
-        print(f"(define-sort {set_type.name} () (_ BitVec {set_type.bit_size}))")
+        print(
+            f"(define-sort {set_type.name} () (_ BitVec {set_type.bit_size}))")
 
         # singleton containing the element 'A', with bitwise representation
         # corresponding to the natural number 'n', is straight zero, except for
         # the bit 2 ** n, which is set to 1.
 
-        print(f"(define-fun {empty} () {set_type.name} (_ bv0 {set_type.bit_size}))")
+        print(
+            f"(define-fun {empty} () {set_type.name} (_ bv0 {set_type.bit_size}))"
+        )
         print(
             f"(define-fun {singleton} ((x {ext_type.name})) {set_type.name} (bvshl (_ bv1 {set_type.bit_size}) ((_ zero_extend {set_type.bit_size - ext_type.bit_size}) x)))"
         )
@@ -119,7 +123,8 @@ def gen_set_type(ext_type: ExternType, over_arrays: bool = False) -> ExternType:
 
 
 def gen_prod_type(fst: ExternType, snd: ExternType) -> ExternType:
-    prod = ExternType(f"Prod_{fst.name}_{snd.name}", fst.bit_size + snd.bit_size)
+    prod = ExternType(f"Prod_{fst.name}_{snd.name}",
+                      fst.bit_size + snd.bit_size)
 
     # (define-sort MsgInfo () (_ BitVec 80))
     # (define-fun mi_label ((mi MsgInfo)) (_ BitVec 64) ((_ extract 79 16) mi))
@@ -135,8 +140,7 @@ def gen_prod_type(fst: ExternType, snd: ExternType) -> ExternType:
             (f"(fst {fst.name})", f"(snd {snd.name})"),
             prod.name,
             concat(("fst", "snd")),
-        )
-    )
+        ))
     print(
         f"(define-fun {prod.name}.fst ((p {prod.name})) {fst.name} ((_ extract {prod.bit_size - 1} {snd.bit_size}) p))"
     )
@@ -174,30 +178,25 @@ def gen_prod_type(fst: ExternType, snd: ExternType) -> ExternType:
     print(f"    (pop)")
     print(f"    (push)")
     print(f'        (echo "should be unsat")')
-    print(
-        f"        "
-        + assert_(
-            not_(
+    print(f"        " + assert_(
+        not_(
+            eq(
+                "true",
                 eq(
-                    "true",
-                    eq(
-                        call(
-                            prod.name + ".fst",
-                            (call(prod.name, ("arb.fst", "arb.snd")),),
-                        ),
-                        "arb.fst",
+                    call(
+                        prod.name + ".fst",
+                        (call(prod.name, ("arb.fst", "arb.snd")), ),
                     ),
-                    eq(
-                        call(
-                            prod.name + ".snd",
-                            (call(prod.name, ("arb.fst", "arb.snd")),),
-                        ),
-                        "arb.snd",
+                    "arb.fst",
+                ),
+                eq(
+                    call(
+                        prod.name + ".snd",
+                        (call(prod.name, ("arb.fst", "arb.snd")), ),
                     ),
-                )
-            )
-        )
-    )
+                    "arb.snd",
+                ),
+            ))))
     print(f"        (check-sat)")
     print(f"    (pop)")
     print(f"(pop)")
@@ -220,9 +219,8 @@ def extract(bv: str, high: int, low: int) -> str:
     return f"((_ extract {high} {low}) {bv})"
 
 
-def gen_composite_type(
-    name: str, constructor: str, fields: dict[str, ExternType]
-) -> ExternType:
+def gen_composite_type(name: str, constructor: str,
+                       fields: dict[str, ExternType]) -> ExternType:
     # older versions of python don't guarantee dict ordering
     ordering = tuple(fields.keys())
 
@@ -254,9 +252,8 @@ def gen_composite_type(
         )
 
         parts = []
-        if (
-            field != ordering[0]
-        ):  # top field doesn't need to extract the fields above it
+        if (field != ordering[0]
+            ):  # top field doesn't need to extract the fields above it
             parts.append(extract("c", comp.bit_size - 1, top + 1))
         parts.append("v")
         # bottom field doesn't need to extract the fields below it
@@ -297,7 +294,8 @@ def gen_composite_type(
     print("        (check-sat)")
     print("    (pop)")
     print("    (push)")
-    print("        " + assert_(not_(eq(f"c{len(ordering)}", call(constructor, args)))))
+    print("        " +
+          assert_(not_(eq(f"c{len(ordering)}", call(constructor, args)))))
     print('        (echo "should be unsat")')
     print("        (check-sat)")
     print("    (pop)")
@@ -312,7 +310,7 @@ def gen_maybe_type(a: ExternType) -> ExternType:
         "Maybe_" + a.name,
         {
             a.name + "_Nothing": (),
-            a.name + "_Just": (a,),
+            a.name + "_Just": (a, ),
         },
     )
 
@@ -369,8 +367,8 @@ def gen_nonrec_data_type(
 
     data = ExternType(
         data_type_name,
-        constructor_sort_bitsize
-        + max(*(sum(arg.bit_size for arg in args) for args in constructors.values())),
+        constructor_sort_bitsize + max(*(sum(arg.bit_size for arg in args)
+                                         for args in constructors.values())),
     )
 
     ordering = list(constructors.keys())
@@ -378,7 +376,9 @@ def gen_nonrec_data_type(
     print(define_sort(data_type_name, f"(_ BitVec {data.bit_size})"))
 
     constructor_sort_name = f"{data_type_name}<>"
-    print(define_sort(constructor_sort_name, f"(_ BitVec {constructor_sort_bitsize})"))
+    print(
+        define_sort(constructor_sort_name,
+                    f"(_ BitVec {constructor_sort_bitsize})"))
 
     constructor_names = tuple(f"<{cons}>" for cons in ordering)
     for i, constructor_name in enumerate(constructor_names):
@@ -389,8 +389,7 @@ def gen_nonrec_data_type(
                     (),
                     constructor_sort_name,
                     bv_value(value=i, size=constructor_sort_bitsize),
-                )
-            )
+                ))
         else:
             print(declare_fun(constructor_name, (), constructor_sort_name))
 
@@ -400,11 +399,11 @@ def gen_nonrec_data_type(
     print(
         define_fun(
             f"{data_type_name}.<>",
-            (f"(v {data_type_name})",),
+            (f"(v {data_type_name})", ),
             constructor_sort_name,
-            extract("v", data.bit_size - 1, data.bit_size - constructor_sort_bitsize),
-        )
-    )
+            extract("v", data.bit_size - 1,
+                    data.bit_size - constructor_sort_bitsize),
+        ))
 
     for i, constructor in enumerate(ordering):
         # for each constructor, we have a function like this
@@ -436,11 +435,10 @@ def gen_nonrec_data_type(
             print(
                 define_fun(
                     f"{constructor}.{j+1}",
-                    (f"(v {data_type_name})",),
+                    (f"(v {data_type_name})", ),
                     arg_type,
                     extract("v", hi, lo),
-                )
-            )
+                ))
 
             bits_left -= arg.bit_size
 
@@ -470,14 +468,11 @@ def gen_nonrec_data_type(
     print(f"(pop)")
     for constructor in ordering:
         print(f"(push) ; test constructor {constructor}")
-        print(
-            f"    "
-            + declare_fun(
-                "d",
-                (),
-                data.name,
-            )
-        )
+        print(f"    " + declare_fun(
+            "d",
+            (),
+            data.name,
+        ))
 
         args1: list[str] = []
         for i, arg1 in enumerate(constructors[constructor]):
@@ -489,10 +484,8 @@ def gen_nonrec_data_type(
             print(f'    (echo "should be sat")')
             print(f"    (check-sat)")
             print(f"    (push)")
-            print(
-                f"        "
-                + assert_(not_(eq(call(f"{constructor}.{i+1}", "d"), f"arg1_{i+1}")))
-            )
+            print(f"        " + assert_(
+                not_(eq(call(f"{constructor}.{i+1}", "d"), f"arg1_{i+1}"))))
             print(f'        (echo "should be unsat")')
             print(f"        (check-sat)")
             print(f"    (pop)")
@@ -500,10 +493,8 @@ def gen_nonrec_data_type(
         print(f'    (echo "should be sat")')
         print(f"    (check-sat)")
         print(f"    (push)")
-        print(
-            f"        "
-            + assert_(not_(eq(call(f"{data.name}.<>", "d"), f"<{constructor}>")))
-        )
+        print(f"        " + assert_(
+            not_(eq(call(f"{data.name}.<>", "d"), f"<{constructor}>"))))
         print(f'        (echo "should be unsat")')
         print(f"        (check-sat)")
         print(f"    (pop)")
@@ -520,10 +511,8 @@ def gen_nonrec_data_type(
                 args2.append(f"arg2_{i+1}")
                 print(f"        " + declare_fun(f"arg2_{i+1}", (), arg2.name))
 
-            print(
-                f"        "
-                + assert_(eq(call(constructor2, args2), call(constructor, args1)))
-            )
+            print(f"        " + assert_(
+                eq(call(constructor2, args2), call(constructor, args1))))
             print(f'        (echo "should be unsat")')
             print(f"        (check-sat)")
             print(f"    (pop)")
@@ -540,7 +529,6 @@ print()
 
 # Ch = ExternType(name='Ch', bit_size=6)
 
-
 # Test = gen_nonrec_data_type('Test', {
 #     'All': (PD, Ch, Word64, Word16),
 #     'Some': (Word64, Ch),
@@ -549,12 +537,12 @@ print()
 
 # exit(0)
 
-PD = gen_nonrec_data_type(
-    "PD", {f"PD{i:02}": () for i in range(62 + 1)}, assign_values_to_constructors=True
-)
-Ch = gen_nonrec_data_type(
-    "Ch", {f"Ch{i:02}": () for i in range(62 + 1)}, assign_values_to_constructors=True
-)
+PD = gen_nonrec_data_type("PD", {f"PD{i:02}": ()
+                                 for i in range(62 + 1)},
+                          assign_values_to_constructors=True)
+Ch = gen_nonrec_data_type("Ch", {f"Ch{i:02}": ()
+                                 for i in range(62 + 1)},
+                          assign_values_to_constructors=True)
 # Word64 = ExternType(name='Word64', bit_size=64)
 # Word16 = ExternType(name='Word16', bit_size=16)
 MsgInfo_Label = ExternType(name="MsgInfo_Label", bit_size=52)
@@ -571,9 +559,10 @@ Set_Ch = gen_set_type(Ch)
 #   } deriving (Eq, Show)
 #
 # This type is misleading!! See the spec
-MsgInfo = gen_composite_type(
-    "MsgInfo", "MI", {"label": MsgInfo_Label, "count": MsgInfo_Count}
-)
+MsgInfo = gen_composite_type("MsgInfo", "MI", {
+    "label": MsgInfo_Label,
+    "count": MsgInfo_Count
+})
 Prod_Ch_MsgInfo = gen_prod_type(Ch, MsgInfo)
 
 SeL4_Ntfn = ExternType(name="SeL4_Ntfn", bit_size=64)
@@ -588,7 +577,11 @@ KernelOracle = gen_maybe_type(Prod_MsgInfo_SeL4_Ntf)
 #   | NR_Unknown
 NextRecv = gen_nonrec_data_type(
     "NextRecv",
-    {"NR_Notification": (Set_Ch,), "NR_PPCall": (Prod_Ch_MsgInfo,), "NR_Unknown": ()},
+    {
+        "NR_Notification": (Set_Ch, ),
+        "NR_PPCall": (Prod_Ch_MsgInfo, ),
+        "NR_Unknown": ()
+    },
 )
 Maybe_MsgInfo = gen_maybe_type(MsgInfo)
 Maybe_Prod_Ch_MsgInfo = gen_maybe_type(Prod_Ch_MsgInfo)
@@ -619,21 +612,18 @@ pc = gen_composite_type(
 print(
     define_fun(
         "C_channel_to_SMT_channel",
-        ("(cc (_ BitVec 32))",),
+        ("(cc (_ BitVec 32))", ),
         Ch.name,
         extract("cc", Ch.bit_size - 1, 0),
-    )
-)
+    ))
 print(
-    define_fun(
-        "C_channel_valid", ("(cc (_ BitVec 32))",), "Bool", f"(bvule cc (_ bv62 32))"
-    )
-)
+    define_fun("C_channel_valid", ("(cc (_ BitVec 32))", ), "Bool",
+               f"(bvule cc (_ bv62 32))"))
 
 # the bit field is packed
 print(
-    define_fun("C_msg_info_to_SMT_msg_info", ("(mi (_ BitVec 64))",), "MsgInfo", f"mi")
-)
+    define_fun("C_msg_info_to_SMT_msg_info", ("(mi (_ BitVec 64))", ),
+               "MsgInfo", f"mi"))
 
 print("; to compare msg info, just use equality, all the bits are significant")
 print("; only compares the label field")

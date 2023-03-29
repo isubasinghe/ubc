@@ -63,7 +63,8 @@ pretty_opers = {
     "And": "and",
 }
 
-known_typ_change = set(["ROData", "MemAcc", "IfThenElse", "WordArrayUpdate", "MemDom"])
+known_typ_change = set(
+    ["ROData", "MemAcc", "IfThenElse", "WordArrayUpdate", "MemDom"])
 
 
 def pretty_expr(expr: syntax.Expr, print_type: bool = False) -> str:
@@ -102,7 +103,8 @@ def pretty_safe_expr(expr: source.ExprT[Any], print_type: bool = False) -> str:
         return pretty_name(expr.name)
     elif isinstance(expr, source.ExprNum):
         return str(expr.num)
-    elif isinstance(expr, source.ExprOp) and expr.operator.value in pretty_opers:
+    elif isinstance(expr,
+                    source.ExprOp) and expr.operator.value in pretty_opers:
         [x, y] = expr.operands
         return "({} {} {})".format(
             pretty_safe_expr(x, print_type),
@@ -114,7 +116,8 @@ def pretty_safe_expr(expr: source.ExprT[Any], print_type: bool = False) -> str:
             vals = [pretty_safe_expr(v) for v in expr.operands]
         else:
             vals = [
-                pretty_safe_expr(v, print_type=print_type and v.typ != expr.typ)
+                pretty_safe_expr(v,
+                                 print_type=print_type and v.typ != expr.typ)
                 for v in expr.operands
             ]
         return "{}({})".format(expr.operator.value, ", ".join(vals))
@@ -130,17 +133,18 @@ def pretty_updates(update: tuple[tuple[str, syntax.Type], syntax.Expr]) -> str:
 
 
 def pretty_safe_update(upd: source.Update[Any]) -> str:
-    return "{} := {}".format(pretty_name(upd.var.name), pretty_safe_expr(upd.expr))
+    return "{} := {}".format(pretty_name(upd.var.name),
+                             pretty_safe_expr(upd.expr))
 
 
 P = TypeVar("P")
 R = TypeVar("R")
 
-
 HIDE_ERROR_NODE = True
 
 
 def viz(t: Callable[[IOBase, P], R]) -> Callable[[P], R]:
+
     def func(arg: P) -> R:
         # don't use /tmp because stupid snap prevent firefox from opening
         # files in there. Whitelist security is good, but you gotta give an
@@ -164,9 +168,8 @@ ErrNodeName = "Err"
 
 @viz
 def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
-    puts: Callable[..., None] = lambda *args, **kwargs: print(
-        *args, file=file, **kwargs
-    )
+    puts: Callable[
+        ..., None] = lambda *args, **kwargs: print(*args, file=file, **kwargs)
 
     puts("digraph grph {")
     puts("  node[shape=box]")
@@ -192,14 +195,15 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
     weights: dict[source.NodeName, int] = {}
     for idx in fun.traverse_topologically(skip_err_and_ret=True):
         node = fun.nodes[idx]
-        weights[idx] = max((weights[p] for p in fun.acyclic_preds_of(idx)), default=1)
+        weights[idx] = max((weights[p] for p in fun.acyclic_preds_of(idx)),
+                           default=1)
         if isinstance(
-            node,
-            source.NodeBasic
-            | source.NodeCall
-            | source.NodeEmpty
-            | source.NodeAssume
-            | source.NodeAssert,
+                node,
+                source.NodeBasic
+                | source.NodeCall
+                | source.NodeEmpty
+                | source.NodeAssume
+                | source.NodeAssert,
         ):
             puts(
                 f"  {idx} -> {node.succ} {dom if (idx, node.succ) in fun.cfg.back_edges else non_dom}"
@@ -216,7 +220,8 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
             assert_never(node)
 
         if isinstance(node, source.NodeBasic):
-            content = "<BR/>".join(pretty_safe_update(upd) for upd in node.upds)
+            content = "<BR/>".join(
+                pretty_safe_update(upd) for upd in node.upds)
         elif isinstance(node, source.NodeCall):
             # TODO: node.rets[0] might be empty
             content = ""
@@ -225,8 +230,7 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
             content += "{}({})".format(
                 node.fname,
                 ", ".join(
-                    pretty_safe_expr(arg)
-                    for arg in node.args
+                    pretty_safe_expr(arg) for arg in node.args
                     # if arg.typ.kind != "Builtin" and arg.name != "GhostAssertions"
                 ),
             )
@@ -235,7 +239,8 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
                 operands = list(source.expr_split_conjuncts(node.expr))
                 content = "<b>assert</b>&nbsp;" + pretty_safe_expr(operands[0])
                 for operand in operands[1:]:
-                    content += "<BR/><b>and</b>&nbsp;" + pretty_safe_expr(operand)
+                    content += "<BR/><b>and</b>&nbsp;" + pretty_safe_expr(
+                        operand)
             else:
                 content = pretty_safe_expr(node.expr)
         elif isinstance(node, source.NodeEmpty):
@@ -249,7 +254,8 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
                 content += "<BR/><b>and</b>&nbsp;" + pretty_safe_expr(operand)
         elif isinstance(node, source.NodeAssert):
             if isinstance(node, ghost_code.NodePrecondObligationFnCall):
-                content = "<b>[hacked assert]</b>&nbsp;" + pretty_safe_expr(node.expr)
+                content = "<b>[hacked assert]</b>&nbsp;" + pretty_safe_expr(
+                    node.expr)
             else:
                 content = "<b>assert</b>&nbsp;" + pretty_safe_expr(node.expr)
         else:
@@ -268,13 +274,13 @@ def viz_function(file: IOBase, fun: source.GenericFunction[Any, Any]) -> None:
 
 @viz
 def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
-    puts: Callable[..., None] = lambda *args, **kwargs: print(
-        *args, file=file, **kwargs
-    )
+    puts: Callable[
+        ..., None] = lambda *args, **kwargs: print(*args, file=file, **kwargs)
 
     puts("digraph grph {")
     puts("  node[shape=box]")
-    puts(f"  FunctionDescription [label=<<u>{fun.name}</u>>] [shape=plaintext]")
+    puts(
+        f"  FunctionDescription [label=<<u>{fun.name}</u>>] [shape=plaintext]")
     puts()
     for idx, node in fun.nodes.items():
         if node.kind == "Basic" or node.kind == "Call":
@@ -285,9 +291,8 @@ def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
                 puts(f"  {idx} -> {node.right} [label=F]")
 
         if node.kind == "Basic":
-            content = (
-                "<BR/>".join(pretty_updates(u) for u in node.upds) or "<i>empty</i>"
-            )
+            content = ("<BR/>".join(pretty_updates(u) for u in node.upds)
+                       or "<i>empty</i>")
         elif node.kind == "Call":
             # weird: what is this ghost assertion?
             # TODO: node.rets[0] might be empty
@@ -298,8 +303,7 @@ def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
             content += "{}({})".format(
                 node.fname,
                 ", ".join(
-                    pretty_expr(arg)
-                    for arg in node.args
+                    pretty_expr(arg) for arg in node.args
                     # if arg.typ.kind != "Builtin" and arg.name != "GhostAssertions"
                 ),
             )
@@ -320,9 +324,8 @@ def viz_raw_function(file: IOBase, fun: syntax.Function) -> None:
 
 @viz
 def viz_successor_graph(file: IOBase, all_succs: dict[str, list[str]]) -> None:
-    puts: Callable[..., None] = lambda *args, **kwargs: print(
-        *args, file=file, **kwargs
-    )
+    puts: Callable[
+        ..., None] = lambda *args, **kwargs: print(*args, file=file, **kwargs)
     puts("digraph grph {")
     puts("  node[shape=box]")
     puts()
@@ -343,7 +346,8 @@ def make_and_open_image(filepath: str) -> None:
     assert p.stderr is not None
 
     if p.returncode != 0:
-        print(f"ERROR: generated invalid dot graph ({filepath=}):", file=sys.stderr)
+        print(f"ERROR: generated invalid dot graph ({filepath=}):",
+              file=sys.stderr)
         print()
         print(
             "   ",
@@ -368,12 +372,10 @@ def make_and_open_image(filepath: str) -> None:
 
 if __name__ == "__main__":
     syntax.set_arch()
-    if (
-        (len(sys.argv) != 3 and len(sys.argv) != 2)
-        or "-h" in sys.argv
-        or "--help" in sys.argv
-    ):
-        print("usage: python3 {} <graph_file>".format(__file__), file=sys.stderr)
+    if ((len(sys.argv) != 3 and len(sys.argv) != 2) or "-h" in sys.argv
+            or "--help" in sys.argv):
+        print("usage: python3 {} <graph_file>".format(__file__),
+              file=sys.stderr)
         print(
             "       python3 {} <graph_file> <function_name>".format(__file__),
             file=sys.stderr,
@@ -390,11 +392,13 @@ if __name__ == "__main__":
         assert False
 
     with open(file_name) as f:
-        structs, functions, const_globals = syntax.parse_and_install_all(f, None)
+        structs, functions, const_globals = syntax.parse_and_install_all(
+            f, None)
 
     if not function_name or function_name not in functions:
         if function_name:
-            print("unknown function {!r}".format(function_name), file=sys.stderr)
+            print("unknown function {!r}".format(function_name),
+                  file=sys.stderr)
         print("Functions defined in the file: ")
         print(" ", "\n  ".join(functions.keys()), file=sys.stderr)
         exit(2)
