@@ -224,7 +224,7 @@ int loop_with_inner_var___fail_because_missing_invariant()
 }
 
 int loop_with_inner_var_declared_outside___fail_because_missing_invariant()
-    // a == 2
+// a == 2
 {
     int s = 0;
     int a;
@@ -252,7 +252,7 @@ int loop_conditional___fails_because_incorrect(int n)
 {
     int a;
     for (int i = 0; i < n; i++)
-    // inv= i<=n
+        // inv= i<=n
     {
         if (0)
             a = 1;
@@ -264,7 +264,7 @@ int loop_conditional_extra__fails_because_incorrect()
 {
     int a;
     for (int i = 0; i < 10; i++)
-    // inv= 0<=i<=10
+        // inv= 0<=i<=10
     {
         if (i == 15)
         {
@@ -278,8 +278,8 @@ int loop_conditional_extra__fails_because_no_inv()
 {
     int a;
     for (int i = 0; i < 10; i++)
-    // inv= 0<=i<=10
-    //      i >= 6 ==> a_defined
+        // inv= 0<=i<=10
+        //      i >= 6 ==> a_defined
     {
         if (i == 5)
         {
@@ -305,10 +305,10 @@ int loop_conditional_extra2__fails_because_no_inv()
     int a;
     int b;
     for (int i = 0; i < 10; i++)
-    // inv= 0<=i<=10
-    //      3 <= i ==> (a_defined && a = 1)
-    //      6 <= i ==> b_defined
-    //      i_assigned
+        // inv= 0<=i<=10
+        //      3 <= i ==> (a_defined && a = 1)
+        //      6 <= i ==> b_defined
+        //      i_assigned
     {
         if (i == 2)
         {
@@ -341,9 +341,9 @@ int loop_conditional_extra2__fails_because_wrong_order()
     int a;
     int b;
     for (int i = 0; i < 10; i++)
-    // inv= 0<=i<=10
-    //      i >= 8 ==> a_defined
-    //      i >= 6 ==> b_defined
+        // inv= 0<=i<=10
+        //      i >= 8 ==> a_defined
+        //      i >= 6 ==> b_defined
     {
         if (i == 7)
         {
@@ -365,9 +365,9 @@ int loop_conditional_extra3__fails_because_no_inv()
     int b;
     int c;
     for (int i = 0; i < 10; i++)
-    // inv= 0<=i<=10
-    //      i >= 1 ==> a_defined
-    //      i >= 6 ==> b_defined
+        // inv= 0<=i<=10
+        //      i >= 1 ==> a_defined
+        //      i >= 6 ==> b_defined
     {
         if (i == 2)
         {
