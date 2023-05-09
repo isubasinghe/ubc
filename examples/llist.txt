@@ -1,0 +1,36 @@
+Struct tmp.node_C 16 8
+StructField item_C Word 32 0
+StructField next_C Word 64 8
+
+Function tmp.main 6 argc___int#v Word 32 argv___ptr_to_ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Num 0 Word 32
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var curr___ptr_to_struct_node_C#v Word 64 Num 8 Word 64 Var nxt___ptr_to_struct_node_C#v Word 64
+5 Cond 4 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var curr___ptr_to_struct_node_C#v Word 64
+10 Cond 6 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var curr___ptr_to_struct_node_C#v Word 64
+11 Basic 10 1 curr___ptr_to_struct_node_C#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var curr___ptr_to_struct_node_C#v Word 64 Num 8 Word 64
+12 Cond 11 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var curr___ptr_to_struct_node_C#v Word 64
+6 Basic 7 1 loop#6#count Word 64 Op Plus Word 64 2 Var loop#6#count Word 64 Num 1 Word 64
+7 Cond 8 Err Op True Bool 0
+8 Cond 12 5 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var curr___ptr_to_struct_node_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+9 Basic 7 1 loop#6#count Word 64 Num 0 Word 64
+13 Cond 9 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var curr___ptr_to_struct_node_C#v Word 64
+14 Basic 13 1 curr___ptr_to_struct_node_C#v Word 64 Var head___ptr_to_struct_node_C#v Word 64
+15 Basic 14 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var nxt___ptr_to_struct_node_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+16 Cond 15 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var nxt___ptr_to_struct_node_C#v Word 64
+17 Basic 16 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var nxt___ptr_to_struct_node_C#v Word 64 Num 23 Word 32
+18 Cond 17 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var nxt___ptr_to_struct_node_C#v Word 64
+19 Basic 18 1 nxt___ptr_to_struct_node_C#v Word 64 Var ret__ptr_to_void#v Word 64
+20 Basic 19 1 ret__ptr_to_void#v Word 64 Var rv#space#ret__ptr_to_void#v Word 64
+21 Call 20 tmp.malloc 5 Op WordCast Word 64 1 Num 16 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+22 Basic 21 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var head___ptr_to_struct_node_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+23 Cond 22 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var head___ptr_to_struct_node_C#v Word 64
+24 Basic 23 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var head___ptr_to_struct_node_C#v Word 64 Num 95 Word 32
+25 Cond 24 Err Op PAlignValid Bool 2 Type Struct tmp.node_C Var head___ptr_to_struct_node_C#v Word 64
+26 Basic 25 1 head___ptr_to_struct_node_C#v Word 64 Var ret__ptr_to_void#v Word 64
+27 Basic 26 1 ret__ptr_to_void#v Word 64 Var rv#space#ret__ptr_to_void#v Word 64
+28 Call 27 tmp.malloc 5 Op WordCast Word 64 1 Num 16 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 28
+
+Function tmp.malloc 5 sz___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64

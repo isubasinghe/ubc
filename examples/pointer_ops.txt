@@ -1,0 +1,145 @@
+Struct tmp.state_C 3072 1
+StructField mac_addrs_C Array Array Word 8 6 512 0
+
+Function tmp.sum 6 data___ptr_to_int#v Word 64 num___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Var tot___int#v Word 32
+8 Basic 4 1 i___int#v Word 32 Op Plus Word 32 2 Var i___int#v Word 32 Num 1 Word 32
+9 Cond 8 Err Op Equals Bool 2 Op SignedLessEquals Bool 2 Var i___int#v Word 32 Op Plus Word 32 2 Var i___int#v Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 1 Word 32
+10 Basic 9 1 tot___int#v Word 32 Op Plus Word 32 2 Var tot___int#v Word 32 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var data___ptr_to_int#v Word 64 Op Times Word 64 2 Op WordCastSigned Word 64 1 Var i___int#v Word 32 Num 4 Word 64
+11 Cond 10 Err Op And Bool 2 Op Equals Bool 2 Op SignedLessEquals Bool 2 Var tot___int#v Word 32 Op Plus Word 32 2 Var tot___int#v Word 32 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var data___ptr_to_int#v Word 64 Op Times Word 64 2 Op WordCastSigned Word 64 1 Var i___int#v Word 32 Num 4 Word 64 Op SignedLessEquals Bool 2 Num 0 Word 32 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var data___ptr_to_int#v Word 64 Op Times Word 64 2 Op WordCastSigned Word 64 1 Var i___int#v Word 32 Num 4 Word 64 Op PAlignValid Bool 2 Type Word 32 Op Plus Word 64 2 Var data___ptr_to_int#v Word 64 Op Times Word 64 2 Op WordCastSigned Word 64 1 Var i___int#v Word 32 Num 4 Word 64
+4 Basic 5 1 loop#4#count Word 64 Op Plus Word 64 2 Var loop#4#count Word 64 Num 1 Word 64
+5 Cond 6 Err Op True Bool 0
+6 Cond 11 3 Op SignedLess Bool 2 Var i___int#v Word 32 Var num___int#v Word 32
+7 Basic 5 1 loop#4#count Word 64 Num 0 Word 64
+12 Basic 7 1 i___int#v Word 32 Num 0 Word 32
+13 Basic 12 1 tot___int#v Word 32 Num 0 Word 32
+EntryPoint 13
+
+Function tmp.deref 5 ref___ptr_to_int#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Op MemAcc Word 32 2 Var Mem Mem Var ref___ptr_to_int#v Word 64
+4 Cond 3 Err Op PAlignValid Bool 2 Type Word 32 Var ref___ptr_to_int#v Word 64
+EntryPoint 4
+
+Function tmp.add_inf 5 counter___unsigned_longlong#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Num 0 Word 32
+8 Basic 4 1 counter___unsigned_longlong#v Word 64 Op Plus Word 64 2 Var counter___unsigned_longlong#v Word 64 Op WordCastSigned Word 64 1 Num 1 Word 32
+4 Basic 5 1 loop#4#count Word 64 Op Plus Word 64 2 Var loop#4#count Word 64 Num 1 Word 64
+5 Cond 6 Err Op True Bool 0
+6 Cond 8 3 Op Not Bool 1 Op Equals Bool 2 Num 1 Word 32 Num 0 Word 32
+7 Basic 5 1 loop#4#count Word 64 Num 0 Word 64
+EntryPoint 7
+
+Function tmp.call_fn 6 a___ptr_to_int#v Word 64 b___ptr_to_int#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__int#v Word 32 Var rv#space#ret__int#v Word 32
+5 Call 4 tmp.same_ptr 6 Var x___ptr_to_int#v Word 64 Var b___ptr_to_int#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Basic 5 1 x___ptr_to_int#v Word 64 Var ret__ptr_to_char#v Word 64
+7 Basic 6 1 ret__ptr_to_char#v Word 64 Var rv#space#ret__ptr_to_char#v Word 64
+8 Call 7 tmp.mmalloc 5 Num 8 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 8
+
+Function tmp.mmalloc 5 len___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+EntryPoint 3
+
+Function tmp.mmemcpy 7 dest___ptr_to_void#v Word 64 src___ptr_to_void#v Word 64 len___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+6 Basic 2 1 s___ptr_to_char#v Word 64 Op Plus Word 64 2 Var s___ptr_to_char#v Word 64 Num 1 Word 64
+7 Basic 6 1 d___ptr_to_char#v Word 64 Op Plus Word 64 2 Var d___ptr_to_char#v Word 64 Num 1 Word 64
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var d___ptr_to_char#v Word 64 Op MemAcc Word 8 2 Var Mem Mem Var s___ptr_to_char#v Word 64
+9 Cond 8 Err Op And Bool 2 Op PAlignValid Bool 2 Type Word 8 Var d___ptr_to_char#v Word 64 Op PAlignValid Bool 2 Type Word 8 Var s___ptr_to_char#v Word 64
+2 Basic 3 1 loop#2#count Word 64 Op Plus Word 64 2 Var loop#2#count Word 64 Num 1 Word 64
+3 Cond 4 Err Op True Bool 0
+4 Cond 9 1 Op SignedLessEquals Bool 2 Var len___int#v Word 32 Num 0 Word 32
+5 Basic 3 1 loop#2#count Word 64 Num 0 Word 64
+10 Basic 5 1 s___ptr_to_char#v Word 64 Var src___ptr_to_void#v Word 64
+11 Basic 10 1 d___ptr_to_char#v Word 64 Var dest___ptr_to_void#v Word 64
+EntryPoint 11
+
+Function tmp.mstrlen 5 str___ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Var len___int#v Word 32
+8 Cond 4 Err Op PAlignValid Bool 2 Type Word 8 Var str___ptr_to_char#v Word 64
+9 Basic 8 1 str___ptr_to_char#v Word 64 Op Plus Word 64 2 Var str___ptr_to_char#v Word 64 Num 1 Word 64
+4 Basic 5 1 loop#4#count Word 64 Op Plus Word 64 2 Var loop#4#count Word 64 Num 1 Word 64
+5 Cond 6 Err Op True Bool 0
+6 Cond 9 3 Op Not Bool 1 Op Equals Bool 2 Op WordCast Word 32 1 Op MemAcc Word 8 2 Var Mem Mem Var str___ptr_to_char#v Word 64 Num 0 Word 32
+7 Basic 5 1 loop#4#count Word 64 Num 0 Word 64
+10 Cond 7 Err Op PAlignValid Bool 2 Type Word 8 Var str___ptr_to_char#v Word 64
+11 Basic 10 1 len___int#v Word 32 Num 0 Word 32
+EntryPoint 11
+
+Function tmp.same_ptr 6 a___ptr_to_int#v Word 64 b___ptr_to_int#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Equals Bool 2 Var a___ptr_to_int#v Word 64 Var b___ptr_to_int#v Word 64 Num 1 Word 32 Num 0 Word 32
+EntryPoint 3
+
+Function tmp.get_macaddr 5 clientidx___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__ptr_to_unsigned_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__ptr_to_unsigned_char#v Word 64 Var retval___ptr_to_unsigned_char#v Word 64
+4 Basic 3 1 retval___ptr_to_unsigned_char#v Word 64 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Num 6 Word 64
+5 Cond 4 Err Op And Bool 2 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64
+EntryPoint 5
+
+Function tmp.set_macaddr 6 clientidx___unsigned#v Word 32 macaddr___ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Num 6 Word 64 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Op Times Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 5 Word 32 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 5 Word 64
+3 Cond 2 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 5 Word 32 Num 6 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 5 Word 32 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64 Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 5 Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Num 6 Word 64 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Op Times Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 4 Word 32 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 4 Word 64
+5 Cond 4 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 4 Word 32 Num 6 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 4 Word 32 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64 Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 4 Word 64
+6 Basic 5 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Num 6 Word 64 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Op Times Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 3 Word 32 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 3 Word 64
+7 Cond 6 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 3 Word 32 Num 6 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 3 Word 32 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64 Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 3 Word 64
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Num 6 Word 64 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Op Times Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 2 Word 32 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 2 Word 64
+9 Cond 8 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 2 Word 32 Num 6 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 2 Word 32 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64 Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 2 Word 64
+10 Basic 9 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Num 6 Word 64 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Op Times Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 1 Word 32 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 1 Word 64
+11 Cond 10 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 1 Word 32 Num 6 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 1 Word 32 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64 Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 1 Word 64
+12 Basic 11 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol state Word 64 Op Times Word 64 2 Num 6 Word 64 Op WordCast Word 64 1 Var clientidx___unsigned#v Word 32 Op Times Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 0 Word 32 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 0 Word 64
+13 Cond 12 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 6 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op Less Bool 2 Var clientidx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.state_C Symbol state Word 64 Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var macaddr___ptr_to_char#v Word 64 Num 0 Word 64
+EntryPoint 13
+
+Function tmp.read_uintptr 5 asd___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned_char#v Word 8 Op WordCast Word 8 1 Op MemAcc Word 8 2 Var Mem Mem Var buf___ptr_to_char#v Word 64
+4 Cond 3 Err Op PAlignValid Bool 2 Type Word 8 Var buf___ptr_to_char#v Word 64
+5 Basic 4 1 buf___ptr_to_char#v Word 64 Var asd___unsigned_long#v Word 64
+EntryPoint 5
+
+Function tmp.int_to_ptr_cast 5 addr___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Op MemAcc Word 32 2 Var Mem Mem Var addr_as_ptr___ptr_to_int#v Word 64
+4 Cond 3 Err Op PAlignValid Bool 2 Type Word 32 Var addr_as_ptr___ptr_to_int#v Word 64
+5 Basic 4 0
+EntryPoint 5
+
+Function tmp.fail_aliased_read 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var y___ptr_to_int#v Word 64 Op Times Word 64 2 Num 0 Word 64 Num 4 Word 64
+4 Cond 3 Err Op PAlignValid Bool 2 Type Word 32 Op Plus Word 64 2 Var y___ptr_to_int#v Word 64 Op Times Word 64 2 Num 0 Word 64 Num 4 Word 64
+5 Basic 4 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var x_ptr___ptr_to_int#v Word 64 Num 23 Word 32
+6 Cond 5 Err Op PAlignValid Bool 2 Type Word 32 Var x_ptr___ptr_to_int#v Word 64
+7 Basic 6 1 x_ptr___ptr_to_int#v Word 64 Op Plus Word 64 2 Var x___ptr_to_int#v Word 64 Op Times Word 64 2 Num 8 Word 64 Num 4 Word 64
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var y___ptr_to_int#v Word 64 Op Times Word 64 2 Num 0 Word 64 Num 4 Word 64 Num 42 Word 32
+9 Cond 8 Err Op PAlignValid Bool 2 Type Word 32 Op Plus Word 64 2 Var y___ptr_to_int#v Word 64 Op Times Word 64 2 Num 0 Word 64 Num 4 Word 64
+10 Basic 9 1 y___ptr_to_int#v Word 64 Var ret__ptr_to_char#v Word 64
+11 Basic 10 1 ret__ptr_to_char#v Word 64 Var rv#space#ret__ptr_to_char#v Word 64
+12 Call 11 tmp.mmalloc 5 Num 8 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+13 Basic 12 1 x___ptr_to_int#v Word 64 Var ret__ptr_to_char#v Word 64
+14 Basic 13 1 ret__ptr_to_char#v Word 64 Var rv#space#ret__ptr_to_char#v Word 64
+15 Call 14 tmp.mmalloc 5 Num 8 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 15

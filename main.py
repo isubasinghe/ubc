@@ -5,6 +5,7 @@ import sys
 import os
 from typing_extensions import assert_never
 from dot_graph import viz_function, viz_raw_function
+import error_reporting as er
 
 import syntax
 import source
@@ -191,6 +192,7 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
             exit(2)
         elif result is smt.VerificationResult.FAIL:
             print("verification failed (good luck figuring out why)", file=sys.stderr)
+            er.debug_func(dsa_func)
             exit(1)
         else:
             assert_never(result)

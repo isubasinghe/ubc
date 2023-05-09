@@ -373,6 +373,38 @@ class CheckSatResult(Enum):
     UNSAT = 'unsat'
     SAT = 'sat'
 
+class SolverType(Enum):
+    Z3 = 'z3'
+    CVC5 = 'cvc5'
+
+
+def get_subprocess(solver_type: SolverType, filepath: str) -> Sequence[str]:
+    if SolverType.Z3 is solver_type:
+        return ["z3", "-file:"+filepath]
+    elif SolverType.CVC5 is solver_type:
+        return ["cvc5", "--incremental", filepath]
+    else:
+        assert_never(solver_type)
+
+def send_smtlib(smtlib: SMTLIB, solver_type: SolverType) -> Iterator[CheckSatResult]:
+    """Send command to any smt solver and returns a boolean per (check-sat)
+    """
+
+    with open_temp_file(suffix='.smt2') as (f, fullpath):
+        f.write(smtlib)
+        f.close()
+        p = subprocess.Popen(get_subprocess(solver_type, fullpath), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        p.wait()
+    assert p.stderr is not None 
+    assert p.stdout is not None
+    if p.returncode != 0:
+        print("stderr:")
+        print(textwrap.indent(p.stdout.read().decode('utf-8'), '   '))
+        return 
+
+    lines = p.stdout.read().splitlines()    
+    for ln in lines:
+        yield CheckSatResult(ln.decode('utf-8'))
 
 def send_smtlib_to_z3(smtlib: SMTLIB) -> Iterator[CheckSatResult]:
     """ Send command to an smt solver and returns a boolean per (check-sat)

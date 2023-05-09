@@ -1,0 +1,93 @@
+Entry node: node_17_ok
+X_ok                      : Bool
+node_pre_condition_ok     : Bool
+node_upd_n17_ok           : Bool
+n___int#v#assigned~1      : Bool
+m___int#v#assigned~1      : Bool
+Mem#assigned~1            : Bool
+HTD#assigned~1            : Bool
+PMS#assigned~1            : Bool
+GhostAssertions#assigned~1: Bool
+ret__int#v#assigned~1     : Bool
+node_guard_n8_ok          : Bool
+node_8_ok                 : Bool
+node_Err_ok               : Bool
+node_guard_n7_ok          : Bool
+n___int#v~1               : BitVec32
+node_j1_ok                : Bool
+m___int#v#assigned~3      : Bool
+m___int#v~3               : BitVec32
+m___int#v~1               : BitVec32
+node_guard_n5_ok          : Bool
+node_7_ok                 : Bool
+node_guard_n6_ok          : Bool
+node_6_ok                 : Bool
+m___int#v~2               : BitVec32
+node_upd_n6_ok            : Bool
+m___int#v#assigned~2      : Bool
+node_j2_ok                : Bool
+node_5_ok                 : Bool
+node_guard_n4_ok          : Bool
+node_4_ok                 : Bool
+n___int#v~2               : BitVec32
+node_upd_n4_ok            : Bool
+n___int#v#assigned~2      : Bool
+node_3_ok                 : Bool
+ret__int#v~1              : BitVec32
+node_upd_n3_ok            : Bool
+ret__int#v#assigned~2     : Bool
+node_1_ok                 : Bool
+node_post_condition_ok    : Bool
+node_Ret_ok               : Bool
+node_Err_ok:            prove False()
+node_Ret_ok:            prove True()
+node_17_ok:             prove node_pre_condition_ok
+node_pre_condition_ok:  assume True()
+                        prove node_upd_n17_ok
+node_upd_n17_ok:        assume (n___int#v#assigned~1 = True())
+                        assume (m___int#v#assigned~1 = True())
+                        assume (Mem#assigned~1 = True())
+                        assume (HTD#assigned~1 = True())
+                        assume (PMS#assigned~1 = True())
+                        assume (GhostAssertions#assigned~1 = True())
+                        assume (ret__int#v#assigned~1 = False())
+                        prove node_guard_n8_ok
+node_guard_n8_ok:       prove (n___int#v#assigned~1 -> node_8_ok)
+                        prove (Not(n___int#v#assigned~1) -> node_Err_ok)
+node_8_ok:              prove (((n___int#v~1 & 1) = 0) -> node_guard_n7_ok)
+                        prove (Not(((n___int#v~1 & 1) = 0)) -> node_j1_ok)
+node_j1_ok:             assume (m___int#v#assigned~3 = m___int#v#assigned~1)
+                        assume (m___int#v~3 = m___int#v~1)
+                        prove node_guard_n5_ok
+node_guard_n7_ok:       prove (m___int#v#assigned~1 -> node_7_ok)
+                        prove (Not(m___int#v#assigned~1) -> node_Err_ok)
+node_7_ok:              prove (((m___int#v~1 <=s (m___int#v~1 + 1)) = (0 <=s 1)) -> node_guard_n6_ok)
+                        prove (Not(((m___int#v~1 <=s (m___int#v~1 + 1)) = (0 <=s 1))) -> node_Err_ok)
+node_guard_n6_ok:       prove (m___int#v#assigned~1 -> node_6_ok)
+                        prove (Not(m___int#v#assigned~1) -> node_Err_ok)
+node_6_ok:              assume (m___int#v~2 = (m___int#v~1 + 1))
+                        prove node_upd_n6_ok
+node_upd_n6_ok:         assume (m___int#v#assigned~2 = m___int#v#assigned~1)
+                        prove node_j2_ok
+node_j2_ok:             assume (m___int#v#assigned~3 = m___int#v#assigned~2)
+                        assume (m___int#v~3 = m___int#v~2)
+                        prove node_guard_n5_ok
+node_guard_n5_ok:       prove (n___int#v#assigned~1 -> node_5_ok)
+                        prove (Not(n___int#v#assigned~1) -> node_Err_ok)
+node_5_ok:              prove (((n___int#v~1 <=s (n___int#v~1 + 1)) = (0 <=s 1)) -> node_guard_n4_ok)
+                        prove (Not(((n___int#v~1 <=s (n___int#v~1 + 1)) = (0 <=s 1))) -> node_Err_ok)
+node_guard_n4_ok:       prove (n___int#v#assigned~1 -> node_4_ok)
+                        prove (Not(n___int#v#assigned~1) -> node_Err_ok)
+node_4_ok:              assume (n___int#v~2 = (n___int#v~1 + 1))
+                        prove node_upd_n4_ok
+node_upd_n4_ok:         assume (n___int#v#assigned~2 = n___int#v#assigned~1)
+                        prove node_3_ok
+node_3_ok:              assume (ret__int#v~1 = 0)
+                        prove node_upd_n3_ok
+node_upd_n3_ok:         assume (ret__int#v#assigned~2 = True())
+                        prove node_1_ok
+node_2_ok:              prove (False() -> node_1_ok)
+                        prove (True() -> node_Err_ok)
+node_1_ok:              prove node_post_condition_ok
+node_post_condition_ok: prove (True() -> node_Ret_ok)
+                        prove (False() -> node_Err_ok)

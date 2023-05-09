@@ -7,6 +7,7 @@ import nip
 import ghost_code
 from utils import set_union
 from dataclasses import dataclass
+import provenance
 
 
 IncarnationNum = NewType('IncarnationNum', int)
@@ -42,6 +43,7 @@ class GenericFunction(ghost_code.GenericFunction[source.VarNameKind, source.VarN
 Function = GenericFunction[Incarnation[source.ProgVarName |
                                        nip.GuardVarName], source.ProgVarName | nip.GuardVarName]
 
+Node = source.Node[Incarnation[source.ProgVarName | nip.GuardVarName]]
 
 @dataclass(frozen=True)
 class NodeJoiner(source.NodeBasic[Incarnation[source.ProgVarName | nip.GuardVarName]]):
@@ -200,7 +202,7 @@ def apply_insertions(s: DSABuilder) -> None:
                 assert_never(pred)
 
             assert len(updates) > 0, f"{node_insertions=}"
-            join_node = NodeJoiner(tuple(updates), node_name)
+            join_node = NodeJoiner(provenance.ProvenanceDSAJoiner(), tuple(updates), node_name)
             s.dsa_nodes[join_node_name] = join_node
             assert join_node_name not in s.incarnations
 
