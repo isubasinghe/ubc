@@ -178,7 +178,7 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
             else:
                 print(smtlib)
 
-        sats = tuple(smt.send_smtlib_to_z3(smtlib))
+        sats = tuple(smt.send_smtlib(smtlib, smt.SolverType.CVC5))
         if CmdlineOption.SHOW_SATS in options:
             print(sats)
 
@@ -192,7 +192,7 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
             exit(2)
         elif result is smt.VerificationResult.FAIL:
             print("verification failed (good luck figuring out why)", file=sys.stderr)
-            er.debug_func(dsa_func)
+            er.debug_func_smt(dsa_func)
             exit(1)
         else:
             assert_never(result)

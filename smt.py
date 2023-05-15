@@ -1,7 +1,8 @@
 from __future__ import annotations
 from enum import Enum
 import subprocess
-from typing import Any, Iterator, Literal, Mapping, Sequence, TypeAlias
+from types import NoneType
+from typing import Any, Iterator, Literal, Mapping, Optional, Sequence, TypeAlias
 from typing_extensions import NamedTuple, NewType, assert_never
 
 import textwrap
@@ -313,7 +314,7 @@ def emit_prelude() -> Sequence[Cmd]:
     return prelude
 
 
-def make_smtlib(p: assume_prove.AssumeProveProg) -> SMTLIB:
+def make_smtlib(p: assume_prove.AssumeProveProg, assert_node: Optional[assume_prove.NodeOkName] = None) -> SMTLIB:
     emited_identifiers: set[Identifier] = set()
     emited_variables: set[assume_prove.VarName] = set()
 
@@ -354,8 +355,14 @@ def make_smtlib(p: assume_prove.AssumeProveProg) -> SMTLIB:
         cmds.append(cmd_assert_eq(node_ok_name, expr))
 
     cmds.append(CmdCheckSat())
-    cmds.append(CmdAssert(source.expr_negate(
-        source.ExprVar(source.type_bool, p.entry))))
+    if assert_node != None:
+        # sanity check if this assert_node actually exists
+        assert assert_node in p.nodes_script
+        cmds.append(CmdAssert(source.expr_negate(
+            source.ExprVar(source.type_bool, assert_node))))
+    else:
+        cmds.append(CmdAssert(source.expr_negate(
+            source.ExprVar(source.type_bool, p.entry))))
 
     cmds.append(CmdCheckSat())
 
@@ -379,9 +386,9 @@ class SolverType(Enum):
 
 
 def get_subprocess(solver_type: SolverType, filepath: str) -> Sequence[str]:
-    if SolverType.Z3 is solver_type:
+    if SolverType.Z3 == solver_type:
         return ["z3", "-file:"+filepath]
-    elif SolverType.CVC5 is solver_type:
+    elif SolverType.CVC5 == solver_type:
         return ["cvc5", "--incremental", filepath]
     else:
         assert_never(solver_type)
@@ -405,41 +412,6 @@ def send_smtlib(smtlib: SMTLIB, solver_type: SolverType) -> Iterator[CheckSatRes
     lines = p.stdout.read().splitlines()    
     for ln in lines:
         yield CheckSatResult(ln.decode('utf-8'))
-
-def send_smtlib_to_z3(smtlib: SMTLIB) -> Iterator[CheckSatResult]:
-    """ Send command to an smt solver and returns a boolean per (check-sat)
-    """
-
-    # print("sending SMTLIB:")
-    # for i, line in enumerate(emit_cmd(cmd) for cmd in cmds):
-    #     print(f'{str(i+1).rjust(int(math.log10(len(cmds)) + 1))} | {line}')
-
-    # p = subprocess.Popen(["z3", "-version"])
-    # err = p.wait()
-    # if err:
-    #     raise ValueError("z3 not found")
-
-    with open_temp_file(suffix='.smt2') as (f, fullpath):
-        f.write(smtlib)
-        f.close()
-
-        p = subprocess.Popen(["z3", "-file:" + fullpath],
-                             stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        p.wait()
-
-    assert p.stderr is not None
-    assert p.stdout is not None
-
-    if p.returncode != 0:
-        print("stderr:")
-        print(textwrap.indent(p.stdout.read().decode('utf-8'), '   '))
-        print("Return code:", p.returncode)
-        return
-
-    lines = p.stdout.read().splitlines()
-    for ln in lines:
-        yield CheckSatResult(ln.decode('utf-8'))
-
 
 class VerificationResult(Enum):
     OK = 'ok'
