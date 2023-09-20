@@ -1,0 +1,495 @@
+Struct tmp.seL4_IPCBuffer__C 1024 8
+StructField tag_C Struct tmp.seL4_MessageInfo_C 0
+StructField msg_C Array Word 64 120 8
+StructField userData_C Word 64 968
+StructField caps_or_badges_C Array Word 64 3 976
+StructField receiveCNode_C Word 64 1000
+StructField receiveIndex_C Word 64 1008
+StructField receiveDepth_C Word 64 1016
+Struct tmp.seL4_MessageInfo_C 8 8
+StructField words_C Array Word 64 1 0
+Struct tmp.seL4_CapRights_C 8 8
+StructField words_C Array Word 64 1 0
+
+Function tmp.init 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+
+Function tmp.main 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Call 1 tmp.handler_loop 4 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+3 Basic 2 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Symbol signal Word 64 Op WordCastSigned Word 64 1 Num 5 Word 32
+4 Cond 3 Err Op PGlobalValid Bool 3 Var HTD HTD Type Word 64 Symbol signal Word 64
+5 Call 4 tmp.seL4_SetMR 6 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Basic 5 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Symbol signal_msg Word 64 Num 0 Word 64 Num 0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+7 Cond 6 Err Op PGlobalValid Bool 3 Var HTD HTD Type Struct tmp.seL4_MessageInfo_C Symbol signal_msg Word 64
+8 Call 7 tmp.seL4_MessageInfo_new 8 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 1 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+9 Basic 8 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Symbol have_signal Word 64 Op WordCastSigned Word 8 1 Num 1 Word 32
+10 Cond 9 Err Op PGlobalValid Bool 3 Var HTD HTD Type Word 8 Symbol have_signal Word 64
+11 Cond 10 2 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 8 Num 0 Word 8
+12 Call 11 tmp.init 4 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+13 Call 12 tmp.run_init_funcs 4 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 13
+
+Function tmp.notified 5 ch___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+
+Function tmp.protected 6 ch___unsigned#v Word 32 msginfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+5 Call 4 tmp.seL4_MessageInfo_new 8 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 5
+
+Function tmp.seL4_Call 6 dest___unsigned_long#v Word 64 msgInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var info___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Call 3 tmp.seL4_SetMR 6 Num 3 Word 32 Var msg3___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+5 Call 4 tmp.seL4_SetMR 6 Num 2 Word 32 Var msg2___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Call 5 tmp.seL4_SetMR 6 Num 1 Word 32 Var msg1___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+7 Call 6 tmp.seL4_SetMR 6 Num 0 Word 32 Var msg0___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+8 Basic 7 1 msg3___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+9 Call 8 tmp.seL4_GetMR 5 Num 3 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+10 Basic 9 1 msg2___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+11 Call 10 tmp.seL4_GetMR 5 Num 2 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+12 Basic 11 1 msg1___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+13 Call 12 tmp.seL4_GetMR 5 Num 1 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+14 Basic 13 1 msg0___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+15 Call 14 tmp.seL4_GetMR 5 Num 0 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 15
+
+Function tmp.seL4_Recv 7 src___unsigned_long#v Word 64 sender___ptr_to_unsigned_long#v Word 64 reply___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var info___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var sender___ptr_to_unsigned_long#v Word 64 Var badge___unsigned_long#v Word 64
+5 Cond 4 Err Op PAlignValid Bool 2 Type Word 64 Var sender___ptr_to_unsigned_long#v Word 64
+6 Cond 5 3 Op Not Bool 1 Op Equals Bool 2 Var sender___ptr_to_unsigned_long#v Word 64 Num 0 Word 64
+7 Call 6 tmp.seL4_SetMR 6 Num 3 Word 32 Var msg3___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+8 Call 7 tmp.seL4_SetMR 6 Num 2 Word 32 Var msg2___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+9 Call 8 tmp.seL4_SetMR 6 Num 1 Word 32 Var msg1___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+10 Call 9 tmp.seL4_SetMR 6 Num 0 Word 32 Var msg0___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 10
+
+Function tmp.seL4_GetMR 5 i___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned_long#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Num 8 Word 64 Op Times Word 64 2 Num 8 Word 64 Op WordCast Word 64 1 Var i___int#v Word 32
+4 Cond 3 Err Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Var i___int#v Word 32 Num 120 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Var i___int#v Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_IPCBuffer__C Var ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64
+5 Basic 4 1 ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Var rv#space#ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64
+6 Call 5 tmp.seL4_GetIPCBuffer 4 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 6
+
+Function tmp.seL4_SetMR 6 i___int#v Word 32 mr___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Num 8 Word 64 Op Times Word 64 2 Num 8 Word 64 Op WordCast Word 64 1 Var i___int#v Word 32 Var mr___unsigned_long#v Word 64
+3 Cond 2 Err Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Var i___int#v Word 32 Num 120 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Var i___int#v Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_IPCBuffer__C Var ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64
+4 Basic 3 1 ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Var rv#space#ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64
+5 Call 4 tmp.seL4_GetIPCBuffer 4 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 5
+
+Function tmp.seL4_NBRecv 7 src___unsigned_long#v Word 64 sender___ptr_to_unsigned_long#v Word 64 reply___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var info___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var sender___ptr_to_unsigned_long#v Word 64 Var badge___unsigned_long#v Word 64
+5 Cond 4 Err Op PAlignValid Bool 2 Type Word 64 Var sender___ptr_to_unsigned_long#v Word 64
+6 Cond 5 3 Op Not Bool 1 Op Equals Bool 2 Var sender___ptr_to_unsigned_long#v Word 64 Num 0 Word 64
+7 Call 6 tmp.seL4_SetMR 6 Num 3 Word 32 Var msg3___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+8 Call 7 tmp.seL4_SetMR 6 Num 2 Word 32 Var msg2___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+9 Call 8 tmp.seL4_SetMR 6 Num 1 Word 32 Var msg1___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+10 Call 9 tmp.seL4_SetMR 6 Num 0 Word 32 Var msg0___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 10
+
+Function tmp.seL4_Signal 5 ch___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var x___ptr_to_char#v Word 64 Op WordCastSigned Word 8 1 Num 97 Word 32
+3 Cond 2 Err Op PAlignValid Bool 2 Type Word 8 Var x___ptr_to_char#v Word 64
+4 Basic 3 1 x___ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+EntryPoint 4
+
+Function tmp.handler_loop 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+6 Basic 2 1 reply_tag___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+7 Call 6 tmp.protected 6 Op WordCast Word 32 1 Op BWAnd Word 64 2 Var badge___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 63 Word 32 Var tag___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+8 Basic 7 1 have_reply___char#v Word 8 Op WordCastSigned Word 8 1 Num 1 Word 32
+13 Basic 9 1 idx___unsigned#v Word 32 Op Plus Word 32 2 Var idx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 1 Word 32
+14 Basic 13 1 badge___unsigned_long#v Word 64 Op ShiftRight Word 64 2 Var badge___unsigned_long#v Word 64 Op WordCast Word 64 1 Num 1 Word 32
+15 Cond 14 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLess Bool 2 Num 1 Word 32 Num 64 Word 32
+16 Call 15 tmp.notified 5 Var idx___unsigned#v Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+17 Cond 16 15 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Var badge___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 1 Word 32 Num 0 Word 64
+9 Basic 10 1 loop#9#count Word 64 Op Plus Word 64 2 Var loop#9#count Word 64 Num 1 Word 64
+10 Cond 11 Err Op True Bool 0
+11 Cond 17 2 Op Not Bool 1 Op Equals Bool 2 Var badge___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+12 Basic 10 1 loop#9#count Word 64 Num 0 Word 64
+18 Basic 12 1 idx___unsigned#v Word 32 Op Plus Word 32 2 Var idx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 1 Word 32
+19 Basic 18 1 badge___unsigned_long#v Word 64 Op ShiftRight Word 64 2 Var badge___unsigned_long#v Word 64 Op WordCast Word 64 1 Num 1 Word 32
+20 Cond 19 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLess Bool 2 Num 1 Word 32 Num 64 Word 32
+21 Call 20 tmp.notified 5 Var idx___unsigned#v Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+22 Cond 21 20 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Var badge___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 1 Word 32 Num 0 Word 64
+23 Basic 22 1 have_reply___char#v Word 8 Op WordCastSigned Word 8 1 Num 0 Word 32
+24 Basic 23 1 idx___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 0 Word 32
+25 Cond 8 24 Op Not Bool 1 Op Equals Bool 2 Var is_endpoint___unsigned_long#v Word 64 Num 0 Word 64
+26 Basic 25 1 is_endpoint___unsigned_long#v Word 64 Op ShiftRight Word 64 2 Var badge___unsigned_long#v Word 64 Op WordCast Word 64 1 Num 63 Word 32
+27 Cond 26 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+28 Basic 27 1 badge___unsigned_long#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol gbadge Word 64
+29 Cond 28 Err Op PAlignValid Bool 2 Type Word 64 Symbol gbadge Word 64
+30 Basic 29 1 tag___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+31 Call 30 tmp.seL4_ReplyRecv 8 Op WordCastSigned Word 64 1 Num 1 Word 32 Var reply_tag___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Symbol gbadge Word 64 Op WordCastSigned Word 64 1 Num 4 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+32 Cond 31 Err Op PAlignValid Bool 2 Type Word 64 Symbol gbadge Word 64
+33 Basic 27 1 badge___unsigned_long#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol gbadge Word 64
+34 Cond 33 Err Op PAlignValid Bool 2 Type Word 64 Symbol gbadge Word 64
+35 Basic 34 1 tag___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+36 Call 35 tmp.seL4_NBSendRecv 9 Op MemAcc Word 64 2 Var Mem Mem Symbol signal Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol signal_msg Word 64 Op Plus Word 64 2 Num 0 Word 64 Op Times Word 64 2 Num 8 Word 64 Num 0 Word 64 Op WordCastSigned Word 64 1 Num 1 Word 32 Symbol gbadge Word 64 Op WordCastSigned Word 64 1 Num 4 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+37 Cond 36 Err Op And Bool 2 Op PGlobalValid Bool 3 Var HTD HTD Type Word 64 Symbol signal Word 64 Op PGlobalValid Bool 3 Var HTD HTD Type Struct tmp.seL4_MessageInfo_C Symbol signal_msg Word 64
+38 Cond 37 Err Op PAlignValid Bool 2 Type Word 64 Symbol gbadge Word 64
+39 Basic 27 1 badge___unsigned_long#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol gbadge Word 64
+40 Cond 39 Err Op PAlignValid Bool 2 Type Word 64 Symbol gbadge Word 64
+41 Basic 40 1 tag___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+42 Call 41 tmp.seL4_Recv 7 Op WordCastSigned Word 64 1 Num 1 Word 32 Symbol gbadge Word 64 Op WordCastSigned Word 64 1 Num 4 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+43 Cond 42 Err Op PAlignValid Bool 2 Type Word 64 Symbol gbadge Word 64
+44 Cond 38 43 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 8 2 Var Mem Mem Symbol have_signal Word 64 Num 0 Word 8
+45 Cond 44 Err Op PGlobalValid Bool 3 Var HTD HTD Type Word 8 Symbol have_signal Word 64
+46 Cond 32 45 Op Not Bool 1 Op Equals Bool 2 Var have_reply___char#v Word 8 Num 0 Word 8
+2 Basic 3 1 loop#2#count Word 64 Op Plus Word 64 2 Var loop#2#count Word 64 Num 1 Word 64
+3 Cond 4 Err Op True Bool 0
+4 Cond 46 1 Op Not Bool 1 Op Equals Bool 2 Num 1 Word 32 Num 0 Word 32
+5 Basic 3 1 loop#2#count Word 64 Num 0 Word 64
+47 Basic 5 1 have_reply___char#v Word 8 Op WordCastSigned Word 8 1 Num 0 Word 32
+EntryPoint 47
+
+Function tmp.zassert_fail 8 str___ptr_to_char#v Word 64 file___ptr_to_char#v Word 64 line___int#v Word 32 function___ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+
+Function tmp.run_init_funcs 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+EntryPoint 1
+
+Function tmp.seL4_ReplyRecv 8 src___unsigned_long#v Word 64 msgInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 sender___ptr_to_unsigned_long#v Word 64 reply___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var info___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var sender___ptr_to_unsigned_long#v Word 64 Var badge___unsigned_long#v Word 64
+5 Cond 4 Err Op PAlignValid Bool 2 Type Word 64 Var sender___ptr_to_unsigned_long#v Word 64
+6 Cond 5 3 Op Not Bool 1 Op Equals Bool 2 Var sender___ptr_to_unsigned_long#v Word 64 Num 0 Word 64
+7 Call 6 tmp.seL4_SetMR 6 Num 3 Word 32 Var msg3___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+8 Call 7 tmp.seL4_SetMR 6 Num 2 Word 32 Var msg2___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+9 Call 8 tmp.seL4_SetMR 6 Num 1 Word 32 Var msg1___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+10 Call 9 tmp.seL4_SetMR 6 Num 0 Word 32 Var msg0___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+11 Basic 10 1 msg3___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+12 Call 11 tmp.seL4_GetMR 5 Num 3 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+13 Basic 12 1 msg2___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+14 Call 13 tmp.seL4_GetMR 5 Num 2 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+15 Basic 14 1 msg1___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+16 Call 15 tmp.seL4_GetMR 5 Num 1 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+17 Basic 16 1 msg0___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+18 Call 17 tmp.seL4_GetMR 5 Num 0 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 18
+
+Function tmp.microkit_mr_get 5 mr___unsigned_char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+5 Call 4 tmp.seL4_GetMR 5 Op WordCast Word 32 1 Var mr___unsigned_char#v Word 8 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 5
+
+Function tmp.microkit_mr_set 6 mr___unsigned_char#v Word 8 value___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Call 1 tmp.seL4_SetMR 6 Op WordCast Word 32 1 Var mr___unsigned_char#v Word 8 Var value___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 2
+
+Function tmp.microkit_notify 5 ch___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Call 1 tmp.seL4_Signal 5 Op WordCast Word 64 1 Op Plus Word 32 2 Op WordCastSigned Word 32 1 Num 10 Word 32 Var ch___unsigned#v Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 2
+
+Function tmp.microkit_ppcall 6 ch___unsigned#v Word 32 msginfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+5 Call 4 tmp.seL4_Call 6 Op WordCast Word 64 1 Op Plus Word 32 2 Op WordCastSigned Word 32 1 Num 74 Word 32 Var ch___unsigned#v Word 32 Var msginfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 5
+
+Function tmp.seL4_NBSendRecv 9 dest___unsigned_long#v Word 64 msgInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 src___unsigned_long#v Word 64 sender___ptr_to_unsigned_long#v Word 64 reply___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var info___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var sender___ptr_to_unsigned_long#v Word 64 Var badge___unsigned_long#v Word 64
+5 Cond 4 Err Op PAlignValid Bool 2 Type Word 64 Var sender___ptr_to_unsigned_long#v Word 64
+6 Cond 5 3 Op Not Bool 1 Op Equals Bool 2 Var sender___ptr_to_unsigned_long#v Word 64 Num 0 Word 64
+7 Call 6 tmp.seL4_SetMR 6 Num 3 Word 32 Var msg3___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+8 Call 7 tmp.seL4_SetMR 6 Num 2 Word 32 Var msg2___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+9 Call 8 tmp.seL4_SetMR 6 Num 1 Word 32 Var msg1___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+10 Call 9 tmp.seL4_SetMR 6 Num 0 Word 32 Var msg0___unsigned_long#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+11 Basic 10 1 msg3___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+12 Call 11 tmp.seL4_GetMR 5 Num 3 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+13 Basic 12 1 msg2___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+14 Call 13 tmp.seL4_GetMR 5 Num 2 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+15 Basic 14 1 msg1___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+16 Call 15 tmp.seL4_GetMR 5 Num 1 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+17 Basic 16 1 msg0___unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+18 Call 17 tmp.seL4_GetMR 5 Num 0 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 18
+
+Function tmp.microkit_irq_ack 5 ch___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Call 1 tmp.seL4_IRQHandler_Ack 5 Op WordCast Word 64 1 Op Plus Word 32 2 Op WordCastSigned Word 32 1 Num 138 Word 32 Var ch___unsigned#v Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 2
+
+Function tmp.microkit_dbg_putc 5 c___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+
+Function tmp.microkit_dbg_puts 5 s___ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+
+Function tmp.seL4_GetIPCBuffer 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol zsel4_ipc_buffer Word 64
+4 Cond 3 Err Op PGlobalValid Bool 3 Var HTD HTD Type Ptr Struct tmp.seL4_IPCBuffer__C Symbol zsel4_ipc_buffer Word 64
+EntryPoint 4
+
+Function tmp.seL4_SetIPCBuffer 5 ipc_buffer___ptr_to_struct_seL4_IPCBuffer__C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Symbol zsel4_ipc_buffer Word 64 Var ipc_buffer___ptr_to_struct_seL4_IPCBuffer__C#v Word 64
+3 Cond 2 Err Op PGlobalValid Bool 3 Var HTD HTD Type Ptr Struct tmp.seL4_IPCBuffer__C Symbol zsel4_ipc_buffer Word 64
+EntryPoint 3
+
+Function tmp.seL4_IRQHandler_Ack 5 StrictC'_service___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var x___ptr_to_char#v Word 64 Op WordCastSigned Word 8 1 Num 97 Word 32
+3 Cond 2 Err Op PAlignValid Bool 2 Type Word 8 Var x___ptr_to_char#v Word 64
+4 Basic 3 1 x___ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+EntryPoint 4
+
+Function tmp.microkit_msginfo_new 6 label___unsigned_long#v Word 64 count___unsigned_short#v Word 16 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+5 Call 4 tmp.seL4_MessageInfo_new 8 Var label___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Var count___unsigned_short#v Word 16 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 5
+
+Function tmp.seL4_MessageInfo_new 8 label___unsigned_long#v Word 64 capsUnwrapped___unsigned_long#v Word 64 extraCaps___unsigned_long#v Word 64 length___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Basic 3 1 seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Op WordCast Word 64 1 Op BWOr Word 64 2 Op BWOr Word 64 2 Op BWOr Word 64 2 Op BWOr Word 64 2 Op WordCastSigned Word 64 1 Num 0 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Num 4503599627370495 Word 64 Op WordCast Word 64 1 Num 12 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Num 7 Word 64 Op WordCast Word 64 1 Num 9 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Num 3 Word 64 Op WordCast Word 64 1 Num 7 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Num 127 Word 64 Op WordCast Word 64 1 Num 0 Word 32
+5 Cond 4 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 64 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 7 Word 32 Op SignedLess Bool 2 Num 7 Word 32 Num 64 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 9 Word 32 Op SignedLess Bool 2 Num 9 Word 32 Num 64 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32
+10 Cond 6 6 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 127 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+11 Basic 10 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+12 Cond 11 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+13 Cond 12 10 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+14 Basic 13 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+6 Basic 7 1 loop#6#count Word 64 Op Plus Word 64 2 Var loop#6#count Word 64 Num 1 Word 64
+7 Cond 8 Err Op True Bool 0
+8 Cond 14 5 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+9 Basic 7 1 loop#6#count Word 64 Num 0 Word 64
+15 Cond 9 9 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 127 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+16 Basic 15 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+17 Cond 16 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+18 Cond 17 15 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+19 Basic 18 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+24 Cond 20 20 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 3 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+25 Basic 24 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+26 Cond 25 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+27 Cond 26 24 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+28 Basic 27 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+20 Basic 21 1 loop#20#count Word 64 Op Plus Word 64 2 Var loop#20#count Word 64 Num 1 Word 64
+21 Cond 22 Err Op True Bool 0
+22 Cond 28 19 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+23 Basic 21 1 loop#20#count Word 64 Num 0 Word 64
+29 Cond 23 23 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 3 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+30 Basic 29 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+31 Cond 30 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+32 Cond 31 29 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+33 Basic 32 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+38 Cond 34 34 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 7 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+39 Basic 38 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+40 Cond 39 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+41 Cond 40 38 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+42 Basic 41 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+34 Basic 35 1 loop#34#count Word 64 Op Plus Word 64 2 Var loop#34#count Word 64 Num 1 Word 64
+35 Cond 36 Err Op True Bool 0
+36 Cond 42 33 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+37 Basic 35 1 loop#34#count Word 64 Num 0 Word 64
+43 Cond 37 37 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 7 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+44 Basic 43 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+45 Cond 44 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+46 Cond 45 43 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+47 Basic 46 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+52 Cond 48 48 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 4503599627370495 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+53 Basic 52 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+54 Cond 53 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+55 Cond 54 52 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+56 Basic 55 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+48 Basic 49 1 loop#48#count Word 64 Op Plus Word 64 2 Var loop#48#count Word 64 Num 1 Word 64
+49 Cond 50 Err Op True Bool 0
+50 Cond 56 47 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+51 Basic 49 1 loop#48#count Word 64 Num 0 Word 64
+57 Cond 51 51 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 4503599627370495 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+58 Basic 57 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+59 Cond 58 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+60 Cond 59 57 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+61 Basic 60 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+EntryPoint 61
+
+Function tmp.seL4_MessageInfo_ptr_new 9 seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 label___unsigned_long#v Word 64 capsUnwrapped___unsigned_long#v Word 64 extraCaps___unsigned_long#v Word 64 length___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Op WordCast Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Op BWOr Word 64 2 Op BWOr Word 64 2 Op BWOr Word 64 2 Op BWOr Word 64 2 Op WordCastSigned Word 64 1 Num 0 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Num 4503599627370495 Word 64 Op WordCast Word 64 1 Num 12 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Num 7 Word 64 Op WordCast Word 64 1 Num 9 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Num 3 Word 64 Op WordCast Word 64 1 Num 7 Word 32 Op ShiftLeft Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Num 127 Word 64 Op WordCast Word 64 1 Num 0 Word 32
+3 Cond 2 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 64 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 7 Word 32 Op SignedLess Bool 2 Num 7 Word 32 Num 64 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 9 Word 32 Op SignedLess Bool 2 Num 9 Word 32 Num 64 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32
+8 Cond 4 4 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 127 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+9 Basic 8 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+10 Cond 9 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+11 Cond 10 8 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+12 Basic 11 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+4 Basic 5 1 loop#4#count Word 64 Op Plus Word 64 2 Var loop#4#count Word 64 Num 1 Word 64
+5 Cond 6 Err Op True Bool 0
+6 Cond 12 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+7 Basic 5 1 loop#4#count Word 64 Num 0 Word 64
+13 Cond 7 7 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 127 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+14 Basic 13 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var length___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+15 Cond 14 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+16 Cond 15 13 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+17 Basic 16 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+22 Cond 18 18 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 3 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+23 Basic 22 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+24 Cond 23 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+25 Cond 24 22 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+26 Basic 25 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+18 Basic 19 1 loop#18#count Word 64 Op Plus Word 64 2 Var loop#18#count Word 64 Num 1 Word 64
+19 Cond 20 Err Op True Bool 0
+20 Cond 26 17 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+21 Basic 19 1 loop#18#count Word 64 Num 0 Word 64
+27 Cond 21 21 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 3 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+28 Basic 27 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var extraCaps___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+29 Cond 28 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+30 Cond 29 27 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+31 Basic 30 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+36 Cond 32 32 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 7 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+37 Basic 36 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+38 Cond 37 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+39 Cond 38 36 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+40 Basic 39 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+32 Basic 33 1 loop#32#count Word 64 Op Plus Word 64 2 Var loop#32#count Word 64 Num 1 Word 64
+33 Cond 34 Err Op True Bool 0
+34 Cond 40 31 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+35 Basic 33 1 loop#32#count Word 64 Num 0 Word 64
+41 Cond 35 35 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 7 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+42 Basic 41 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var capsUnwrapped___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+43 Cond 42 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+44 Cond 43 41 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+45 Basic 44 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+50 Cond 46 46 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 4503599627370495 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+51 Basic 50 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+52 Cond 51 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+53 Cond 52 50 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+54 Basic 53 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+46 Basic 47 1 loop#46#count Word 64 Op Plus Word 64 2 Var loop#46#count Word 64 Num 1 Word 64
+47 Cond 48 Err Op True Bool 0
+48 Cond 54 45 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+49 Basic 47 1 loop#46#count Word 64 Num 0 Word 64
+55 Cond 49 49 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op BWNot Word 64 1 Num 4503599627370495 Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+56 Basic 55 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var label___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+57 Cond 56 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+58 Cond 57 55 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+59 Basic 58 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+EntryPoint 59
+
+Function tmp.microkit_msginfo_get_label 5 msginfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__unsigned_long#v Word 64 Var rv#space#ret__unsigned_long#v Word 64
+5 Call 4 tmp.seL4_MessageInfo_get_label 5 Var msginfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 5
+
+Function tmp.seL4_MessageInfo_get_label 5 seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned_long#v Word 64 Var ret___unsigned_long#v Word 64
+4 Basic 3 1 ret___unsigned_long#v Word 64 Op BWOr Word 64 2 Var ret___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+5 Cond 4 3 Op Not Bool 1 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+6 Basic 5 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var ret___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+7 Cond 6 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+8 Cond 7 5 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+9 Basic 8 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+10 Basic 9 1 ret___unsigned_long#v Word 64 Op WordCast Word 64 1 Op ShiftRight Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Num 18446744073709547520 Word 64 Op WordCast Word 64 1 Num 12 Word 32
+11 Cond 10 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32
+EntryPoint 11
+
+Function tmp.seL4_MessageInfo_set_label 6 seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 v64___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Var seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64
+4 Basic 3 1 seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Op WordCast Word 64 1 Op BWOr Word 64 2 Op WordCast Word 64 1 Var seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Op BWAnd Word 64 2 Op WordCast Word 64 1 Op ShiftLeft Word 64 2 Var v64___unsigned_long#v Word 64 Op WordCast Word 64 1 Num 12 Word 32 Num 18446744073709547520 Word 64
+5 Cond 4 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32
+6 Basic 5 1 seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Op WordCast Word 64 1 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var seL4_MessageInfo___struct_seL4_MessageInfo_C#v.words_C.0 Word 64 Op BWNot Word 64 1 Num 18446744073709547520 Word 64
+7 Cond 6 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32
+12 Cond 8 8 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op BWOr Word 64 2 Op ShiftRight Word 64 2 Op BWNot Word 64 1 Num 18446744073709547520 Word 64 Op WordCast Word 64 1 Num 12 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+13 Cond 12 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32
+14 Basic 13 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+15 Cond 14 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+16 Cond 15 13 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+17 Basic 16 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+8 Basic 9 1 loop#8#count Word 64 Op Plus Word 64 2 Var loop#8#count Word 64 Num 1 Word 64
+9 Cond 10 Err Op True Bool 0
+10 Cond 17 7 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+11 Basic 9 1 loop#8#count Word 64 Num 0 Word 64
+18 Cond 11 11 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op BWOr Word 64 2 Op ShiftRight Word 64 2 Op BWNot Word 64 1 Num 18446744073709547520 Word 64 Op WordCast Word 64 1 Num 12 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+19 Cond 18 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32
+20 Basic 19 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+21 Cond 20 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+22 Cond 21 19 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+23 Basic 22 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+EntryPoint 23
+
+Function tmp.seL4_MessageInfo_ptr_get_label 5 seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned_long#v Word 64 Var ret___unsigned_long#v Word 64
+4 Basic 3 1 ret___unsigned_long#v Word 64 Op BWOr Word 64 2 Var ret___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+5 Cond 4 3 Op Not Bool 1 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+6 Basic 5 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var ret___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+7 Cond 6 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+8 Cond 7 5 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+9 Basic 8 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+10 Basic 9 1 ret___unsigned_long#v Word 64 Op WordCast Word 64 1 Op ShiftRight Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Num 0 Word 64 Num 18446744073709547520 Word 64 Op WordCast Word 64 1 Num 12 Word 32
+11 Cond 10 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64
+EntryPoint 11
+
+Function tmp.seL4_MessageInfo_ptr_set_label 6 seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 v64___unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Op WordCast Word 64 1 Num 0 Word 32 Op BWOr Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Num 0 Word 64 Op BWAnd Word 64 2 Op ShiftLeft Word 64 2 Var v64___unsigned_long#v Word 64 Op WordCast Word 64 1 Num 12 Word 32 Num 18446744073709547520 Word 64
+3 Cond 2 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Op WordCast Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Op BWAnd Word 64 2 Op WordCast Word 64 1 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Num 0 Word 64 Op BWNot Word 64 1 Num 18446744073709547520 Word 64
+5 Cond 4 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64
+10 Cond 6 6 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op BWOr Word 64 2 Op ShiftRight Word 64 2 Op BWNot Word 64 1 Num 18446744073709547520 Word 64 Op WordCast Word 64 1 Num 12 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+11 Cond 10 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32
+12 Basic 11 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+13 Cond 12 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+14 Cond 13 11 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+15 Basic 14 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+6 Basic 7 1 loop#6#count Word 64 Op Plus Word 64 2 Var loop#6#count Word 64 Num 1 Word 64
+7 Cond 8 Err Op True Bool 0
+8 Cond 15 5 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32
+9 Basic 7 1 loop#6#count Word 64 Num 0 Word 64
+16 Cond 9 9 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op BWOr Word 64 2 Op ShiftRight Word 64 2 Op BWNot Word 64 1 Num 18446744073709547520 Word 64 Op WordCast Word 64 1 Num 12 Word 32 Op WordCastSigned Word 64 1 Num 0 Word 32 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32 Num 0 Word 32 Num 0 Word 32
+17 Cond 16 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 12 Word 32 Op SignedLess Bool 2 Num 12 Word 32 Num 64 Word 32
+18 Basic 17 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var v64___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+19 Cond 18 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+20 Cond 19 17 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+21 Basic 20 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+EntryPoint 21
+
+Function tmp.seL4_MessageInfo_ptr_get_extraCaps 5 seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned_long#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned_long#v Word 64 Var ret___unsigned_long#v Word 64
+4 Basic 3 1 ret___unsigned_long#v Word 64 Op BWOr Word 64 2 Var ret___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+5 Cond 4 3 Op Not Bool 1 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+6 Basic 5 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Var ret___unsigned_long#v Word 64 Op ShiftLeft Word 64 2 Num 1 Word 64 Op WordCast Word 64 1 Num 63 Word 32 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+7 Cond 6 Err Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 63 Word 32 Op SignedLess Bool 2 Num 63 Word 32 Num 64 Word 32
+8 Cond 7 5 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+9 Basic 8 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Num 0 Word 32 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+10 Basic 9 1 ret___unsigned_long#v Word 64 Op WordCast Word 64 1 Op ShiftRight Word 64 2 Op BWAnd Word 64 2 Op WordCast Word 64 1 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64 Op Times Word 64 2 Num 8 Word 64 Num 0 Word 64 Num 384 Word 64 Op WordCast Word 64 1 Num 7 Word 32
+11 Cond 10 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 7 Word 32 Op SignedLess Bool 2 Num 7 Word 32 Num 64 Word 32 Op SignedLess Bool 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.seL4_MessageInfo_C Var seL4_MessageInfo_ptr___ptr_to_struct_seL4_MessageInfo_C#v Word 64
+EntryPoint 11

@@ -1,0 +1,4 @@
+
+Function tmp.assert 6 v___int#v Word 32 msg___ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+EntryPoint 1

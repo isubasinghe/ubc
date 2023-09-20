@@ -44,3 +44,8 @@ int bar()
     char ret = 1;
     return ret;
 }
+
+unsigned int add_one(unsigned int a, unsigned int b) {
+  return a - (b + 1);
+}
+

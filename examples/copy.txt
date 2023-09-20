@@ -1,0 +1,267 @@
+Struct tmp.ring_handle_C 16 8
+StructField free_ring_C Word 64 0
+StructField used_ring_C Word 64 8
+Struct tmp.ring_buffer_C 12304 8
+StructField write_idx_C Word 32 0
+StructField read_idx_C Word 32 4
+StructField size_C Word 32 8
+StructField notify_writer_C Word 8 12
+StructField notify_reader_C Word 8 13
+StructField buffers_C Array Struct tmp.buff_desc_C 512 16
+Struct tmp.buff_desc_C 24 8
+StructField encoded_addr_C Word 64 0
+StructField len_C Word 32 8
+StructField cookie_C Word 64 16
+
+Function tmp.memcpy 7 src___ptr_to_char#v Word 64 dest___ptr_to_char#v Word 64 len___unsigned_longlong#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+EntryPoint 1
+
+Function tmp.dequeue 8 ring___ptr_to_struct_ring_buffer_C#v Word 64 addr___ptr_to_unsigned_long#v Word 64 len___ptr_to_unsigned#v Word 64 cookie___ptr_to_ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Num 0 Word 32
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op Plus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op WordCastSigned Word 32 1 Num 1 Word 32
+5 Cond 4 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+6 Basic 5 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var cookie___ptr_to_ptr_to_void#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 24 Word 64 Num 16 Word 64
+7 Cond 6 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Ptr UNIT Var cookie___ptr_to_ptr_to_void#v Word 64 Op Less Bool 2 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var len___ptr_to_unsigned#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 24 Word 64 Num 8 Word 64
+9 Cond 8 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Word 32 Var len___ptr_to_unsigned#v Word 64 Op Less Bool 2 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+10 Basic 9 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var addr___ptr_to_unsigned_long#v Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 24 Word 64
+11 Cond 10 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Word 64 Var addr___ptr_to_unsigned_long#v Word 64 Op Less Bool 2 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+12 Basic 1 1 ret__int#v Word 32 Op Minus Word 32 2 Num 0 Word 32 Num 1 Word 32
+13 Cond 12 Err Op Equals Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Op Minus Word 32 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 1 Word 32 Num 0 Word 32
+14 Cond 13 11 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8
+15 Basic 14 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+16 Call 15 tmp.ring_empty 5 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 16
+
+Function tmp.enqueue 8 ring___ptr_to_struct_ring_buffer_C#v Word 64 buffer___unsigned_long#v Word 64 len___unsigned#v Word 32 cookie___ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Num 0 Word 32
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Plus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op WordCastSigned Word 32 1 Num 1 Word 32
+5 Cond 4 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+6 Basic 5 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 24 Word 64 Num 16 Word 64 Var cookie___ptr_to_void#v Word 64
+7 Cond 6 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op Less Bool 2 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 24 Word 64 Num 8 Word 64 Var len___unsigned#v Word 32
+9 Cond 8 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op Less Bool 2 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+10 Basic 9 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 24 Word 64 Var buffer___unsigned_long#v Word 64
+11 Cond 10 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op And Bool 2 Op Less Bool 2 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 512 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+12 Basic 11 3 tmp___struct_buff_desc_C#v.encoded_addr_C Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var rbufs___ptr_to_struct_buff_desc_C#v Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Var idx___unsigned#v Word 32 Num 24 Word 64 Num 0 Word 64 tmp___struct_buff_desc_C#v.len_C Word 32 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var rbufs___ptr_to_struct_buff_desc_C#v Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Var idx___unsigned#v Word 32 Num 24 Word 64 Num 8 Word 64 tmp___struct_buff_desc_C#v.cookie_C Word 64 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Op Plus Word 64 2 Var rbufs___ptr_to_struct_buff_desc_C#v Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Var idx___unsigned#v Word 32 Num 24 Word 64 Num 16 Word 64
+13 Cond 12 Err Op PAlignValid Bool 2 Type Struct tmp.buff_desc_C Op Plus Word 64 2 Var rbufs___ptr_to_struct_buff_desc_C#v Word 64 Op Times Word 64 2 Op WordCast Word 64 1 Var idx___unsigned#v Word 32 Num 24 Word 64
+14 Basic 1 1 ret__int#v Word 32 Op Minus Word 32 2 Num 0 Word 32 Num 1 Word 32
+15 Cond 14 Err Op Equals Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Op Minus Word 32 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 1 Word 32 Num 0 Word 32
+16 Cond 15 13 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+17 Basic 16 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op LessEquals Bool 2 Op DividedBy Word 32 2 Op Plus Word 32 2 Op Times Word 32 2 Op WordCastSigned Word 32 1 Num 2147483647 Word 32 Num 2 Word 32 Num 1 Word 32 Op WordCastSigned Word 32 1 Num 2 Word 32 Var idx___unsigned#v Word 32 Num 1 Word 32 Num 0 Word 32
+18 Cond 17 Err Op Not Bool 1 Op Equals Bool 2 Num 2 Word 32 Num 0 Word 32
+19 Cond 16 18 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+20 Basic 19 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op LessEquals Bool 2 Op WordCast Word 64 1 Op DividedBy Word 32 2 Op Plus Word 32 2 Op Times Word 32 2 Op WordCastSigned Word 32 1 Num 2147483647 Word 32 Num 2 Word 32 Num 1 Word 32 Op WordCastSigned Word 32 1 Num 2 Word 32 Var rbufs___ptr_to_struct_buff_desc_C#v Word 64 Num 1 Word 32 Num 0 Word 32
+21 Cond 20 Err Op Not Bool 1 Op Equals Bool 2 Num 2 Word 32 Num 0 Word 32
+22 Basic 21 1 rbufs___ptr_to_struct_buff_desc_C#v Word 64 Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 16 Word 64
+23 Cond 22 Err Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+24 Basic 23 1 idx___unsigned#v Word 32 Op Modulus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64
+25 Cond 24 Err Op And Bool 2 Op And Bool 2 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+26 Basic 1 1 ret__int#v Word 32 Op Minus Word 32 2 Num 0 Word 32 Num 1 Word 32
+27 Cond 26 Err Op Equals Bool 2 Op SignedLessEquals Bool 2 Num 0 Word 32 Op Minus Word 32 2 Num 0 Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 1 Word 32 Num 0 Word 32
+28 Cond 27 25 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8
+29 Basic 28 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+30 Call 29 tmp.ring_full 5 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+EntryPoint 30
+
+Function tmp.getchars 6 start___ptr_to_char#v Word 64 count___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+6 Basic 2 1 i___int#v Word 32 Op Plus Word 32 2 Var i___int#v Word 32 Num 1 Word 32
+7 Cond 6 Err Op Equals Bool 2 Op SignedLessEquals Bool 2 Var i___int#v Word 32 Op Plus Word 32 2 Var i___int#v Word 32 Num 1 Word 32 Op SignedLessEquals Bool 2 Num 0 Word 32 Num 1 Word 32
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var start___ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Var i___int#v Word 32 Var c___char#v Word 8
+9 Cond 8 Err Op PAlignValid Bool 2 Type Word 8 Op Plus Word 64 2 Var start___ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Var i___int#v Word 32
+10 Basic 9 1 c___char#v Word 8 Op WordCastSigned Word 8 1 Num 97 Word 32
+2 Basic 3 1 loop#2#count Word 64 Op Plus Word 64 2 Var loop#2#count Word 64 Num 1 Word 64
+3 Cond 4 Err Op True Bool 0
+4 Cond 10 1 Op SignedLess Bool 2 Var i___int#v Word 32 Var count___int#v Word 32
+5 Basic 3 1 loop#2#count Word 64 Num 0 Word 64
+11 Basic 5 1 i___int#v Word 32 Num 0 Word 32
+EntryPoint 11
+
+Function tmp.ring_full 5 ring___ptr_to_struct_ring_buffer_C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__char#v Word 8 Op WordCastSigned Word 8 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Op Modulus Word 32 2 Op Plus Word 32 2 Op Minus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op WordCastSigned Word 32 1 Num 1 Word 32 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+4 Cond 3 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+EntryPoint 4
+
+Function tmp.ring_init 10 ring___ptr_to_struct_ring_handle_C#v Word 64 free___ptr_to_struct_ring_buffer_C#v Word 64 used___ptr_to_struct_ring_buffer_C#v Word 64 buffer_init___int#v Word 32 free_size___unsigned#v Word 32 used_size___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Basic 1 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Num 13 Word 64 Op WordCastSigned Word 8 1 Num 0 Word 32
+3 Cond 2 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Num 12 Word 64 Op WordCastSigned Word 8 1 Num 0 Word 32
+5 Cond 4 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+6 Basic 5 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Num 8 Word 64 Var used_size___unsigned#v Word 32
+7 Cond 6 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+8 Basic 7 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Num 4 Word 64 Op WordCastSigned Word 32 1 Num 0 Word 32
+9 Cond 8 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+10 Basic 9 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Op WordCastSigned Word 32 1 Num 0 Word 32
+11 Cond 10 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+12 Basic 11 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 13 Word 64 Op WordCastSigned Word 8 1 Num 0 Word 32
+13 Cond 12 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+14 Basic 13 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 12 Word 64 Op WordCastSigned Word 8 1 Num 0 Word 32
+15 Cond 14 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+16 Basic 15 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Var free_size___unsigned#v Word 32
+17 Cond 16 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+18 Basic 17 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 4 Word 64 Op WordCastSigned Word 32 1 Num 0 Word 32
+19 Cond 18 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+20 Basic 19 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Op WordCastSigned Word 32 1 Num 0 Word 32
+21 Cond 20 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+22 Cond 21 1 Op Not Bool 1 Op Equals Bool 2 Var buffer_init___int#v Word 32 Num 0 Word 32
+23 Basic 22 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Var used___ptr_to_struct_ring_buffer_C#v Word 64
+24 Cond 23 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+25 Basic 24 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Var free___ptr_to_struct_ring_buffer_C#v Word 64
+26 Cond 25 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+EntryPoint 26
+
+Function tmp.ring_size 5 ring___ptr_to_struct_ring_buffer_C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned#v Word 32 Op Minus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64
+4 Cond 3 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+EntryPoint 4
+
+Function tmp.ring_empty 5 ring___ptr_to_struct_ring_buffer_C#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__char#v Word 8 Op WordCastSigned Word 8 1 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Op Modulus Word 32 2 Op Minus Word 32 2 Op MemAcc Word 32 2 Var Mem Mem Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 4 Word 64 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Num 1 Word 32 Num 0 Word 32
+4 Cond 3 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 32 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Num 8 Word 64 Num 0 Word 32 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Var ring___ptr_to_struct_ring_buffer_C#v Word 64
+EntryPoint 4
+
+Function tmp.dequeue_free 8 ring___ptr_to_struct_ring_handle_C#v Word 64 addr___ptr_to_unsigned_long#v Word 64 len___ptr_to_unsigned#v Word 64 cookie___ptr_to_ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__int#v Word 32 Var rv#space#ret__int#v Word 32
+5 Call 4 tmp.dequeue 8 Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Var addr___ptr_to_unsigned_long#v Word 64 Var len___ptr_to_unsigned#v Word 64 Var cookie___ptr_to_ptr_to_void#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Cond 5 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+EntryPoint 6
+
+Function tmp.dequeue_used 8 ring___ptr_to_struct_ring_handle_C#v Word 64 addr___ptr_to_unsigned_long#v Word 64 len___ptr_to_unsigned#v Word 64 cookie___ptr_to_ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__int#v Word 32 Var rv#space#ret__int#v Word 32
+5 Call 4 tmp.dequeue 8 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Var addr___ptr_to_unsigned_long#v Word 64 Var len___ptr_to_unsigned#v Word 64 Var cookie___ptr_to_ptr_to_void#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Cond 5 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+EntryPoint 6
+
+Function tmp.enqueue_free 8 ring___ptr_to_struct_ring_handle_C#v Word 64 addr___unsigned_long#v Word 64 len___unsigned#v Word 32 cookie___ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__int#v Word 32 Var rv#space#ret__int#v Word 32
+5 Call 4 tmp.enqueue 8 Op MemAcc Word 64 2 Var Mem Mem Var ring___ptr_to_struct_ring_handle_C#v Word 64 Var addr___unsigned_long#v Word 64 Var len___unsigned#v Word 32 Var cookie___ptr_to_void#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Cond 5 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+EntryPoint 6
+
+Function tmp.enqueue_used 8 ring___ptr_to_struct_ring_handle_C#v Word 64 addr___unsigned_long#v Word 64 len___unsigned#v Word 32 cookie___ptr_to_void#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 0
+4 Basic 3 1 ret__int#v Word 32 Var rv#space#ret__int#v Word 32
+5 Call 4 tmp.enqueue 8 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Var ring___ptr_to_struct_ring_handle_C#v Word 64 Num 8 Word 64 Var addr___unsigned_long#v Word 64 Var len___unsigned#v Word 32 Var cookie___ptr_to_void#v Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+6 Cond 5 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Var ring___ptr_to_struct_ring_handle_C#v Word 64
+EntryPoint 6
+
+Function tmp.sel4cp_notify 5 ch___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+EntryPoint 1
+
+Function tmp.process_rx_complete 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Call 1 tmp.sel4cp_notify_delayed 5 Op WordCastSigned Word 32 1 Num 0 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+3 Cond 2 1 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+4 Basic 3 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_mux Word 64 Num 13 Word 64 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+5 Cond 4 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_mux Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64
+6 Cond 5 3 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+7 Basic 6 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Equals Bool 2 Var enqueued___unsigned_long#v Word 64 Num 0 Word 64 Num 1 Word 32 Num 0 Word 32
+8 Call 7 tmp.sel4cp_notify 5 Op WordCastSigned Word 32 1 Num 1 Word 32 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+9 Cond 8 7 Op And Bool 2 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 8 2 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_cli Word 64 Num 8 Word 64 Num 13 Word 64 Num 0 Word 8 Op Not Bool 1 Op Equals Bool 2 Var enqueued___unsigned_long#v Word 64 Num 0 Word 64
+10 Cond 9 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_cli Word 64 Num 8 Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+11 Basic 10 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_cli Word 64 Num 13 Word 64 Op WordCastSigned Word 8 1 Num 0 Word 32
+12 Cond 11 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_cli Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+13 Basic 10 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Op Plus Word 64 2 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_cli Word 64 Num 13 Word 64 Op WordCastSigned Word 8 1 Num 0 Word 32
+14 Cond 13 Err Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_buffer_C Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_cli Word 64 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+15 Cond 12 14 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8
+16 Basic 15 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+17 Call 16 tmp.ring_empty 5 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_mux Word 64 Num 8 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+18 Cond 17 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64
+23 Basic 19 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+24 Basic 23 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+25 Call 24 tmp.ring_full 5 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_cli Word 64 Num 8 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+26 Cond 25 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+27 Cond 26 19 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+28 Basic 27 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+29 Basic 28 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+30 Call 29 tmp.ring_full 5 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_mux Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+31 Cond 30 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64
+32 Cond 31 27 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+33 Basic 32 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+34 Basic 33 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+35 Call 34 tmp.ring_empty 5 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_cli Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+36 Cond 35 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+37 Cond 36 32 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+38 Basic 37 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+39 Basic 38 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+40 Call 39 tmp.ring_empty 5 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_mux Word 64 Num 8 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+41 Cond 40 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64
+42 Basic 41 1 enqueued___unsigned_long#v Word 64 Op Plus Word 64 2 Var enqueued___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 1 Word 32
+43 Basic 42 1 err___int#v Word 32 Var rv#space#ret__int#v Word 32
+44 Call 43 tmp.enqueue_free 8 Symbol rx_ring_mux Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol m_addr Word 64 Op WordCastSigned Word 32 1 Num 2048 Word 32 Op MemAcc Word 64 2 Var Mem Mem Symbol cookie Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+45 Cond 44 Err Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64 Op PAlignValid Bool 2 Type Word 64 Symbol m_addr Word 64 Op PAlignValid Bool 2 Type Ptr UNIT Symbol cookie Word 64
+46 Basic 45 1 err___int#v Word 32 Var rv#space#ret__int#v Word 32
+47 Call 46 tmp.enqueue_used 8 Symbol rx_ring_cli Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol c_addr Word 64 Op MemAcc Word 32 2 Var Mem Mem Symbol m_len Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol cookie2 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+48 Cond 47 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64 Op PAlignValid Bool 2 Type Word 64 Symbol c_addr Word 64 Op PAlignValid Bool 2 Type Word 32 Symbol m_len Word 64 Op PAlignValid Bool 2 Type Ptr UNIT Symbol cookie2 Word 64
+49 Call 48 tmp.memcpy 7 Op MemAcc Word 64 2 Var Mem Mem Symbol c_addr Word 64 Op MemAcc Word 64 2 Var Mem Mem Symbol m_addr Word 64 Op WordCast Word 64 1 Op MemAcc Word 32 2 Var Mem Mem Symbol m_len Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+50 Cond 49 Err Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Word 64 Symbol c_addr Word 64 Op PAlignValid Bool 2 Type Word 64 Symbol m_addr Word 64 Op PAlignValid Bool 2 Type Word 32 Symbol m_len Word 64
+51 Basic 50 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var x___ptr_to_char#v Word 64 Op WordCastSigned Word 8 1 Num 97 Word 32
+52 Cond 51 Err Op PAlignValid Bool 2 Type Word 8 Var x___ptr_to_char#v Word 64
+53 Basic 52 1 x___ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+54 Cond 53 50 Op Less Bool 2 Op MemAcc Word 32 2 Var Mem Mem Symbol c_len Word 64 Op MemAcc Word 32 2 Var Mem Mem Symbol m_len Word 64
+55 Cond 54 Err Op And Bool 2 Op PAlignValid Bool 2 Type Word 32 Symbol m_len Word 64 Op PAlignValid Bool 2 Type Word 32 Symbol c_len Word 64
+56 Basic 55 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Var x___ptr_to_char#v Word 64 Op WordCastSigned Word 8 1 Num 97 Word 32
+57 Cond 56 Err Op PAlignValid Bool 2 Type Word 8 Var x___ptr_to_char#v Word 64
+58 Basic 57 1 x___ptr_to_char#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+59 Cond 58 55 Op Or Bool 2 Op Or Bool 2 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Op MemAcc Word 64 2 Var Mem Mem Symbol c_addr Word 64 Num 0 Word 64 Op Less Bool 2 Op MemAcc Word 64 2 Var Mem Mem Symbol c_addr Word 64 Num 0 Word 64 Op LessEquals Bool 2 Op Plus Word 64 2 Num 0 Word 64 Op WordCastSigned Word 64 1 Op Times Word 32 2 Num 2048 Word 32 Num 512 Word 32 Op MemAcc Word 64 2 Var Mem Mem Symbol c_addr Word 64
+60 Cond 59 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Word 64 Symbol c_addr Word 64 Op Equals Bool 2 Op Times Word 64 2 Op WordCastSigned Word 64 1 Num 2048 Word 32 Op WordCastSigned Word 64 1 Num 512 Word 32 Op WordCastSigned Word 64 1 Op Times Word 32 2 Num 2048 Word 32 Num 512 Word 32 Op PAlignValid Bool 2 Type Word 64 Symbol c_addr Word 64 Op PAlignValid Bool 2 Type Word 64 Symbol c_addr Word 64
+61 Basic 60 1 err___int#v Word 32 Var rv#space#ret__int#v Word 32
+62 Call 61 tmp.dequeue_free 8 Symbol rx_ring_cli Word 64 Symbol c_addr Word 64 Symbol c_len Word 64 Symbol cookie2 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+63 Cond 62 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64 Op PAlignValid Bool 2 Type Word 64 Symbol c_addr Word 64 Op PAlignValid Bool 2 Type Word 32 Symbol c_len Word 64 Op PAlignValid Bool 2 Type Ptr UNIT Symbol cookie2 Word 64
+64 Basic 63 1 err___int#v Word 32 Var rv#space#ret__int#v Word 32
+65 Call 64 tmp.dequeue_used 8 Symbol rx_ring_mux Word 64 Symbol m_addr Word 64 Symbol m_len Word 64 Symbol cookie Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+66 Cond 65 Err Op And Bool 2 Op And Bool 2 Op And Bool 2 Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64 Op PAlignValid Bool 2 Type Word 64 Symbol m_addr Word 64 Op PAlignValid Bool 2 Type Word 32 Symbol m_len Word 64 Op PAlignValid Bool 2 Type Ptr UNIT Symbol cookie Word 64
+19 Basic 20 1 loop#19#count Word 64 Op Plus Word 64 2 Var loop#19#count Word 64 Num 1 Word 64
+20 Cond 21 Err Op True Bool 0
+21 Cond 66 18 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+22 Basic 20 1 loop#19#count Word 64 Num 0 Word 64
+67 Basic 22 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+68 Basic 67 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+69 Call 68 tmp.ring_full 5 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_cli Word 64 Num 8 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+70 Cond 69 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+71 Cond 70 22 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+72 Basic 71 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+73 Basic 72 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+74 Call 73 tmp.ring_full 5 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_mux Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+75 Cond 74 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64
+76 Cond 75 71 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+77 Basic 76 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+78 Basic 77 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+79 Call 78 tmp.ring_empty 5 Op MemAcc Word 64 2 Var Mem Mem Symbol rx_ring_cli Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+80 Cond 79 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_cli Word 64
+81 Cond 80 76 Op Not Bool 1 Op Equals Bool 2 Var ret__int#v Word 32 Num 0 Word 32
+82 Basic 81 1 ret__int#v Word 32 Op IfThenElse Word 32 3 Op Not Bool 1 Op Not Bool 1 Op Equals Bool 2 Var ret__char#v Word 8 Num 0 Word 8 Num 1 Word 32 Num 0 Word 32
+83 Basic 82 1 ret__char#v Word 8 Var rv#space#ret__char#v Word 8
+84 Call 83 tmp.ring_empty 5 Op MemAcc Word 64 2 Var Mem Mem Op Plus Word 64 2 Symbol rx_ring_mux Word 64 Num 8 Word 64 Var Mem Mem Var HTD HTD Var PMS PMS Var GhostAssertions WordArray 50 64 5 rv#space#ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+85 Cond 84 Err Op PAlignValid Bool 2 Type Struct tmp.ring_handle_C Symbol rx_ring_mux Word 64
+86 Basic 85 1 enqueued___unsigned_long#v Word 64 Op WordCastSigned Word 64 1 Num 0 Word 32
+EntryPoint 86
+
+Function tmp.sel4cp_notify_delayed 5 ch___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+EntryPoint 1

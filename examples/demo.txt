@@ -45,6 +45,12 @@ Function tmp.maths 6 a___int#v Word 32 b___int#v Word 32 Mem Mem HTD HTD PMS PMS
 9 Cond 6 8 Op Not Bool 1 Op Equals Bool 2 Var a___int#v Word 32 Num 0 Word 32
 EntryPoint 9
 
+Function tmp.add_one 6 a___unsigned#v Word 32 b___unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__unsigned#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__unsigned#v Word 32 Op Minus Word 32 2 Var a___unsigned#v Word 32 Op Plus Word 32 2 Var b___unsigned#v Word 32 Op WordCastSigned Word 32 1 Num 1 Word 32
+EntryPoint 3
+
 Function tmp.arith_sum 5 n___int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
 1 Basic Ret 0
 2 Cond 1 Err Op False Bool 0
