@@ -7,6 +7,7 @@ import os
 from typing_extensions import assert_never
 from dot_graph import viz_function, viz_raw_function
 import error_reporting as er
+from prog_globals import populate_safe_structs, populate_safe_globals
 from split_prove_nodes import split_prove_nodes
 
 import syntax
@@ -142,7 +143,9 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
         for func in stuff[1].values():
             print(f'  {func.name} ({len(func.nodes)} nodes)')
 
-    _, functions, _ = stuff
+    structs, functions, _ = stuff
+    populate_safe_structs(structs)
+    populate_safe_globals()
 
     for name in function_names:
         unsafe_func = functions[find_functions_by_name(functions.keys(), name)]
