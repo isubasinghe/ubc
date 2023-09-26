@@ -7,7 +7,7 @@ import os
 from typing_extensions import assert_never
 from dot_graph import viz_function, viz_raw_function
 import error_reporting as er
-from prog_globals import populate_safe_structs, populate_safe_globals
+from prog_globals import populate_safe_structs, populate_safe_globals, initialise_memory
 from split_prove_nodes import split_prove_nodes
 
 import syntax
@@ -146,6 +146,7 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
     structs, functions, _ = stuff
     populate_safe_structs(structs)
     populate_safe_globals()
+    initialise_memory()
 
     for name in function_names:
         unsafe_func = functions[find_functions_by_name(functions.keys(), name)]

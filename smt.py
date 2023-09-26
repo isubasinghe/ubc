@@ -305,6 +305,9 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
         if len(expr.arguments) == 0:
             return SMTLIB(expr.function_name)
         return SMTLIB(f'({expr.function_name} {" ".join(emit_expr(arg) for arg in expr.arguments)})')
+    elif isinstance(expr, source.ExprForall):
+        return SMTLIB(f"(forall ({' '.join(emit_expr(arg) for arg in expr.args)}) (emit_expr(expr.expr)) :pattern (emit_expr(expr.pattern)))")
+
     assert_never(expr)
 
 

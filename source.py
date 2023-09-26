@@ -204,7 +204,7 @@ def convert_type(typ: syntax.Type) -> Type:
         return TypePtr(typ.el_typ_symb)
     elif typ.kind == 'Array':
         assert typ.el_typ_symb is not None
-        return TypeArray(typ.el_typ_symb, typ.num)
+        return TypeArray(convert_type(typ.el_typ_symb), typ.num)
     elif typ.kind == 'FloatingPoint':
         assert False, "floating points not supported yet"
         return TypeFloatingPoint(typ.nums[0], typ.nums[1])
@@ -228,6 +228,12 @@ class ExprVar(ABCExpr[TypeKind, VarNameKind]):
 
 
 ExprVarT: TypeAlias = ExprVar[Type, VarNameKind]
+
+@dataclass(frozen=True)
+class ExprForall(ABCExpr[TypeKind, VarNameKind]):
+    args: Sequence[ExprVar[TypeKind, VarNameKind]]
+    expr: Expr[TypeKind, VarNameKind]
+    pattern: Expr[TypeKind, VarNameKind] 
 
 
 @dataclass(frozen=True)
@@ -416,6 +422,7 @@ Expr: TypeAlias = \
     | ExprOp[TypeKind, VarNameKind] \
     | ExprFunction[TypeKind, VarNameKind] \
     | ExprSymbol[TypeKind] \
+    | ExprForall \
 
 ExprT: TypeAlias = Expr[Type, VarNameKind]
 
@@ -443,7 +450,7 @@ def visit_expr(expr: ExprT[VarNameKind], visitor: Callable[[ExprT[VarNameKind]],
         for arg in expr.arguments:
             visit_expr(arg, visitor)
     elif not isinstance(expr, ExprVar
-                        | ExprNum | ExprType | ExprSymbol):
+                        | ExprNum | ExprType | ExprSymbol | ExprForall):
         assert_never(expr)
 
 
