@@ -125,6 +125,9 @@ def assert_expr_equals_mod_dsa(lhs: source.ExprT[source.ProgVarName | nip.GuardV
         assert len(lhs.arguments) == len(rhs.arguments)
         for i in range(len(lhs.arguments)):
             assert_expr_equals_mod_dsa(lhs.arguments[i], rhs.arguments[i])
+    elif isinstance(lhs, source.ExprForall):
+        assert isinstance(rhs, source.ExprForall)
+        assert_expr_equals_mod_dsa(lhs.expr, rhs.expr)
     else:
         assert_never(lhs)
 

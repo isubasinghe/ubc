@@ -42,10 +42,15 @@ ops_to_smt: Mapping[source.Operator, SMTLIB] = {
     source.Operator.WORD_ARRAY_ACCESS: SMTLIB("select"),
     source.Operator.WORD_ARRAY_UPDATE: SMTLIB("store"),
     source.Operator.MEM_DOM: SMTLIB("mem-dom"),
-    source.Operator.MEM_ACC: SMTLIB("mem-acc")
+    source.Operator.MEM_ACC: SMTLIB("mem-acc"),
+    source.Operator.MEM_VALID: SMTLIB("mem-valid")
 }
 
 MEM_SORT = SMTLIB('(Array (_ BitVec 64) (_ BitVec 8))')
+MEM_SORT_VAR = SMTLIB("MEMSORT")
+
+MEMSORT_VALID = SMTLIB("(Array (_ BitVec 64) Bool)")
+MEMSORT_VALID_VAR = SMTLIB("MEMSORT_VALID")
 
 BOOL = SMTLIB('Bool')
 
@@ -306,7 +311,11 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
             return SMTLIB(expr.function_name)
         return SMTLIB(f'({expr.function_name} {" ".join(emit_expr(arg) for arg in expr.arguments)})')
     elif isinstance(expr, source.ExprForall):
-        return SMTLIB(f"(forall ({' '.join(emit_expr(arg) for arg in expr.args)}) (emit_expr(expr.expr)) :pattern (emit_expr(expr.pattern)))")
+        return SMTLIB(f"""
+(forall ({" ".join('(' + emit_expr(arg) + emit_sort(arg.typ) + ')' for arg in expr.args)}) 
+    ({emit_expr(expr.expr)}) 
+    :pattern ({emit_expr(expr.pattern)})
+)""")
 
     assert_never(expr)
 

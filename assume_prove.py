@@ -79,6 +79,8 @@ def convert_expr_dsa_vars_to_ap(expr: source.ExprT[dsa.Incarnation[source.ProgVa
         return expr
     elif isinstance(expr, source.ExprFunction):
         return source.ExprFunction(expr.typ, expr.function_name, [convert_expr_dsa_vars_to_ap(arg) for arg in expr.arguments], )
+    elif isinstance(expr, source.ExprForall):
+        assert False, "not yet implemented"
     assert_never(expr)
 
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
-from enum import Enum
-from typing import Mapping, NamedTuple
+from typing import Mapping, NamedTuple, TYPE_CHECKING, Sequence
 from typing_extensions import assert_never
 from collections import OrderedDict
-import syntax
-from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT
+from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT
 import source
 
-
+if TYPE_CHECKING:
+    import assume_prove
+    import syntax
 
 class StructField(NamedTuple):
     name: str
@@ -35,11 +35,16 @@ safe_structs: Mapping[TypeStruct, Struct] = {
 }
 
 
+# These turns into asserts later
+global_asserts: Sequence[ExprT[assume_prove.VarName]] = []
+
 # declare your global variables here
 __loose_globals: Mapping[str, Type] = {
     "rx_ring_mux": TypeStruct('tmp.ring_handle_C'),
     "buffers": TypeStruct("tmp.ring_buffer_C")
 }
+
+mem = source.ExprVar(typ=source.type_mem, name=source.ProgVarName(source.Operator.MEM_VALID))
 
 def sz(ty: Type) -> int:
     """
@@ -104,19 +109,19 @@ class InitMem():
             struct = safe_structs[ty]
             self.init_struct(var, struct)
         elif isinstance(ty, TypeBitVec):
-            assert False
+            assert False, "not yet implemented"
         elif isinstance(ty, TypeArray):
-            assert False
+            assert False, "not yet implemented"
         elif isinstance(ty, TypeWordArray):
-            assert False
+            assert False, "not yet implemented"
         elif isinstance(ty, TypePtr):
-            assert False
+            assert False, "not yet implemented"
         elif isinstance(ty, TypeFloatingPoint):
-            assert False
+            assert False, "not yet implemented"
         elif isinstance(ty, TypeSpecGhost):
-            assert False
+            assert False, "not yet implemented"
         elif isinstance(ty, TypeBuiltin):
-            assert False
+            assert False, "not yet implemented"
         else:
             assert_never(ty)
         pass
@@ -149,7 +154,17 @@ class InitMem():
         self.offset = offset
         
         cond: source.ExprT[source.ProgVarName] = source.expr_eq(var, source.ExprNum(num=starting_point, typ=source.type_word64))
+        vari = source.ExprVar(source.type_word64, source.ProgVarName("i"))
+        # starting_point <= i < offset
+        # starting_point <= i
+        # offset < i
+        lowerterm = source.expr_ule(source.ExprNum(source.type_word64, starting_point), vari)
+        upperterm = source.expr_ult(source.ExprNum(source.type_word64, offset), vari)
+        memvalid = source.expr_valid(mem, vari)
+        validity = source.expr_implies(source.expr_and(lowerterm, upperterm), memvalid)
+        validityQuant = source.ExprForall(source.type_bool, [vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
         self.sym_conds.append(cond)
+        self.sym_conds.append(validityQuant)
 
 def to_safe_struct(struct: syntax.Struct) -> Struct:
     fields:OrderedDict[str, StructField] = OrderedDict()

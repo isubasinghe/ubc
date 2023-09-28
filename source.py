@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum, unique
-from typing import Any, Callable, Generic, Iterator, Literal, Mapping, NamedTuple, NewType, Sequence, Set, TypeAlias, TypeVar, Tuple
+from typing import Any, Callable, Generic, Iterator, Literal, Mapping, NamedTuple, NewType, Sequence, Set, TypeAlias, TypeVar, Tuple, cast
 import typing
 from typing_extensions import assert_never
 from provenance import *
@@ -233,7 +233,10 @@ ExprVarT: TypeAlias = ExprVar[Type, VarNameKind]
 class ExprForall(ABCExpr[TypeKind, VarNameKind]):
     args: Sequence[ExprVar[TypeKind, VarNameKind]]
     expr: Expr[TypeKind, VarNameKind]
-    pattern: Expr[TypeKind, VarNameKind] 
+    pattern: Expr[TypeKind, VarNameKind]
+    # noPattern: Optional[Expr]
+    named: str
+    skolemId: str
 
 
 @dataclass(frozen=True)
@@ -318,6 +321,7 @@ class Operator(Enum):
 
     MEM_ACC = 'MemAcc'
     MEM_UPDATE = 'MemUpdate'
+    MEM_VALID = 'MemValid'
 
     WORD_ARRAY_ACCESS = 'WordArrayAccess'
     WORD_ARRAY_UPDATE = 'WordArrayUpdate'
@@ -500,6 +504,12 @@ def pretty_expr_ascii(expr: ExprT[VarNameKind]) -> str:
             return f'{expr.operator.value}({", ".join(pretty_expr_ascii(operand) for operand in expr.operands)})'
     elif isinstance(expr, ExprFunction):
         return f'{expr.function_name} {" ".join(pretty_expr_ascii(arg) for arg in expr.arguments)}'
+    elif isinstance(expr, ExprForall):
+        return f"""
+(forall ({" ".join('(' + pretty_expr_ascii(arg) + pretty_expr_ascii(arg.typ) + ')' for arg in expr.args)}) 
+    ({pretty_expr_ascii(expr.expr)}) 
+    :pattern ({pretty_expr_ascii(expr.pattern)})
+)"""
     assert_never(expr)
 
 
@@ -547,6 +557,10 @@ def convert_expr_vars(f: Callable[[ExprVar[TypeKind, VarNameKind]], Expr[TypeKin
     elif isinstance(expr, ExprFunction):
         args = tuple(convert_expr_vars(f, arg) for arg in expr.arguments)
         return ExprFunction(expr.typ, expr.function_name, args)
+    elif isinstance(expr, ExprForall):
+
+        expr_inner = convert_expr_vars(f, expr.expr)
+        return ExprForall(expr.typ, expr.args, expr_inner, expr.pattern, expr.named, expr.skolemId)
     assert_never(expr)
 
 
@@ -576,6 +590,10 @@ def mk_binary_bitvec_relation(op: Operator) -> Callable[[ExprT[VarNameKind], Exp
         return ExprOp(type_bool, op, (lhs, rhs))
     return f
 
+def expr_valid(mem: ExprT[VarNameKind], loc: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+    assert mem.typ == type_mem
+    assert loc.typ == type_word64
+    return ExprOp(type_bool, Operator.MEM_VALID, (mem, loc))
 
 expr_ult = mk_binary_bitvec_relation(Operator.LESS)
 expr_ule = mk_binary_bitvec_relation(Operator.LESS_EQUALS)
@@ -715,6 +733,8 @@ def condition_to_evaluate_subexpr_in_expr(expr: ExprT[VarNameKind], sub: ExprT[V
 
     elif isinstance(expr, ExprType | ExprSymbol):
         assert False, "I'm not sure what this is suppose to mean"
+    elif isinstance(expr, ExprForall):
+        assert False, "not sure what to do here yet"
     assert_never(expr)
 
 # for the following commented out expr classes

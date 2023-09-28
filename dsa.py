@@ -148,6 +148,19 @@ def apply_incarnations(
         ))
     elif isinstance(root, source.ExprFunction):
         return source.ExprFunction(root.typ, root.function_name, tuple(apply_incarnations(context, arg) for arg in root.arguments))
+    elif isinstance(root, source.ExprForall):
+        """
+        Doesn't actually make sense to apply incarnations as is.
+        Why? because essentially this is a new scope.
+        Previous incarnations of the same variable name die.
+
+        We do a hack by asserting that all the variables in args and pattern
+        do not have any incarnations associated with them yet.
+        """
+        non_valid = list(filter(lambda x: x in context, root.args))
+        assert len(non_valid) == 0, non_valid
+
+        return source.ExprForall(root.typ, root.args, apply_incarnations(context, root.expr), root.pattern, root.named, root.skolemId)
     assert_never(root)
 
 
