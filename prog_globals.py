@@ -23,11 +23,8 @@ class Struct(NamedTuple):
     fields: Mapping[str, StructField]
     typ: Type
 
-
-
-
-
 safe_globals: Mapping[ExprSymbolT, Type] = {
+
 }
 
 safe_structs: Mapping[TypeStruct, Struct] = {
@@ -40,8 +37,6 @@ global_asserts: Sequence[ExprT[assume_prove.VarName]] = []
 
 # declare your global variables here
 __loose_globals: Mapping[str, Type] = {
-    "rx_ring_mux": TypeStruct('tmp.ring_handle_C'),
-    "buffers": TypeStruct("tmp.ring_buffer_C")
 }
 
 mem = source.ExprVar(typ=source.type_mem, name=source.ProgVarName(source.Operator.MEM_VALID))

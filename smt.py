@@ -43,7 +43,8 @@ ops_to_smt: Mapping[source.Operator, SMTLIB] = {
     source.Operator.WORD_ARRAY_UPDATE: SMTLIB("store"),
     source.Operator.MEM_DOM: SMTLIB("mem-dom"),
     source.Operator.MEM_ACC: SMTLIB("mem-acc"),
-    source.Operator.MEM_VALID: SMTLIB("mem-valid")
+    source.Operator.MEM_VALID: SMTLIB("mem-valid"),
+    source.Operator.P_GLOBAL_VALID: SMTLIB("global-valid")
 }
 
 MEM_SORT = SMTLIB('(Array (_ BitVec 64) (_ BitVec 8))')
@@ -283,12 +284,15 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
             raise NotImplementedError(
                 "PAlignValid for non symbols isn't supported")
 
+        if expr.operator is source.Operator.P_GLOBAL_VALID:
+            return statically_infered_must_be_true
+
         if expr.operator is source.Operator.MEM_ACC:
             mem, symb_or_addr = expr.operands
             if not isinstance(symb_or_addr, source.ExprSymbol):
+                print(symb_or_addr)
                 raise NotImplementedError(
                     "MemAcc for non symbols isn't supported yet")
-
             if not isinstance(symb_or_addr.typ, source.TypeBitVec):
                 assert False, "Only TypBitVec is accepted"
 
