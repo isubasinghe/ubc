@@ -51,21 +51,6 @@ ring_handle_t rx_ring_cli;
 
 
 void ring_init(ring_handle_t *ring, ring_buffer_t *free, ring_buffer_t *used, int buffer_init, uint32_t free_size, uint32_t used_size)
-/*@
-requires ring_handle_free_ring(ring,_) &*& 
-         ring_handle_used_ring(ring, _) &*&
-         ring_buffer_write_idx(free,_) &*&
-         ring_buffer_read_idx(free, _) &*&
-         ring_buffer_size(free, _) &*&
-         ring_buffer_notify_writer(free, _) &*&
-         ring_buffer_notify_reader(free, _) &*&
-         ring_buffer_write_idx(used, _) &*&
-         ring_buffer_read_idx(used, _) &*&
-         ring_buffer_size(used, _) &*&
-         ring_buffer_notify_writer(used, _) &*&
-         ring_buffer_notify_reader(used, _);
-@*/
-//@ensures 0;
 {
     ring->free_ring = free;
     ring->used_ring = used;
@@ -82,174 +67,33 @@ requires ring_handle_free_ring(ring,_) &*&
         ring->used_ring->notify_writer = 0;
         ring->used_ring->notify_reader =  0;
     }
-    /*@
-    leak ring_handle_free_ring(ring,_) &*& 
-         ring_handle_used_ring(ring, _) &*&
-         ring_buffer_write_idx(free,_) &*&
-         ring_buffer_read_idx(free, _) &*&
-         ring_buffer_size(free, _) &*&
-         ring_buffer_notify_writer(free, _) &*&
-         ring_buffer_notify_reader(free, _) &*&
-         ring_buffer_write_idx(used, _) &*&
-         ring_buffer_read_idx(used, _) &*&
-         ring_buffer_size(used, _) &*&
-         ring_buffer_notify_writer(used, _) &*&
-         ring_buffer_notify_reader(used, _);
-    @*/
 }
 
 static inline char ring_empty(ring_buffer_t *ring)
-/*@
-requires 
-	ring_buffer_write_idx(ring, ?widx) &*& 
-	ring_buffer_read_idx(ring, ?ridx) &*&
-	widx >= ridx &*&  (widx >= 0) &*& ((widx - ridx) <= 4294967295) &*&
-	ring_buffer_size(ring, ?size) &*& size > 0;
-@*/
-/*@
-ensures 0;
-@*/
 {
     return !((ring->write_idx - ring->read_idx) % ring->size);
-    //@leak ring_buffer_read_idx(ring, _);
-    //@leak ring_buffer_size(ring, _);
-    //@leak ring_buffer_write_idx(ring, _);
 }
 
 static inline char ring_full(ring_buffer_t *ring)
-/*@
-requires 
-  ring_buffer_write_idx(ring, ?widx) &*&
-  ring_buffer_read_idx(ring, ?ridx) &*&
-  widx >= ridx &*& ((widx - ridx + 1) <= 4294967295) &*&
-  ring_buffer_size(ring, ?size) &*& size > 0;
-@*/
-/*@
-ensures 0;
-@*/
 {
-    //assert((ring->write_idx - ring->read_idx) >= 0);
     return !((ring->write_idx - ring->read_idx + 1) % ring->size);
-    //@leak ring_buffer_read_idx(ring, _);
-    //@leak ring_buffer_size(ring, _);
-    //@leak ring_buffer_write_idx(ring, _);
 }
 
 static inline uint32_t ring_size(ring_buffer_t *ring)
-/*@
-requires 
-  ring_buffer_write_idx(ring, ?widx) &*&
-  ring_buffer_read_idx(ring, ?ridx) &*&
-  (0 <= (widx - ridx)) && ((widx - ridx) <= 4294967295);
-@*/
-/*@
-ensures 0;
-@*/
 {
-    //assert((ring->write_idx - ring->read_idx) >= 0);
     return (ring->write_idx - ring->read_idx);
-    //@leak ring_buffer_write_idx(ring, _);
-    //@leak ring_buffer_read_idx(ring, _);
-}
-/*@
-predicate characters(char *start, int count) = 
-  count <= 0 ? 0 : character(start, _) &*& characters(start+1, count-1);
-@*/
-
-/*@
-lemma void split_characters_chunk(char *start, int i)
-  requires characters(start, ?count) &*& 0 <= i &*& i <= count;
-  ensures characters(start, i) &*& characters(start+i, count-i); 
-  {
-    if(i==0) {
-      close characters(start, 0);
-    }else {
-      open characters(start, count);
-      split_characters_chunk(start+1, i-1);
-      close characters(start, i);
-    }
-  }
-@*/
-
-/*@ 
-lemma void merge_characters_chunk(char *start)
-  requires characters(start, ?i) &*& characters(start+i, ?count) &*& 0 <= i &*& 0 <= count;
-  ensures characters(start, i + count); {
-    open characters(start, i);
-    if(i != 0) {
-      merge_characters_chunk(start + 1);
-      close characters(start, i + count);
-    }
-  }
-@*/
-
-void getchars(char *start, int count) 
-/*@
-requires characters(start, count) &*& ((((uintptr_t)start) + count) <= UINTPTR_MAX);
-@*/
-//@ensures characters(start, count);
-{
-  for(int i=0; i < count; i++) 
-  //@ invariant characters(start, count) &*& 0 <= i;
-  {
-    char c = 'a';
-    //@ split_characters_chunk(start, i);
-    //@ open characters(start+i, count - i);
-    *(start + i) = c;
-    //@ close characters(start+i, count-i);
-    //@ merge_characters_chunk(start);
-  }
 }
 
-/*@
-predicate buff_desc(buff_desc_t* bs, int idx) = 
-  bs[idx] |-> ?b;
-@*/
 
-/*@
-lemma void assume_fits(buff_desc_t* a, int b) 
-requires 0;
-ensures 0;
-{
-  assume(a + b >= 0);	
-}
-@*/
 
 static inline int enqueue(ring_buffer_t *ring, uintptr_t buffer, unsigned int len, void *cookie)
-/*@
-requires 
-	buffer != 0 &*&
-	ring_buffer_write_idx(ring, ?widx) &*&
-	ring_buffer_read_idx(ring, ?ridx) &*&
-	widx >= ridx &*&
-	(widx - ridx + 1) <= 4294967295 &*&
-	ring_buffer_size(ring, ?size) &*&
-	size > 0 &*&
-	ring_buffer_write_idx(ring, ?lwidx) &*&
-	ridx <= lwidx &*&
-	(lwidx - ridx + 1) <= 4294967295 &*&
-	ring_buffer_size(ring, ?lsize) &*&
-	lsize > 0 &*&
-	ring_buffer_buffers(ring, ?buffers) &*&
-	buff_desc(buffers, widx%lsize);
-@*/
-/*@
-ensures 0;
-@*/
 {
-    //assert(buffer != 0);
     if (ring_full(ring)) {
-    	//@leak ring_buffer_buffers(ring, _);
-    	//@leak buff_desc(buffers, widx%lsize);
-    	//@leak ring_buffer_size(ring, _);
-    	//@leak ring_buffer_write_idx(ring, _);
         return -1;
     }
     uint32_t idx = ring->write_idx % ring->size;
     buff_desc_t *rbufs = (buff_desc_t *)ring->buffers;
-    //@ assume_fits(rbufs, idx);
     if ((rbufs >= (buff_desc_t *)((0x7fffffff *2U + 1U)/2)) || (idx >= (uint32_t)((0x7fffffff * 2U + 1U)/2))) { return -1; }
-    //@ assert (rbufs + idx >= 0);
     buff_desc_t tmp = *(rbufs + idx);
     ring->buffers[ring->write_idx % ring->size].encoded_addr = buffer;
     ring->buffers[ring->write_idx % ring->size].len = len;
@@ -257,9 +101,6 @@ ensures 0;
 
     // THREAD_MEMORY_RELEASE();
     ring->write_idx++;
-    
-    //@leak buff_desc(buffers, widx%lsize);
-    //@leak ring_buffer_buffers(ring, _);
     
     return 0;
 
@@ -376,7 +217,6 @@ void process_rx_complete(void)
         sel4cp_notify_delayed(MUX_RX_CH);
     }
 }
-
 
 //void notified(int ch)
 // requires (ch >= 0) && (ch <= 63);

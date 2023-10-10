@@ -128,6 +128,9 @@ def assert_expr_equals_mod_dsa(lhs: source.ExprT[source.ProgVarName | nip.GuardV
     elif isinstance(lhs, source.ExprForall):
         assert isinstance(rhs, source.ExprForall)
         assert_expr_equals_mod_dsa(lhs.expr, rhs.expr)
+    elif isinstance(lhs, source.ExprMemAcc):
+        assert isinstance(rhs, source.ExprMemAcc)
+        assert_expr_equals_mod_dsa(lhs.addr, rhs.addr)
     else:
         assert_never(lhs)
 

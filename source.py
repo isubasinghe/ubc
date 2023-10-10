@@ -415,6 +415,11 @@ class ExprOp(ABCExpr[TypeKind, VarNameKind]):
     operator: Operator
     operands: tuple[Expr[TypeKind, VarNameKind], ...]
 
+@dataclass(frozen=True)
+class ExprMemAcc(ABCExpr[TypeKind, VarNameKind]):
+    addr: Expr[TypeKind, VarNameKind]
+    mem: ExprVar[TypeBuiltin, VarNameKind]
+
 
 ExprOpT: TypeAlias = ExprOp[Type, VarNameKind]
 
@@ -427,6 +432,7 @@ Expr: TypeAlias = \
     | ExprFunction[TypeKind, VarNameKind] \
     | ExprSymbol[TypeKind] \
     | ExprForall \
+    | ExprMemAcc \
 
 ExprT: TypeAlias = Expr[Type, VarNameKind]
 
@@ -453,6 +459,8 @@ def visit_expr(expr: ExprT[VarNameKind], visitor: Callable[[ExprT[VarNameKind]],
     elif isinstance(expr, ExprFunction):
         for arg in expr.arguments:
             visit_expr(arg, visitor)
+    elif isinstance(expr, ExprMemAcc):
+        visit_expr(expr.addr, visitor)
     elif not isinstance(expr, ExprVar
                         | ExprNum | ExprType | ExprSymbol | ExprForall):
         assert_never(expr)
@@ -510,6 +518,9 @@ def pretty_expr_ascii(expr: ExprT[VarNameKind]) -> str:
     ({pretty_expr_ascii(expr.expr)}) 
     :pattern ({pretty_expr_ascii(expr.pattern)})
 )"""
+    elif isinstance(expr, ExprMemAcc):
+        return f"""
+(mem-acc {pretty_expr_ascii(expr.typ)} {expr.addr})"""
     assert_never(expr)
 
 
@@ -557,10 +568,14 @@ def convert_expr_vars(f: Callable[[ExprVar[TypeKind, VarNameKind]], Expr[TypeKin
     elif isinstance(expr, ExprFunction):
         args = tuple(convert_expr_vars(f, arg) for arg in expr.arguments)
         return ExprFunction(expr.typ, expr.function_name, args)
+    elif isinstance(expr, ExprMemAcc):
+        addr = convert_expr_vars(f, expr.addr)
+        return ExprMemAcc(expr.typ, addr)
     elif isinstance(expr, ExprForall):
 
         expr_inner = convert_expr_vars(f, expr.expr)
         return ExprForall(expr.typ, expr.args, expr_inner, expr.pattern, expr.named, expr.skolemId)
+
     assert_never(expr)
 
 
@@ -735,6 +750,8 @@ def condition_to_evaluate_subexpr_in_expr(expr: ExprT[VarNameKind], sub: ExprT[V
         assert False, "I'm not sure what this is suppose to mean"
     elif isinstance(expr, ExprForall):
         assert False, "not sure what to do here yet"
+    elif isinstance(expr, ExprMemAcc):
+        assert False, "not sure what to do here"
     assert_never(expr)
 
 # for the following commented out expr classes

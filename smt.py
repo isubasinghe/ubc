@@ -43,20 +43,16 @@ ops_to_smt: Mapping[source.Operator, SMTLIB] = {
     source.Operator.WORD_ARRAY_UPDATE: SMTLIB("store"),
     source.Operator.MEM_DOM: SMTLIB("mem-dom"),
     source.Operator.MEM_ACC: SMTLIB("mem-acc"),
-    source.Operator.MEM_VALID: SMTLIB("mem-valid"),
+    source.Operator.P_VALID: SMTLIB("mem-valid"),
     source.Operator.P_GLOBAL_VALID: SMTLIB("global-valid")
 }
 
 MEM_SORT = SMTLIB('(Array (_ BitVec 64) (_ BitVec 8))')
-MEM_SORT_VAR = SMTLIB("MEMSORT")
-
-MEMSORT_VALID = SMTLIB("(Array (_ BitVec 64) Bool)")
-MEMSORT_VALID_VAR = SMTLIB("MEMSORT_VALID")
 
 BOOL = SMTLIB('Bool')
 
 PMS = SMTLIB('PMS')
-HTD = SMTLIB('HTD')
+HTD = SMTLIB('(Array (_ BitVec 64) Bool)')
 
 # 〈simple_symbol 〉 ::= a non-empty sequence of letters, digits and the characters
 #                       + - / * = % ? ! . $ _ ~ & ˆ < > @ that does not start
@@ -303,6 +299,10 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
                     f"MemAcc for BitVec of size {symb_or_addr.typ.size} is not supported")
             return SMTLIB(f"({load_word_map[symb_or_addr.typ.size]} {emit_expr(mem)} {as_fn_call})")
 
+        if expr.operator is source.Operator.P_VALID:
+            print(expr)
+            exit(0)
+
         return SMTLIB(f'({ops_to_smt[expr.operator]} {" ".join(emit_expr(op) for op in expr.operands)})')
     elif isinstance(expr, source.ExprVar):
         return SMTLIB(f'{identifier(expr.name)}')
@@ -320,6 +320,12 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
     ({emit_expr(expr.expr)}) 
     :pattern ({emit_expr(expr.pattern)})
 )""")
+    elif isinstance(expr, source.ExprMemAcc):
+        assert isinstance(expr.typ, source.TypeBitVec)
+        assert expr.typ.size in load_word_map
+        fname = load_word_map[expr.typ.size]
+        new_expr = source.ExprFunction(expr.typ, source.FunctionName(fname), (expr.mem, expr.addr))
+        return emit_expr(new_expr)
 
     assert_never(expr)
 
@@ -457,9 +463,7 @@ raw_mem_acc_prelude = ['''
 
 def emit_prelude() -> Sequence[Cmd]:
     pms = CmdDeclareSort(Identifier(str(PMS)), 0)
-    htd = CmdDeclareSort(Identifier(str(HTD)), 0)
-
-    prelude: Sequence[Cmd] = [pms, htd]
+    prelude: Sequence[Cmd] = [pms]
     return prelude
 
 

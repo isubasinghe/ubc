@@ -161,6 +161,8 @@ def apply_incarnations(
         assert len(non_valid) == 0, non_valid
 
         return source.ExprForall(root.typ, root.args, apply_incarnations(context, root.expr), root.pattern, root.named, root.skolemId)
+    elif isinstance(root, source.ExprMemAcc):
+        return source.ExprMemAcc(root.typ, apply_incarnations(context, root.addr))
     assert_never(root)
 
 
