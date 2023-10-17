@@ -2,6 +2,7 @@ from typing import Mapping, Any
 import source
 import nip
 import sel4cp_spec
+import copy_spec
 from ghost_data_helpers import *
 
 
@@ -227,5 +228,7 @@ universe: Mapping[str, Mapping[str, source.Ghost[source.ProgVarName | nip.GuardV
             postcondition=eq(testghost, plus(arg(testghost), plus(arg(i32v('n')), i32(1)))))
         # the +1 breaks everything here
     },
-    "tests/libsel4cp_trunc.txt": sel4cp_spec.functions_spec
+    "tests/libsel4cp_trunc.txt": sel4cp_spec.functions_spec,
+    "examples/CFunDump.txt": copy_spec.functions_spec
+
 }

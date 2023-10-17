@@ -8,6 +8,7 @@ import textwrap
 import assume_prove
 import source
 import re
+import io
 from utils import open_temp_file
 
 SMTLIB = NewType("SMTLIB", str)
@@ -44,7 +45,8 @@ ops_to_smt: Mapping[source.Operator, SMTLIB] = {
     source.Operator.MEM_DOM: SMTLIB("mem-dom"),
     source.Operator.MEM_ACC: SMTLIB("mem-acc"),
     source.Operator.P_VALID: SMTLIB("mem-valid"),
-    source.Operator.P_GLOBAL_VALID: SMTLIB("global-valid")
+    source.Operator.P_GLOBAL_VALID: SMTLIB("global-valid"),
+    source.Operator.MEM_UPDATE: SMTLIB("mem-update")
 }
 
 MEM_SORT = SMTLIB('(Array (_ BitVec 64) (_ BitVec 8))')
@@ -234,6 +236,8 @@ def emit_bitvec_cast(target_typ: source.TypeBitVec, operator: Literal[source.Ope
 
 
 def emit_expr_symbol(expr: source.ExprSymbol[Any]) -> SMTLIB:
+    # see source.py where this is converted to
+    # a CmdDeclareFun
     return SMTLIB(f"{expr.name}@global-symbol")
 
 
@@ -282,26 +286,35 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
 
         if expr.operator is source.Operator.P_GLOBAL_VALID:
             return statically_infered_must_be_true
+        
+        if expr.operator is source.Operator.MEM_UPDATE:
+            mem, symb_or_addr, value = expr.operands
+            if not isinstance(value.typ, source.TypeBitVec):
+                assert False, "Only TypeBitVec supported"
+
+            as_fn_call = emit_expr(symb_or_addr)
+
+            value_as_smt = emit_expr(value)
+
+            if value.typ.size not in store_word_map.keys():
+                raise NotImplementedError(
+                        f"MemUpdate for BitVec of size {value.typ.size} is not supported")
+            return SMTLIB(f"({store_word_map[value.typ.size]} {emit_expr(mem)} {as_fn_call} {value_as_smt})")
 
         if expr.operator is source.Operator.MEM_ACC:
             mem, symb_or_addr = expr.operands
-            if not isinstance(symb_or_addr, source.ExprSymbol):
-                print(symb_or_addr)
-                raise NotImplementedError(
-                    "MemAcc for non symbols isn't supported yet")
-            if not isinstance(symb_or_addr.typ, source.TypeBitVec):
+            if not isinstance(expr.typ, source.TypeBitVec):
                 assert False, "Only TypBitVec is accepted"
 
             as_fn_call = emit_expr(symb_or_addr)
 
-            if symb_or_addr.typ.size not in load_word_map.keys():
+            if expr.typ.size not in load_word_map.keys():
                 raise NotImplementedError(
-                    f"MemAcc for BitVec of size {symb_or_addr.typ.size} is not supported")
-            return SMTLIB(f"({load_word_map[symb_or_addr.typ.size]} {emit_expr(mem)} {as_fn_call})")
+                    f"MemAcc for BitVec of size {expr.typ.size} is not supported")
+            return SMTLIB(f"({load_word_map[expr.typ.size]} {emit_expr(mem)} {as_fn_call})")
 
         if expr.operator is source.Operator.P_VALID:
-            print(expr)
-            exit(0)
+            return statically_infered_must_be_true
 
         return SMTLIB(f'({ops_to_smt[expr.operator]} {" ".join(emit_expr(op) for op in expr.operands)})')
     elif isinstance(expr, source.ExprVar):
@@ -320,12 +333,6 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
     ({emit_expr(expr.expr)}) 
     :pattern ({emit_expr(expr.pattern)})
 )""")
-    elif isinstance(expr, source.ExprMemAcc):
-        assert isinstance(expr.typ, source.TypeBitVec)
-        assert expr.typ.size in load_word_map
-        fname = load_word_map[expr.typ.size]
-        new_expr = source.ExprFunction(expr.typ, source.FunctionName(fname), (expr.mem, expr.addr))
-        return emit_expr(new_expr)
 
     assert_never(expr)
 
@@ -480,6 +487,7 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
     # check-sats emitted.
 
     emited_identifiers: set[Identifier] = set()
+    emitted_symbols: set[source.ExprSymbolT] = set()
     emited_variables: set[assume_prove.VarName] = set()
 
     cmds: list[Cmd] = []
@@ -515,6 +523,13 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
                     emited_identifiers.add(iden)
                     emited_variables.add(var.name)
                     expr_variables.add(var.name)
+            for symbol in source.all_symbols_in_expr(ins.expr):
+                if symbol not in emitted_symbols:
+                    # see smt.py, this is where the naming structure comes from
+                    cmds.append(CmdDeclareFun(Identifier(f"{symbol.name}@global-symbol"), (), symbol.typ))
+
+                emitted_symbols.add(symbol)
+
 
     cmds.append(EmptyLine)
 
@@ -585,15 +600,14 @@ def send_smtlib(smtlib: SMTLIB, solver: Solver) -> Iterator[CheckSatResult]:
         f.close()
         p = subprocess.Popen(get_subprocess_file(
             solver, fullpath), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        output, error = p.communicate()
         p.wait()
-    assert p.stderr is not None
-    assert p.stdout is not None
     if p.returncode != 0:
         print("stderr:")
-        print(textwrap.indent(p.stdout.read().decode('utf-8'), '   '))
+        print(textwrap.indent(error.decode('utf-8'), '   '))
         return
 
-    lines = p.stdout.read().splitlines()
+    lines = output.splitlines()
     for ln in lines:
         yield CheckSatResult(ln.decode('utf-8'))
 

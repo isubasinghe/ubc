@@ -96,20 +96,6 @@ Ch_empty_fn: source.ExprT[source.ProgVarName] = source.ExprFunction(
 lc_err = source.ExprNum(source.TypeBitVec(407), 0xdead1c)
 
 
-def htd_assigned() -> source.ExprVarT[nip.GuardVarName]:
-    return g(source.ExprVar(source.type_bool, source.ProgVarName('HTD')))
-
-
-def mem_assigned() -> source.ExprVarT[nip.GuardVarName]:
-    return g(source.ExprVar(source.type_bool, source.ProgVarName('Mem')))
-
-
-def pms_assigned() -> source.ExprVarT[nip.GuardVarName]:
-    return g(source.ExprVar(source.type_bool, source.ProgVarName('PMS')))
-
-
-def ghost_asserts_assigned() -> source.ExprVarT[nip.GuardVarName]:
-    return g(source.ExprVar(source.type_bool, source.ProgVarName('GhostAssertions')))
 
 
 def handler_loop_node_name() -> str:

@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import Mapping, NamedTuple, TYPE_CHECKING, Sequence
 from typing_extensions import assert_never
 from collections import OrderedDict
-from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT
+from dot_graph import pretty_expr
+from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT, pretty_expr_ascii
 import source
 
 if TYPE_CHECKING:
@@ -35,11 +36,14 @@ safe_structs: Mapping[TypeStruct, Struct] = {
 # These turns into asserts later
 global_asserts: Sequence[ExprT[assume_prove.VarName]] = []
 
+ring_handle_t = TypeStruct("Kernel_C.ring_handle_C")
+
 # declare your global variables here
 __loose_globals: Mapping[str, Type] = {
+    "rx_ring_mux": ring_handle_t,
+    "rx_ring_cli": ring_handle_t
 }
 
-mem = source.ExprVar(typ=source.type_mem, name=source.ProgVarName(source.Operator.MEM_VALID))
 
 def sz(ty: Type) -> int:
     """
@@ -119,7 +123,6 @@ class InitMem():
             assert False, "not yet implemented"
         else:
             assert_never(ty)
-        pass
 
 
     def init_struct(self, var: ExprSymbolT, struct: Struct) -> None:
@@ -150,6 +153,7 @@ class InitMem():
         
         cond: source.ExprT[source.ProgVarName] = source.expr_eq(var, source.ExprNum(num=starting_point, typ=source.type_word64))
         vari = source.ExprVar(source.type_word64, source.ProgVarName("i"))
+        var_htd = source.ExprVar(source.type_htd, source.ProgVarName("h"))
         # starting_point <= i < offset
         # starting_point <= i
         # offset < i
@@ -157,9 +161,16 @@ class InitMem():
         upperterm = source.expr_ult(source.ExprNum(source.type_word64, offset), vari)
         memvalid = source.expr_valid(mem, vari)
         validity = source.expr_implies(source.expr_and(lowerterm, upperterm), memvalid)
-        validityQuant = source.ExprForall(source.type_bool, [vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
+        validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
         self.sym_conds.append(cond)
         self.sym_conds.append(validityQuant)
+        print('-'*80)
+        print(cond)
+        print('*'*80)
+        print(validityQuant)
+        print('x'*80)
+        print(pretty_expr_ascii(validityQuant))
+        exit(0)
 
 def to_safe_struct(struct: syntax.Struct) -> Struct:
     fields:OrderedDict[str, StructField] = OrderedDict()

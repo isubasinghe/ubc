@@ -319,18 +319,18 @@ def send_smtlib_model(smtlib: smt.SMTLIB, solver: smt.Solver) -> smt.Responses:
     """
 
     with utils.open_temp_file(suffix='.smt2') as (f, fullpath):
+        print(fullpath)
         f.write(smtlib)
         f.close()
         p = subprocess.Popen(smt.get_subprocess_file(
             solver, fullpath), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        output, error = p.communicate()
         p.wait()
-    assert p.stderr is not None
-    assert p.stdout is not None
     if p.returncode != 0:
         print("stderr:")
-        print(textwrap.indent(p.stdout.read().decode('utf-8'), '   '))
+        print(textwrap.indent(error.decode('utf-8'), '   '))
         sys.exit(1)
-    lines = p.stdout.read().decode('utf-8')
+    lines = output.decode('utf-8')
     fn = smt_parser.parse_responses()
     res = fn(lines)
     assert not isinstance(
@@ -408,7 +408,7 @@ def diagnose_error(func: dsa.Function, node_name: source.NodeName, prog: ap.Assu
         eprint("HINT: SUSPECTED STATEMENT",
                justify="center", style="red on white")
         eprint(pretty_node(used_node_as_ap), style="magenta bold")
-
+    
     succ_smtlib_with_model = smt.make_smtlib(
         prog, prelude_files=prelude_files, assert_ok_nodes=not_taken_path.union(set(successors)), with_model=True)
 

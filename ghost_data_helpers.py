@@ -36,6 +36,9 @@ def conjs(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameK
     # return reduce(source.expr_and, xs)  # pyright: ignore
 
 
+def mem_acc_word(x: source.ExprT[source.ProgVarName]) -> source.ExprT[source.ProgVarName]:
+    return source.ExprOp(source.type_word64, source.Operator.MEM_ACC, (memvar(), x))
+
 def ors(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameKind]:
     if len(xs) == 0:
         return T
@@ -57,6 +60,12 @@ def i64v(name: str) -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(source.type_word64, source.ProgVarName(name + "___long#v"))
 
 
+def ret_32v() -> source.ExprVarT[source.ProgVarName]:
+    return source.ExprVar(source.type_word32, source.ProgVarName("ret__int#v"))
+
+def ret_64v() -> source.ExprVarT[source.ProgVarName]:
+    return source.ExprVar(source.type_word64, source.ProgVarName("ret__int#v"))
+
 def u32(n: int) -> source.ExprNumT:
     assert n <= 0xffff_ffff
     return source.ExprNum(source.type_word32, n)
@@ -71,6 +80,9 @@ def u64v(name: str) -> source.ExprVarT[source.ProgVarName]:
     # return source.ExprVar(source.type_word64, source.HumanVarName(source.HumanVarNameSubject(name), use_guard=False, path=()))
     return source.ExprVar(source.type_word64, source.ProgVarName(name + "___unsigned_long#v"))
 
+
+def ulonglong(name: str) -> source.ExprVarT[source.ProgVarName]:
+    return source.ExprVar(source.type_word64, source.ProgVarName(name + "___unsigned_longlong#v"))
 
 def i64(n: int) -> source.ExprNumT:
     assert -0x8000_0000_0000_0000 <= n and n <= 0x7fff_ffff_ffff_ffff
@@ -111,3 +123,23 @@ def lh(x: str) -> source.LoopHeaderName:
 
 def arg(v: source.ExprVarT[source.ProgVarName]) -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(v.typ, source.ProgVarName(v.name + "/arg"))
+
+
+def memvar() -> source.ExprVarT[source.ProgVarName]:
+    return source.ExprVar(source.TypeBuiltin(source.Builtin.MEM), source.ProgVarName("Mem"))
+
+
+def htd_assigned() -> source.ExprVarT[nip.GuardVarName]:
+    return g(source.ExprVar(source.type_bool, source.ProgVarName('HTD')))
+
+
+def mem_assigned() -> source.ExprVarT[nip.GuardVarName]:
+    return g(memvar())
+
+
+def pms_assigned() -> source.ExprVarT[nip.GuardVarName]:
+    return g(source.ExprVar(source.type_bool, source.ProgVarName('PMS')))
+
+
+def ghost_asserts_assigned() -> source.ExprVarT[nip.GuardVarName]:
+    return g(source.ExprVar(source.type_bool, source.ProgVarName('GhostAssertions')))

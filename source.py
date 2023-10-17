@@ -321,7 +321,6 @@ class Operator(Enum):
 
     MEM_ACC = 'MemAcc'
     MEM_UPDATE = 'MemUpdate'
-    MEM_VALID = 'MemValid'
 
     WORD_ARRAY_ACCESS = 'WordArrayAccess'
     WORD_ARRAY_UPDATE = 'WordArrayUpdate'
@@ -415,11 +414,6 @@ class ExprOp(ABCExpr[TypeKind, VarNameKind]):
     operator: Operator
     operands: tuple[Expr[TypeKind, VarNameKind], ...]
 
-@dataclass(frozen=True)
-class ExprMemAcc(ABCExpr[TypeKind, VarNameKind]):
-    addr: Expr[TypeKind, VarNameKind]
-    mem: ExprVar[TypeBuiltin, VarNameKind]
-
 
 ExprOpT: TypeAlias = ExprOp[Type, VarNameKind]
 
@@ -432,7 +426,6 @@ Expr: TypeAlias = \
     | ExprFunction[TypeKind, VarNameKind] \
     | ExprSymbol[TypeKind] \
     | ExprForall \
-    | ExprMemAcc \
 
 ExprT: TypeAlias = Expr[Type, VarNameKind]
 
@@ -459,8 +452,6 @@ def visit_expr(expr: ExprT[VarNameKind], visitor: Callable[[ExprT[VarNameKind]],
     elif isinstance(expr, ExprFunction):
         for arg in expr.arguments:
             visit_expr(arg, visitor)
-    elif isinstance(expr, ExprMemAcc):
-        visit_expr(expr.addr, visitor)
     elif not isinstance(expr, ExprVar
                         | ExprNum | ExprType | ExprSymbol | ExprForall):
         assert_never(expr)
@@ -514,13 +505,11 @@ def pretty_expr_ascii(expr: ExprT[VarNameKind]) -> str:
         return f'{expr.function_name} {" ".join(pretty_expr_ascii(arg) for arg in expr.arguments)}'
     elif isinstance(expr, ExprForall):
         return f"""
-(forall ({" ".join('(' + pretty_expr_ascii(arg) + pretty_expr_ascii(arg.typ) + ')' for arg in expr.args)}) 
+(forall ({" ".join('(' + pretty_expr_ascii(arg) + ' ' + pretty_type_ascii(arg.typ) + ')' for arg in expr.args)}) 
     ({pretty_expr_ascii(expr.expr)}) 
     :pattern ({pretty_expr_ascii(expr.pattern)})
 )"""
-    elif isinstance(expr, ExprMemAcc):
-        return f"""
-(mem-acc {pretty_expr_ascii(expr.typ)} {expr.addr})"""
+
     assert_never(expr)
 
 
@@ -549,6 +538,15 @@ def all_vars_in_expr(expr: ExprT[VarNameKind]) -> set[ExprVarT[VarNameKind]]:
     return s
 
 
+def all_symbols_in_expr(expr: ExprT[VarNameKind]) -> set[ExprSymbolT]:
+    s: set[ExprSymbolT] = set()
+    def visitor(expr: ExprT[VarNameKind]) -> None:
+        if isinstance(expr, ExprSymbol):
+            s.add(expr)
+    visit_expr(expr, visitor)
+    return s
+
+
 VarNameKind2 = TypeVar('VarNameKind2', covariant=True)
 
 # type hints could be stronger (when expr is ExprVar, we return an ExprVar,
@@ -568,9 +566,6 @@ def convert_expr_vars(f: Callable[[ExprVar[TypeKind, VarNameKind]], Expr[TypeKin
     elif isinstance(expr, ExprFunction):
         args = tuple(convert_expr_vars(f, arg) for arg in expr.arguments)
         return ExprFunction(expr.typ, expr.function_name, args)
-    elif isinstance(expr, ExprMemAcc):
-        addr = convert_expr_vars(f, expr.addr)
-        return ExprMemAcc(expr.typ, addr)
     elif isinstance(expr, ExprForall):
 
         expr_inner = convert_expr_vars(f, expr.expr)
@@ -605,10 +600,10 @@ def mk_binary_bitvec_relation(op: Operator) -> Callable[[ExprT[VarNameKind], Exp
         return ExprOp(type_bool, op, (lhs, rhs))
     return f
 
-def expr_valid(mem: ExprT[VarNameKind], loc: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
-    assert mem.typ == type_mem
+def expr_valid(htd: ExprT[VarNameKind], loc: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+    assert htd.typ == type_htd
     assert loc.typ == type_word64
-    return ExprOp(type_bool, Operator.MEM_VALID, (mem, loc))
+    return ExprOp(type_bool, Operator.P_VALID, (htd, loc))
 
 expr_ult = mk_binary_bitvec_relation(Operator.LESS)
 expr_ule = mk_binary_bitvec_relation(Operator.LESS_EQUALS)
@@ -750,8 +745,6 @@ def condition_to_evaluate_subexpr_in_expr(expr: ExprT[VarNameKind], sub: ExprT[V
         assert False, "I'm not sure what this is suppose to mean"
     elif isinstance(expr, ExprForall):
         assert False, "not sure what to do here yet"
-    elif isinstance(expr, ExprMemAcc):
-        assert False, "not sure what to do here"
     assert_never(expr)
 
 # for the following commented out expr classes
@@ -1003,7 +996,11 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
                           loop_iterations={
                               lh: empty_loop_ghost for lh in self.loops},
                           )
-        assert self.loops.keys() == ghost.loop_invariants.keys(), "loop invariants don't match"
+        
+        if self.loops.keys() != ghost.loop_invariants.keys():
+            print("Expected loop invariants: ", self.loops.keys())
+            print("Got loop invariants: ", ghost.loop_invariants.keys())
+            assert False, "loop invariants don't match"
         return GenericFunction(name=self.name, variables=self.variables, nodes=self.nodes, loops=self.loops, signature=self.signature, cfg=self.cfg, ghost=ghost)
 
 
