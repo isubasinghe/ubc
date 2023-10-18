@@ -11,6 +11,7 @@ let
     ps.pytest-xdist
   ]);
 in pkgs.mkShell {
+
   packages = [
     pythonEnv
     pkgs.pyright
@@ -19,5 +20,6 @@ in pkgs.mkShell {
     pkgs.cvc5
     pkgs.time
     pkgs.chromium
+    pkgs.watchexec
   ];
 }

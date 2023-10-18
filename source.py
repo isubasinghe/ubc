@@ -231,10 +231,9 @@ ExprVarT: TypeAlias = ExprVar[Type, VarNameKind]
 
 @dataclass(frozen=True)
 class ExprForall(ABCExpr[TypeKind, VarNameKind]):
-    args: Sequence[ExprVar[TypeKind, VarNameKind]]
+    args: Sequence[ExprVar[TypeKind, Any]]
     expr: Expr[TypeKind, VarNameKind]
-    pattern: Expr[TypeKind, VarNameKind]
-    # noPattern: Optional[Expr]
+    pattern: Expr[TypeKind, Any]
     named: str
     skolemId: str
 
@@ -425,7 +424,7 @@ Expr: TypeAlias = \
     | ExprOp[TypeKind, VarNameKind] \
     | ExprFunction[TypeKind, VarNameKind] \
     | ExprSymbol[TypeKind] \
-    | ExprForall \
+    | ExprForall[TypeKind, VarNameKind] \
 
 ExprT: TypeAlias = Expr[Type, VarNameKind]
 
@@ -600,10 +599,10 @@ def mk_binary_bitvec_relation(op: Operator) -> Callable[[ExprT[VarNameKind], Exp
         return ExprOp(type_bool, op, (lhs, rhs))
     return f
 
-def expr_valid(htd: ExprT[VarNameKind], loc: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
+def expr_valid(htd: ExprT[VarNameKind], ty: Type, loc: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     assert htd.typ == type_htd
     assert loc.typ == type_word64
-    return ExprOp(type_bool, Operator.P_VALID, (htd, loc))
+    return ExprOp(type_bool, Operator.P_VALID, (htd, ExprType(ty, ty), loc))
 
 expr_ult = mk_binary_bitvec_relation(Operator.LESS)
 expr_ule = mk_binary_bitvec_relation(Operator.LESS_EQUALS)

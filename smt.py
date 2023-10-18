@@ -8,9 +8,9 @@ import textwrap
 import assume_prove
 import source
 import re
-import io
 from utils import open_temp_file
 
+import prog_globals as pg
 SMTLIB = NewType("SMTLIB", str)
 
 statically_infered_must_be_true = SMTLIB('true')
@@ -314,7 +314,13 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
             return SMTLIB(f"({load_word_map[expr.typ.size]} {emit_expr(mem)} {as_fn_call})")
 
         if expr.operator is source.Operator.P_VALID:
-            return statically_infered_must_be_true
+            assert len(expr.operands) == 3
+            # We do not care about the type
+            htd, _, addr = expr.operands
+            
+            if not isinstance(addr, source.ExprSymbol | source.ExprVar | source.ExprNum | source.ExprOp):
+                assert False, f"Expression {addr} not supported"
+            return SMTLIB(f"(= (select {emit_expr(htd)} {emit_expr(addr)}) true)")
 
         return SMTLIB(f'({ops_to_smt[expr.operator]} {" ".join(emit_expr(op) for op in expr.operands)})')
     elif isinstance(expr, source.ExprVar):
@@ -329,9 +335,8 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
         return SMTLIB(f'({expr.function_name} {" ".join(emit_expr(arg) for arg in expr.arguments)})')
     elif isinstance(expr, source.ExprForall):
         return SMTLIB(f"""
-(forall ({" ".join('(' + emit_expr(arg) + emit_sort(arg.typ) + ')' for arg in expr.args)}) 
-    ({emit_expr(expr.expr)}) 
-    :pattern ({emit_expr(expr.pattern)})
+(forall ({" ".join('(' + emit_expr(arg) +' ' + emit_sort(arg.typ) + ')' for arg in expr.args)}) 
+    {emit_expr(expr.expr)}
 )""")
 
     assert_never(expr)
@@ -527,6 +532,13 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
                 if symbol not in emitted_symbols:
                     # see smt.py, this is where the naming structure comes from
                     cmds.append(CmdDeclareFun(Identifier(f"{symbol.name}@global-symbol"), (), symbol.typ))
+                    if symbol not in pg.mem.sym_conds:
+                        assert False, f"{symbol} not in program globals"
+
+                    conds = pg.mem.sym_conds[symbol]
+                    for cond in conds:
+                        cmds.append(CmdAssert(cond))
+
 
                 emitted_symbols.add(symbol)
 
@@ -557,7 +569,7 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
     raw_prelude = ""
     # overwritten if file prelude exists
     if len(prelude_files) == 0:
-        raw_prelude = SMTLIB('(set-logic QF_ABV)')
+        raw_prelude = SMTLIB('(set-logic ALL)')
 
     # NOTE: prelude order matters
     for file in prelude_files:

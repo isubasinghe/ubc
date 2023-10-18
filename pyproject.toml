@@ -1,0 +1,6 @@
+[tool.pyright]
+include = ["."]
+ignore = ["logic.py",
+  "syntax.py",
+  "target_objects.py"
+]

@@ -77,13 +77,13 @@ def make_state_update_for_node(node: source.Node[source.ProgVarName], new_variab
                 new_variables.add(guard_var(upd.var))
                 yield source.Update(guard_var(upd.var), var_deps(upd.expr))
     elif isinstance(node, source.NodeCall):
-        deps = reduce(source.expr_and, (var_deps(arg)
+        deps = reduce(source.expr_and, (var_deps(arg) # pyright: ignore
                                         for arg in node.args), source.expr_true)
         for ret in node.rets:
             assert not source.is_loop_counter_name(
                 ret.name), "didn't expect a return value to be a loop counter"
             new_variables.add(guard_var(ret))  # new variables go in LHS
-            yield source.Update(guard_var(ret), deps)
+            yield source.Update(guard_var(ret), deps) # pyright: ignore
     else:
         assert not isinstance(node, source.NodeEmpty | source.NodeCond |
                               source.NodeAssume | source.NodeAssert), "doesn't make sense to have a state update for those nodes"
@@ -98,7 +98,7 @@ def make_protection_for_node(node: source.Node[source.ProgVarName]) -> Tuple[Set
 
     # return variables, source.ExprOp(source.type_bool, source.Operator.AND, guards)
     # for now, we ignore short circuiting
-    return (variables, reduce(source.expr_and, guards, source.expr_true))
+    return (variables, reduce(source.expr_and, guards, source.expr_true)) #pyright: ignore
     # return (variables, reduce(source.expr_and, (guard_var(v) for v in source.used_variables_in_node(node) if not source.is_loop_counter_name(v.name)), source.expr_true))
 
 
@@ -295,5 +295,5 @@ def nip(func: source.Function) -> Function:
 
     # return Function(cfg=cfg, nodes=new_nodes, loops=loops, signature=func.signature,
     #                 name=func.name, ghost=unify_variables_to_make_ghost(func))
-    return Function(cfg=cfg, variables=func.variables | all_guard_vars, nodes=new_nodes, loops=loops, signature=func.signature,
-                    name=func.name, ghost=func.ghost)
+    return Function(cfg=cfg, variables=func.variables | all_guard_vars, nodes=new_nodes, loops=loops, signature=func.signature, # pyright: ignore
+                    name=func.name, ghost=func.ghost) 

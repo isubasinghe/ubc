@@ -81,8 +81,6 @@ def convert_expr_dsa_vars_to_ap(expr: source.ExprT[dsa.Incarnation[source.ProgVa
         return source.ExprFunction(expr.typ, expr.function_name, [convert_expr_dsa_vars_to_ap(arg) for arg in expr.arguments], )
     elif isinstance(expr, source.ExprForall):
         assert False, "not yet implemented"
-    elif isinstance(expr, source.ExprMemAcc):
-        return convert_expr_dsa_vars_to_ap(expr.addr)
     assert_never(expr)
 
 
@@ -98,6 +96,7 @@ def make_assume(var: dsa.Var[source.ProgVarName | nip.GuardVarName], expr: sourc
 # TODO: rename to base var to ap var
 def prog_var_to_ap_var(v: source.ExprVarT[source.ProgVarName | nip.GuardVarName]) -> APVar:
     return source.ExprVar(v.typ, VarName(v.name))
+
 
 
 def get_loop_count_target_var(loop: source.Loop[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]) -> source.ExprVarT[dsa.Incarnation[source.ProgVarName]]:

@@ -7,9 +7,10 @@ from ghost_data_helpers import *
 testghost = source.ExprVar(source.TypeBitVec(
     32), source.ProgVarName("test#ghost"))
 
-functions_spec: Mapping[str, source.Ghost[source.ProgVarName]] = {
+
+functions_spec: Mapping[str, source.Ghost[source.ProgVarName | nip.GuardVarName]] = {
     "Kernel_C.process_rx_complete": source.Ghost(
-        precondition=conjs(source.expr_true),
+        precondition=conjs((source.expr_true)),
         postcondition=conjs(source.expr_true),
         loop_invariants={lh('20'): conjs(
                                         g(ret_32v()),

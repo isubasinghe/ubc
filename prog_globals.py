@@ -3,9 +3,10 @@ from typing import Mapping, NamedTuple, TYPE_CHECKING, Sequence
 from typing_extensions import assert_never
 from collections import OrderedDict
 from dot_graph import pretty_expr
-from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT, pretty_expr_ascii
+from source import ProgVarName, TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT, pretty_expr_ascii
 import source
 
+import assume_prove as ap
 if TYPE_CHECKING:
     import assume_prove
     import syntax
@@ -41,7 +42,13 @@ ring_handle_t = TypeStruct("Kernel_C.ring_handle_C")
 # declare your global variables here
 __loose_globals: Mapping[str, Type] = {
     "rx_ring_mux": ring_handle_t,
-    "rx_ring_cli": ring_handle_t
+    "rx_ring_cli": ring_handle_t,
+    "cookie": source.type_word64,
+    "m_len": source.type_word64,
+    "m_addr": source.type_word64,
+    "c_len": source.type_word64,
+    "c_addr": source.type_word64,
+    "cookie2": source.type_word64,
 }
 
 
@@ -80,12 +87,12 @@ class InitMem():
     addr_bits: int
     offset: int # we layout variables one by one
 
-    sym_conds: list[source.ExprT[source.ProgVarName]]
+    sym_conds: Mapping[source.ExprSymbolT, list[source.ExprT[ap.VarName]]]
 
     def __init__(self, addr_bits: int):
         self.addr_bits = addr_bits
         self.offset = 0
-        self.sym_conds = []
+        self.sym_conds = {}
 
     def init_mem(self, var: ExprSymbolT, ty: Type) -> None:
         """
@@ -108,7 +115,7 @@ class InitMem():
             struct = safe_structs[ty]
             self.init_struct(var, struct)
         elif isinstance(ty, TypeBitVec):
-            assert False, "not yet implemented"
+            self.init_bitvec(var)
         elif isinstance(ty, TypeArray):
             assert False, "not yet implemented"
         elif isinstance(ty, TypeWordArray):
@@ -126,6 +133,8 @@ class InitMem():
 
 
     def init_struct(self, var: ExprSymbolT, struct: Struct) -> None:
+        assert var not in self.sym_conds 
+        local_sym_conds: dict[source.ExprSymbolT, list[source.ExprT[ap.VarName]]] = {k: v for k,v in self.sym_conds.items()}
 
         # alignment is given by default through this
         starting_point = self.offset + (self.offset % struct.align)
@@ -151,26 +160,53 @@ class InitMem():
         assert offset == expected_offset
         self.offset = offset
         
-        cond: source.ExprT[source.ProgVarName] = source.expr_eq(var, source.ExprNum(num=starting_point, typ=source.type_word64))
-        vari = source.ExprVar(source.type_word64, source.ProgVarName("i"))
-        var_htd = source.ExprVar(source.type_htd, source.ProgVarName("h"))
+        cond: source.ExprT[ap.VarName] = source.expr_eq(var, source.ExprNum(num=starting_point, typ=source.type_word64))
+        vari = source.ExprVar(source.type_word64, ap.VarName("i"))
+        var_htd = source.ExprVar(source.type_htd, ap.VarName("h"))
         # starting_point <= i < offset
         # starting_point <= i
         # offset < i
         lowerterm = source.expr_ule(source.ExprNum(source.type_word64, starting_point), vari)
         upperterm = source.expr_ult(source.ExprNum(source.type_word64, offset), vari)
-        memvalid = source.expr_valid(mem, vari)
+        memvalid = source.expr_valid(var_htd, struct.typ, vari)
         validity = source.expr_implies(source.expr_and(lowerterm, upperterm), memvalid)
         validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
-        self.sym_conds.append(cond)
-        self.sym_conds.append(validityQuant)
-        print('-'*80)
-        print(cond)
-        print('*'*80)
-        print(validityQuant)
-        print('x'*80)
-        print(pretty_expr_ascii(validityQuant))
-        exit(0)
+        local_sym_conds[var] = [cond, validityQuant]
+        self.sym_conds = local_sym_conds
+
+
+    def init_bitvec(self, var: ExprSymbolT) -> None:
+        assert isinstance(var.typ, source.TypeBitVec)
+        assert var not in self.sym_conds 
+        local_sym_conds: dict[source.ExprSymbolT, list[source.ExprT[ap.VarName]]] = {k: v for k,v in self.sym_conds.items()}
+        
+        alignment = 0
+        if var.typ.size == 8:
+            alignment = 0
+        elif var.typ.size == 16:
+            alignment = 2
+        elif var.typ.size == 32:
+            alignment = 4
+        elif var.typ.size == 64:
+            alignment = 8
+        else:
+            assert False, f"{var.typ.size} size is not supported"
+
+        myoffset = self.offset + (self.offset % alignment)
+        end = myoffset + int(var.typ.size / 8)
+
+        vari = source.ExprVar(source.type_word64, ap.VarName("i"))
+        var_htd = source.ExprVar(source.type_htd, ap.VarName("h"))
+
+        cond: source.ExprT[ap.VarName] = source.expr_eq(var, source.ExprNum(num=myoffset, typ=source.type_word64))
+        lowerterm = source.expr_ule(source.ExprNum(source.type_word64, myoffset), vari)
+        upperterm = source.expr_ult(source.ExprNum(source.type_word64, end), vari)
+        memvalid = source.expr_valid(var_htd, var.typ, vari)
+        validity = source.expr_implies(source.expr_and(lowerterm, upperterm), memvalid)
+        validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{var.name}", f"skolem-valid-{var.name}")
+        local_sym_conds[var] = [cond, validityQuant]
+        self.sym_conds = local_sym_conds
+        self.offset = end
 
 def to_safe_struct(struct: syntax.Struct) -> Struct:
     fields:OrderedDict[str, StructField] = OrderedDict()
@@ -209,6 +245,7 @@ def populate_safe_globals() -> None:
     safe_globals = safe_globals_local
 
 
+mem = InitMem(64)
 
 def initialise_memory() -> None:
     """
@@ -216,6 +253,5 @@ def initialise_memory() -> None:
     because our globals are by definition already valid.
     """
     
-    mem = InitMem(64)
     for var, ty in safe_globals.items():
         mem.init_mem(var, ty)
