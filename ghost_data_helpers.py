@@ -39,6 +39,7 @@ def conjs(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameK
 def mem_acc_word(x: source.ExprT[source.ProgVarName]) -> source.ExprT[source.ProgVarName]:
     return source.ExprOp(source.type_word64, source.Operator.MEM_ACC, (memvar(), x))
 
+
 def ors(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameKind]:
     if len(xs) == 0:
         return T
@@ -63,8 +64,10 @@ def i64v(name: str) -> source.ExprVarT[source.ProgVarName]:
 def ret_32v() -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(source.type_word32, source.ProgVarName("ret__int#v"))
 
+
 def ret_64v() -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(source.type_word64, source.ProgVarName("ret__int#v"))
+
 
 def u32(n: int) -> source.ExprNumT:
     assert n <= 0xffff_ffff
@@ -83,6 +86,7 @@ def u64v(name: str) -> source.ExprVarT[source.ProgVarName]:
 
 def ulonglong(name: str) -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(source.type_word64, source.ProgVarName(name + "___unsigned_longlong#v"))
+
 
 def i64(n: int) -> source.ExprNumT:
     assert -0x8000_0000_0000_0000 <= n and n <= 0x7fff_ffff_ffff_ffff

@@ -96,8 +96,6 @@ Ch_empty_fn: source.ExprT[source.ProgVarName] = source.ExprFunction(
 lc_err = source.ExprNum(source.TypeBitVec(407), 0xdead1c)
 
 
-
-
 def handler_loop_node_name() -> str:
     return '3'
 

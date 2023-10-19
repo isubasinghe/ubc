@@ -389,13 +389,6 @@
 (declare-fun enqueued___unsigned_longlong@v@assigned~2 () Bool)
 (declare-fun rx_ring_mux@global-symbol () (_ BitVec 64))
 (assert (= rx_ring_mux@global-symbol (_ bv0 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (!
-      (=> (and (bvule (_ bv0 64) i) (bvult (_ bv16 64) i)) (= (select h i) true))
-      :pattern (= (select h i) true)
-    )
-))
 (declare-fun ring___ptr_to_struct_ring_buffer_C@v/call-arg~1 () (_ BitVec 64))
 (declare-fun Mem/call-arg~1 () (Array (_ BitVec 64) (_ BitVec 8)))
 (declare-fun HTD/call-arg~1 () (Array (_ BitVec 64) Bool))
@@ -426,11 +419,6 @@
 (declare-fun ring___ptr_to_struct_ring_buffer_C@v/call-arg~3 () (_ BitVec 64))
 (declare-fun rx_ring_cli@global-symbol () (_ BitVec 64))
 (assert (= rx_ring_cli@global-symbol (_ bv16 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv16 64) i) (bvult (_ bv32 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun ring___ptr_to_struct_ring_buffer_C@v/call-arg~2 () (_ BitVec 64))
 (declare-fun Mem/call-arg~2 () (Array (_ BitVec 64) (_ BitVec 8)))
 (declare-fun HTD/call-arg~2 () (Array (_ BitVec 64) Bool))
@@ -553,25 +541,10 @@
 (declare-fun test@ghost~13 () (_ BitVec 32))
 (declare-fun cookie@global-symbol () (_ BitVec 64))
 (assert (= cookie@global-symbol (_ bv32 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv32 64) i) (bvult (_ bv40 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun m_len@global-symbol () (_ BitVec 64))
 (assert (= m_len@global-symbol (_ bv40 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv40 64) i) (bvult (_ bv48 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun m_addr@global-symbol () (_ BitVec 64))
 (assert (= m_addr@global-symbol (_ bv48 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv48 64) i) (bvult (_ bv56 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun ring___ptr_to_struct_ring_handle_C@v/call-arg~2 () (_ BitVec 64))
 (declare-fun addr___ptr_to_unsigned_longlong@v/call-arg~2 () (_ BitVec 64))
 (declare-fun len___ptr_to_unsigned@v/call-arg~2 () (_ BitVec 64))
@@ -586,25 +559,10 @@
 (declare-fun HTD~3 () (Array (_ BitVec 64) Bool))
 (declare-fun c_len@global-symbol () (_ BitVec 64))
 (assert (= c_len@global-symbol (_ bv56 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv56 64) i) (bvult (_ bv64 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun c_addr@global-symbol () (_ BitVec 64))
 (assert (= c_addr@global-symbol (_ bv64 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv64 64) i) (bvult (_ bv72 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun cookie2@global-symbol () (_ BitVec 64))
 (assert (= cookie2@global-symbol (_ bv72 64)))
-(assert 
-(forall ((h (Array (_ BitVec 64) Bool)) (i (_ BitVec 64))) 
-    (=> (and (bvule (_ bv72 64) i) (bvult (_ bv80 64) i)) (= (select h i) true))
-    :pattern ((= (select h i) true))
-))
 (declare-fun ring___ptr_to_struct_ring_handle_C@v/call-arg~3 () (_ BitVec 64))
 (declare-fun addr___ptr_to_unsigned_longlong@v/call-arg~3 () (_ BitVec 64))
 (declare-fun len___ptr_to_unsigned@v/call-arg~3 () (_ BitVec 64))
@@ -1089,4 +1047,4 @@
 (check-sat)
 (assert (not node_97_ok))
 (check-sat)
-
+/tmp/tmp8lf09458.smt2

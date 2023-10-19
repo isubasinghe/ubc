@@ -408,7 +408,7 @@ def diagnose_error(func: dsa.Function, node_name: source.NodeName, prog: ap.Assu
         eprint("HINT: SUSPECTED STATEMENT",
                justify="center", style="red on white")
         eprint(pretty_node(used_node_as_ap), style="magenta bold")
-    
+
     succ_smtlib_with_model = smt.make_smtlib(
         prog, prelude_files=prelude_files, assert_ok_nodes=not_taken_path.union(set(successors)), with_model=True)
 

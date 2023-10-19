@@ -57,40 +57,6 @@ def same_var_diff_type(func: source.Function) -> None:
         print(f"diffs: {func.name} {diff}")
 
 
-@unique
-class CmdlineOption(Enum):
-    SHOW_RAW = '--show-raw'
-    """ Show the raw function """
-
-    SHOW_GRAPH = '--show-graph'
-    """ Show the graph lang """
-
-    SHOW_NIP = '--show-nip'
-    """ Show the non-initialized protected cfg """
-
-    SHOW_GHOST = '--show-ghost'
-    """ Show the cfg with the ghost code inserted
-        (pre condition, post condition and loop invariants)
-    """
-
-    SHOW_DSA = '--show-dsa'
-    """ Show the graph after having applied dynamic single assignment """
-
-    SHOW_AP = '--show-ap'
-    """ Show the assume prove prog """
-
-    SHOW_SMT = '--show-smt'
-    """ Show the SMT given to the solvers """
-
-    SHOW_SATS = '--show-sats'
-    """ Show the raw results from the smt solvers (sat/unsat) """
-
-    SHOW_LINE_NUMBERS = '--ln'
-    """ Shows line numbers for the smt """
-
-    SPLIT_PROVE_CONJUNCTIONS = "--split-prove-conjunctions"
-
-
 def find_functions_by_name(function_names: Collection[str], target: str) -> str:
     if target in function_names:
         return target
@@ -117,7 +83,7 @@ def find_functions_by_name(function_names: Collection[str], target: str) -> str:
     return selected
 
 
-def run(filename: str, function_names: Collection[str], options: Collection[CmdlineOption], preludes: Sequence[str]) -> None:
+def run(filename: str, function_names: Collection[str], args: argparse.Namespace, preludes: Sequence[str]) -> None:
     if filename.lower() == 'dsa':
         filename = 'examples/dsa.txt'
     elif filename.lower() == 'kernel':
@@ -150,39 +116,40 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
 
     for name in function_names:
         unsafe_func = functions[find_functions_by_name(functions.keys(), name)]
-        if CmdlineOption.SHOW_RAW in options:
+        if args.show_raw:
             viz_raw_function(unsafe_func)
 
         prog_func = source.convert_function(unsafe_func).with_ghost(
             ghost_data.get(filename, unsafe_func.name))
-        if CmdlineOption.SHOW_GRAPH in options:
+        if args.show_graph:
             viz_function(prog_func)
 
         nip_func = nip.nip(prog_func)
-        if CmdlineOption.SHOW_NIP in options:
+        if args.show_nip:
             viz_function(nip_func)
 
         ghost_func = ghost_code.sprinkle_ghost_code(
             filename, nip_func, functions)
-        if CmdlineOption.SHOW_GHOST in options:
+        if args.show_nip:
             viz_function(ghost_func)
 
-        if CmdlineOption.SPLIT_PROVE_CONJUNCTIONS in options:
+        if args.split_prove_conjunctions:
             ghost_func = split_prove_nodes(ghost_func)
 
         dsa_func = dsa.dsa(ghost_func)
-        if CmdlineOption.SHOW_DSA in options:
+        if args.show_dsa:
             viz_function(dsa_func)
 
-        validate_dsa.validate(ghost_func, dsa_func)
+        if not args.fast:
+            validate_dsa.validate(ghost_func, dsa_func)
 
         prog = assume_prove.make_prog(dsa_func)
-        if CmdlineOption.SHOW_AP in options:
+        if args.show_ap:
             assume_prove.pretty_print_prog(prog)
 
         smtlib = smt.make_smtlib(prog, prelude_files=preludes)
-        if CmdlineOption.SHOW_SMT in options:
-            if CmdlineOption.SHOW_LINE_NUMBERS in options:
+        if args.show_smt:
+            if args.show_line_numbers:
                 lines = smtlib.splitlines()
                 w = len(str(len(lines)))
                 for i, line in enumerate(lines):
@@ -191,7 +158,7 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
                 print(smtlib)
 
         sats = tuple(smt.send_smtlib(smtlib, smt.Solver.CVC5))
-        if CmdlineOption.SHOW_SATS in options:
+        if args.show_sats:
             print(sats)
         assert len(sats) == 2
         result = smt.parse_sats(sats)
@@ -207,19 +174,6 @@ def run(filename: str, function_names: Collection[str], options: Collection[Cmdl
             exit(1)
         else:
             assert_never(result)
-
-
-def usage() -> None:
-    print('usage: python3 main.py [options] <graphfile.txt> function-names...')
-    print()
-    print('  --show-graph: Show the graph lang')
-    print('  --show-nip: Show the nip stage')
-    print('  --show-ghost: Show the ghost stage')
-    print('  --show-dsa: Show the graph after having applied dynamic single assignment')
-    print('  --show-ap: Show the assume prove prog')
-    print('  --show-smt: Show the SMT given to the solvers')
-    print('  --show-sats: Show the raw results from the smt solvers (sat/unsat)')
-    exit(0)
 
 
 def debug1() -> None:
@@ -264,8 +218,21 @@ def main() -> None:
         epilog="Note: You can separate items explicitly by '--'")
     parser.add_argument("file", type=str, help="GraphLang file to use")
     parser.add_argument("fnames", default=[], nargs='*')
+
+    parser.add_argument("-P", "--profile", help="Profile the code",
+                        default=False, action="store_true")
+
+    parser.add_argument("-R", "--show-raw", help="Show the raw function",
+                        default=False, action="store_true")
+
+    parser.add_argument("-f", "--fast", help="When used in developing, disable validate_dsa to run faster",
+                        default=False, action="store_true")
+
     parser.add_argument("-g", "--show-graph", help="Show the graph lang",
                         default=False, action="store_true")
+    parser.add_argument("-l", "--show-line-numbers", help="Show the graph lang",
+                        default=False, action="store_true")
+
     parser.add_argument("-n", "--show-nip", help="Show the nip stage",
                         default=False, action="store_true")
     parser.add_argument("-gh", "--show-ghost",
@@ -293,32 +260,23 @@ def main() -> None:
         print(f"{args.file} is not a valid file")
         exit(1)
 
-    if '--help' in sys.argv or '-h' in sys.argv or len(sys.argv) == 1:
-        usage()
+    if args.profile:
+        import cProfile
+        print("Profiling")
+        with cProfile.Profile() as pr:
+            pr.enable()
+            try:
+                run(args.file, args.fnames, args, args.preludes)
+            finally:
+                pr.print_stats()
+                pr.dump_stats("output.prof")
+        exit(0)
 
     if '--debug' in sys.argv:
         debug()
         exit(0)
 
-    # FIXME: uh why are we doing this? just pass args straight
-    options: set[CmdlineOption] = set([])
-    if args.show_graph:
-        options.add(CmdlineOption.SHOW_GRAPH)
-    if args.show_nip:
-        options.add(CmdlineOption.SHOW_NIP)
-    if args.show_ghost:
-        options.add(CmdlineOption.SHOW_GHOST)
-    if args.show_dsa:
-        options.add(CmdlineOption.SHOW_DSA)
-    if args.show_ap:
-        options.add(CmdlineOption.SHOW_AP)
-    if args.show_smt:
-        options.add(CmdlineOption.SHOW_SMT)
-    if args.show_sats:
-        options.add(CmdlineOption.SHOW_SATS)
-    if args.split_prove_conjunctions:
-        options.add(CmdlineOption.SPLIT_PROVE_CONJUNCTIONS)
-    run(args.file, args.fnames, options, args.preludes)
+    run(args.file, args.fnames, args, args.preludes)
 
 
 # if __name__ == "__main__":

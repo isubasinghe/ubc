@@ -98,7 +98,6 @@ def prog_var_to_ap_var(v: source.ExprVarT[source.ProgVarName | nip.GuardVarName]
     return source.ExprVar(v.typ, VarName(v.name))
 
 
-
 def get_loop_count_target_var(loop: source.Loop[dsa.Incarnation[source.ProgVarName | nip.GuardVarName]]) -> source.ExprVarT[dsa.Incarnation[source.ProgVarName]]:
     for target in loop.targets:
         if target.name.base.startswith('loop#') and target.name.base.endswith('#count'):

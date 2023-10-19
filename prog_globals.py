@@ -2,8 +2,7 @@ from __future__ import annotations
 from typing import Mapping, NamedTuple, TYPE_CHECKING, Sequence
 from typing_extensions import assert_never
 from collections import OrderedDict
-from dot_graph import pretty_expr
-from source import ProgVarName, TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT, pretty_expr_ascii
+from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT
 import source
 
 import assume_prove as ap
@@ -11,10 +10,12 @@ if TYPE_CHECKING:
     import assume_prove
     import syntax
 
+
 class StructField(NamedTuple):
     name: str
     offset: int
     typ: Type
+
 
 class Struct(NamedTuple):
     """
@@ -24,6 +25,7 @@ class Struct(NamedTuple):
     align: int
     fields: Mapping[str, StructField]
     typ: Type
+
 
 safe_globals: Mapping[ExprSymbolT, Type] = {
 
@@ -83,9 +85,10 @@ def sz(ty: Type) -> int:
 
     return size
 
+
 class InitMem():
     addr_bits: int
-    offset: int # we layout variables one by one
+    offset: int  # we layout variables one by one
 
     sym_conds: Mapping[source.ExprSymbolT, list[source.ExprT[ap.VarName]]]
 
@@ -131,18 +134,18 @@ class InitMem():
         else:
             assert_never(ty)
 
-
     def init_struct(self, var: ExprSymbolT, struct: Struct) -> None:
-        assert var not in self.sym_conds 
-        local_sym_conds: dict[source.ExprSymbolT, list[source.ExprT[ap.VarName]]] = {k: v for k,v in self.sym_conds.items()}
+        assert var not in self.sym_conds
+        local_sym_conds: dict[source.ExprSymbolT, list[source.ExprT[ap.VarName]]] = {
+            k: v for k, v in self.sym_conds.items()}
 
         # alignment is given by default through this
         starting_point = self.offset + (self.offset % struct.align)
 
         offset = starting_point
         local_offset = 0
-    
-        # finding our next offset is simple, 
+
+        # finding our next offset is simple,
         # we just want to sanity check though
 
         assert len(struct.fields) >= 1, "structs should have at least one field"
@@ -159,27 +162,31 @@ class InitMem():
 
         assert offset == expected_offset
         self.offset = offset
-        
-        cond: source.ExprT[ap.VarName] = source.expr_eq(var, source.ExprNum(num=starting_point, typ=source.type_word64))
+
+        cond: source.ExprT[ap.VarName] = source.expr_eq(
+            var, source.ExprNum(num=starting_point, typ=source.type_word64))
         vari = source.ExprVar(source.type_word64, ap.VarName("i"))
         var_htd = source.ExprVar(source.type_htd, ap.VarName("h"))
         # starting_point <= i < offset
         # starting_point <= i
         # offset < i
-        lowerterm = source.expr_ule(source.ExprNum(source.type_word64, starting_point), vari)
-        upperterm = source.expr_ult(source.ExprNum(source.type_word64, offset), vari)
+        lowerterm = source.expr_ule(source.ExprNum(
+            source.type_word64, starting_point), vari)
+        upperterm = source.expr_ult(
+            source.ExprNum(source.type_word64, offset), vari)
         memvalid = source.expr_valid(var_htd, struct.typ, vari)
-        validity = source.expr_implies(source.expr_and(lowerterm, upperterm), memvalid)
-        validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
-        local_sym_conds[var] = [cond, validityQuant]
+        validity = source.expr_implies(
+            source.expr_and(lowerterm, upperterm), memvalid)
+        # validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
+        local_sym_conds[var] = [cond]
         self.sym_conds = local_sym_conds
-
 
     def init_bitvec(self, var: ExprSymbolT) -> None:
         assert isinstance(var.typ, source.TypeBitVec)
-        assert var not in self.sym_conds 
-        local_sym_conds: dict[source.ExprSymbolT, list[source.ExprT[ap.VarName]]] = {k: v for k,v in self.sym_conds.items()}
-        
+        assert var not in self.sym_conds
+        local_sym_conds: dict[source.ExprSymbolT, list[source.ExprT[ap.VarName]]] = {
+            k: v for k, v in self.sym_conds.items()}
+
         alignment = 0
         if var.typ.size == 8:
             alignment = 0
@@ -198,23 +205,29 @@ class InitMem():
         vari = source.ExprVar(source.type_word64, ap.VarName("i"))
         var_htd = source.ExprVar(source.type_htd, ap.VarName("h"))
 
-        cond: source.ExprT[ap.VarName] = source.expr_eq(var, source.ExprNum(num=myoffset, typ=source.type_word64))
-        lowerterm = source.expr_ule(source.ExprNum(source.type_word64, myoffset), vari)
-        upperterm = source.expr_ult(source.ExprNum(source.type_word64, end), vari)
+        cond: source.ExprT[ap.VarName] = source.expr_eq(
+            var, source.ExprNum(num=myoffset, typ=source.type_word64))
+        lowerterm = source.expr_ule(source.ExprNum(
+            source.type_word64, myoffset), vari)
+        upperterm = source.expr_ult(
+            source.ExprNum(source.type_word64, end), vari)
         memvalid = source.expr_valid(var_htd, var.typ, vari)
-        validity = source.expr_implies(source.expr_and(lowerterm, upperterm), memvalid)
-        validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{var.name}", f"skolem-valid-{var.name}")
-        local_sym_conds[var] = [cond, validityQuant]
+        validity = source.expr_implies(
+            source.expr_and(lowerterm, upperterm), memvalid)
+        # validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{var.name}", f"skolem-valid-{var.name}")
+        local_sym_conds[var] = [cond]
         self.sym_conds = local_sym_conds
         self.offset = end
 
+
 def to_safe_struct(struct: syntax.Struct) -> Struct:
-    fields:OrderedDict[str, StructField] = OrderedDict()
+    fields: OrderedDict[str, StructField] = OrderedDict()
 
     for field_name, (typ, offset, _) in struct.fields.items():
         assert field_name not in fields
         fields[field_name] = StructField(field_name, offset, convert_type(typ))
     return Struct(struct.name, struct.size, struct.align, fields, convert_type(struct.typ))
+
 
 def populate_safe_structs(structs: Mapping[str, syntax.Struct]) -> None:
     safe_structs_local: dict[TypeStruct, Struct] = {}
@@ -236,22 +249,24 @@ def populate_safe_globals() -> None:
     associated type
     """
     global safe_globals
-    safe_globals_local: dict[ExprSymbolT, Type] = {} 
+    safe_globals_local: dict[ExprSymbolT, Type] = {}
     for variable, typ in __loose_globals.items():
-        if isinstance(typ, TypeStruct): 
+        if isinstance(typ, TypeStruct):
             assert typ in safe_structs
-        safe_globals_local[ExprSymbolT(name=variable, typ=source.type_word64)] = typ
+        safe_globals_local[ExprSymbolT(
+            name=variable, typ=source.type_word64)] = typ
 
     safe_globals = safe_globals_local
 
 
 mem = InitMem(64)
 
+
 def initialise_memory() -> None:
     """
     We need to initialise the array used to represent memory, 
     because our globals are by definition already valid.
     """
-    
+
     for var, ty in safe_globals.items():
         mem.init_mem(var, ty)

@@ -286,7 +286,7 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
 
         if expr.operator is source.Operator.P_GLOBAL_VALID:
             return statically_infered_must_be_true
-        
+
         if expr.operator is source.Operator.MEM_UPDATE:
             mem, symb_or_addr, value = expr.operands
             if not isinstance(value.typ, source.TypeBitVec):
@@ -298,7 +298,7 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
 
             if value.typ.size not in store_word_map.keys():
                 raise NotImplementedError(
-                        f"MemUpdate for BitVec of size {value.typ.size} is not supported")
+                    f"MemUpdate for BitVec of size {value.typ.size} is not supported")
             return SMTLIB(f"({store_word_map[value.typ.size]} {emit_expr(mem)} {as_fn_call} {value_as_smt})")
 
         if expr.operator is source.Operator.MEM_ACC:
@@ -314,10 +314,11 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
             return SMTLIB(f"({load_word_map[expr.typ.size]} {emit_expr(mem)} {as_fn_call})")
 
         if expr.operator is source.Operator.P_VALID:
+            return statically_infered_must_be_true
             assert len(expr.operands) == 3
             # We do not care about the type
             htd, _, addr = expr.operands
-            
+
             if not isinstance(addr, source.ExprSymbol | source.ExprVar | source.ExprNum | source.ExprOp):
                 assert False, f"Expression {addr} not supported"
             return SMTLIB(f"(= (select {emit_expr(htd)} {emit_expr(addr)}) true)")
@@ -531,7 +532,8 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
             for symbol in source.all_symbols_in_expr(ins.expr):
                 if symbol not in emitted_symbols:
                     # see smt.py, this is where the naming structure comes from
-                    cmds.append(CmdDeclareFun(Identifier(f"{symbol.name}@global-symbol"), (), symbol.typ))
+                    cmds.append(CmdDeclareFun(Identifier(
+                        f"{symbol.name}@global-symbol"), (), symbol.typ))
                     if symbol not in pg.mem.sym_conds:
                         assert False, f"{symbol} not in program globals"
 
@@ -539,9 +541,7 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
                     for cond in conds:
                         cmds.append(CmdAssert(cond))
 
-
                 emitted_symbols.add(symbol)
-
 
     cmds.append(EmptyLine)
 

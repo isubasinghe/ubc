@@ -229,6 +229,7 @@ class ExprVar(ABCExpr[TypeKind, VarNameKind]):
 
 ExprVarT: TypeAlias = ExprVar[Type, VarNameKind]
 
+
 @dataclass(frozen=True)
 class ExprForall(ABCExpr[TypeKind, VarNameKind]):
     args: Sequence[ExprVar[TypeKind, Any]]
@@ -539,6 +540,7 @@ def all_vars_in_expr(expr: ExprT[VarNameKind]) -> set[ExprVarT[VarNameKind]]:
 
 def all_symbols_in_expr(expr: ExprT[VarNameKind]) -> set[ExprSymbolT]:
     s: set[ExprSymbolT] = set()
+
     def visitor(expr: ExprT[VarNameKind]) -> None:
         if isinstance(expr, ExprSymbol):
             s.add(expr)
@@ -599,10 +601,12 @@ def mk_binary_bitvec_relation(op: Operator) -> Callable[[ExprT[VarNameKind], Exp
         return ExprOp(type_bool, op, (lhs, rhs))
     return f
 
+
 def expr_valid(htd: ExprT[VarNameKind], ty: Type, loc: ExprT[VarNameKind]) -> ExprT[VarNameKind]:
     assert htd.typ == type_htd
     assert loc.typ == type_word64
     return ExprOp(type_bool, Operator.P_VALID, (htd, ExprType(ty, ty), loc))
+
 
 expr_ult = mk_binary_bitvec_relation(Operator.LESS)
 expr_ule = mk_binary_bitvec_relation(Operator.LESS_EQUALS)
@@ -995,7 +999,7 @@ class GhostlessFunction(Generic[VarNameKind, VarNameKind2]):
                           loop_iterations={
                               lh: empty_loop_ghost for lh in self.loops},
                           )
-        
+
         if self.loops.keys() != ghost.loop_invariants.keys():
             print("Expected loop invariants: ", self.loops.keys())
             print("Got loop invariants: ", ghost.loop_invariants.keys())
