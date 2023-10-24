@@ -79,11 +79,11 @@ def parse_type_builtin_mem() -> pc.Parser[source.Type]:
 
 
 def parse_type_builtin_htd() -> pc.Parser[source.Type]:
-    return pc.pmap(ws(pc.string(smt.HTD)), lambda _: source.TypeBuiltin(source.Builtin.HTD))
+    return pc.pmap(ws(pc.string("HTD")), lambda _: source.TypeBuiltin(source.Builtin.HTD))
 
 
 def parse_type_builtin_pms() -> pc.Parser[source.Type]:
-    return pc.pmap(ws(pc.string(smt.PMS)), lambda _: source.TypeBuiltin(source.Builtin.PMS))
+    return pc.pmap(ws(pc.string("PMS")), lambda _: source.TypeBuiltin(source.Builtin.PMS))
 
 
 def parse_type_builtin() -> pc.Parser[source.Type]:

@@ -36,8 +36,9 @@ def conjs(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameK
     # return reduce(source.expr_and, xs)  # pyright: ignore
 
 
-def mem_acc_word(x: source.ExprT[source.ProgVarName]) -> source.ExprT[source.ProgVarName]:
-    return source.ExprOp(source.type_word64, source.Operator.MEM_ACC, (memvar(), x))
+def mem_acc_word(x: source.ExprT[source.ProgVarName], mem: source.ExprT[source.ProgVarName]| None) -> source.ExprT[source.ProgVarName]:
+    mem = mem if mem is not None else memvar()
+    return source.ExprOp(source.type_word64, source.Operator.MEM_ACC, (mem, x))
 
 
 def ors(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameKind]:
@@ -132,6 +133,8 @@ def arg(v: source.ExprVarT[source.ProgVarName]) -> source.ExprVarT[source.ProgVa
 def memvar() -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(source.TypeBuiltin(source.Builtin.MEM), source.ProgVarName("Mem"))
 
+def htdvar() -> source.ExprVarT[source.ProgVarName]:
+    return source.ExprVar(source.type_htd, source.ProgVarName("HTD"))
 
 def htd_assigned() -> source.ExprVarT[nip.GuardVarName]:
     return g(source.ExprVar(source.type_bool, source.ProgVarName('HTD')))

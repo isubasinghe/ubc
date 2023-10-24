@@ -174,12 +174,11 @@ void process_rx_complete(void)
             void *cookie2 = NULL;
             int err;
 
-            err = dequeue_used(&rx_ring_mux, &m_addr, &m_len, &cookie);
             // assert(!err);
             // get a free one from clients queue.
             err = dequeue_free(&rx_ring_cli, &c_addr, &c_len, &cookie2);
             // assert(!err);
-            /* if (!c_addr ||
+            if (!c_addr ||
                     c_addr < shared_dma_vaddr_cli ||
                     c_addr >= shared_dma_vaddr_cli + SHARED_DMA_SIZE)
             {
@@ -190,18 +189,15 @@ void process_rx_complete(void)
                 // print(" and ");
                 // puthex64(shared_dma_vaddr_cli + SHARED_DMA_SIZE);
                 // print("\n");
-                return;
-            } */
+                continue;
+            } 
 
-            /* if (c_len < m_len) {
-                // print("COPY|ERROR: client buffer length is less than mux buffer length.\n");
-                // print("client length: ");
-                // puthex64(c_len);
-                // print(" mux length: ");
-                // puthex64(m_len);
-                // print("\n");
-                return;
-            } */
+            if (c_len < BUF_SIZE) {
+              continue;
+            }
+
+            err = dequeue_used(&rx_ring_mux, &m_addr, &m_len, &cookie);
+
             // copy the data over to the clients address space.
             memcpy((void *)c_addr, (void *)m_addr, m_len);
 
