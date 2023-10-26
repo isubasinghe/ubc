@@ -4,8 +4,11 @@ from typing_extensions import assert_never
 from collections import OrderedDict
 from source import TypeArray, TypeBitVec, TypeBuiltin, TypeFloatingPoint, TypePtr, TypeSpecGhost, TypeWordArray, convert_type, TypeStruct, Type, ExprSymbolT, ExprT
 import source
-
 import assume_prove as ap
+
+ADDR_SIZE_BITS = 64
+ADDR_SIZE_BYTES = int(ADDR_SIZE_BITS / 8)
+
 if TYPE_CHECKING:
     import assume_prove
     import syntax
@@ -165,20 +168,10 @@ class InitMem():
 
         cond: source.ExprT[ap.VarName] = source.expr_eq(
             var, source.ExprNum(num=starting_point, typ=source.type_word64))
-        vari = source.ExprVar(source.type_word64, ap.VarName("i"))
-        var_htd = source.ExprVar(source.type_htd, ap.VarName("h"))
-        # starting_point <= i < offset
-        # starting_point <= i
-        # offset < i
-        lowerterm = source.expr_ule(source.ExprNum(
-            source.type_word64, starting_point), vari)
-        upperterm = source.expr_ult(
-            source.ExprNum(source.type_word64, offset), vari)
-        memvalid = source.expr_valid(var_htd, struct.typ, vari)
-        validity = source.expr_implies(
-            source.expr_and(lowerterm, upperterm), memvalid)
-        # validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{struct.name}", f"skolem-valid-{struct.name}")
-        local_sym_conds[var] = [cond]
+        # kinda hacky but safe, we know HTD~1 appears in every function
+        var_htd = source.ExprVar(source.type_htd, ap.VarName("HTD~1"))
+        validity = source.expr_valid(var_htd, var.typ, var)
+        local_sym_conds[var] = [cond, validity]
         self.sym_conds = local_sym_conds
 
     def init_bitvec(self, var: ExprSymbolT) -> None:
@@ -202,20 +195,16 @@ class InitMem():
         myoffset = self.offset + (self.offset % alignment)
         end = myoffset + int(var.typ.size / 8)
 
-        vari = source.ExprVar(source.type_word64, ap.VarName("i"))
-        var_htd = source.ExprVar(source.type_htd, ap.VarName("h"))
+        
+        # kinda hacky but safe, we know HTD~1 appears in every function
+        var_htd = source.ExprVar(source.type_htd, ap.VarName("HTD~1"))
+        validity = source.expr_valid(var_htd, var.typ, var)
 
         cond: source.ExprT[ap.VarName] = source.expr_eq(
             var, source.ExprNum(num=myoffset, typ=source.type_word64))
-        lowerterm = source.expr_ule(source.ExprNum(
-            source.type_word64, myoffset), vari)
-        upperterm = source.expr_ult(
-            source.ExprNum(source.type_word64, end), vari)
-        memvalid = source.expr_valid(var_htd, var.typ, vari)
-        validity = source.expr_implies(
-            source.expr_and(lowerterm, upperterm), memvalid)
-        # validityQuant = source.ExprForall(source.type_bool, [var_htd, vari], validity, memvalid, f"quantifier-valid-{var.name}", f"skolem-valid-{var.name}")
-        local_sym_conds[var] = [cond]
+
+
+        local_sym_conds[var] = [cond, validity]
         self.sym_conds = local_sym_conds
         self.offset = end
 
@@ -259,7 +248,7 @@ def populate_safe_globals() -> None:
     safe_globals = safe_globals_local
 
 
-mem = InitMem(64)
+mem = InitMem(ADDR_SIZE_BITS)
 
 
 def initialise_memory() -> None:

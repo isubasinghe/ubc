@@ -157,7 +157,7 @@ def run(filename: str, function_names: Collection[str], args: argparse.Namespace
             else:
                 print(smtlib)
 
-        sats = tuple(smt.send_smtlib(smtlib, smt.Solver.CVC5))
+        sats = tuple(smt.send_smtlib(smtlib, smt.Solver.Z3))
         if args.show_sats:
             print(sats)
         assert len(sats) == 2

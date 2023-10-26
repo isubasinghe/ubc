@@ -23,6 +23,7 @@ import smt_parser
 import ghost_code
 from enum import Enum, unique
 from rich.console import Console
+import progress
 
 econsole = Console(stderr=True)
 
@@ -438,7 +439,11 @@ def debug_func_smt(func: dsa.Function, prelude_files: Sequence[str]) -> Tuple[Fa
     prog = ap.make_prog(func)
     q: set[source.NodeName] = set([func.cfg.entry])
     not_taken_path: set[source.NodeName] = set([])
+
+    prg = progress.ProgressBar(len(func.nodes))
     while len(q) != 0:
+        prg.current += 1
+        prg()
         node_name = q.pop()
         node = func.nodes[node_name]
         not_taken_path_and_node = not_taken_path.union(set([node_name]))
@@ -483,7 +488,6 @@ def debug_func_smt(func: dsa.Function, prelude_files: Sequence[str]) -> Tuple[Fa
             # no possible way for this to be a loop latch since these nodes are trimmed
             assert not func.is_loop_latch_or_loop_entry(
                 node_name), "loop latch with two successors are not handled - no need to worry, should be a simple fix"
-
         else:
             assert "invalid number of successors received"
 
@@ -513,7 +517,7 @@ def debug_func_smt(func: dsa.Function, prelude_files: Sequence[str]) -> Tuple[Fa
                 my_succ_const, my_succ_sat = get_sat(my_succ_smtlib)
                 assert my_succ_const, "Expected to be consistent"
                 assert my_succ_sat == smt.CheckSatResult.UNSAT, "Expected to pass"
-
+            prg.done()
             return diagnose_error(func, node_name, prog, not_taken_path, successors, prelude_files)
 
         # handle the case where we have two paths to take
@@ -528,10 +532,8 @@ def debug_func_smt(func: dsa.Function, prelude_files: Sequence[str]) -> Tuple[Fa
                 prog, prelude_files=prelude_files, assert_ok_nodes=not_taken_path_and_succ2)
             succ_node1_consistent, succ_node1_sat = get_sat(succ_node1_smtlib)
             succ_node2_consistent, succ_node2_sat = get_sat(succ_node2_smtlib)
-            # for some reason, the C parser will emit nonsense such as (assert True) => cond(when False) => assume True => Err.
+            # at this stage we will see nonsense such as (assert True) => cond(when False) => assume True => Err.
             # The consistentcy is used as an "reachability analysis" of sorts.
-            # This works because False `implies` True will give us False, returning an UNSAT (NOTE: this is before the UNSAT for the condition of program verification).
-
             # let's assert that this consistency edge cased is only encountered for the above pattern.
             # TODO: assert this
 

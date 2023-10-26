@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum, unique
-from typing import Any, Callable, Generic, Iterator, Literal, Mapping, NamedTuple, NewType, Sequence, Set, TypeAlias, TypeVar, Tuple, cast
+from typing import Any, Callable, Generic, Iterator, Literal, Mapping, NamedTuple, NewType, Optional, Sequence, Set, TypeAlias, TypeVar, Tuple, cast
 import typing
 from typing_extensions import assert_never
 from provenance import *
@@ -234,7 +234,7 @@ ExprVarT: TypeAlias = ExprVar[Type, VarNameKind]
 class ExprForall(ABCExpr[TypeKind, VarNameKind]):
     args: Sequence[ExprVar[TypeKind, Any]]
     expr: Expr[TypeKind, VarNameKind]
-    pattern: Expr[TypeKind, Any]
+    pattern: Optional[Expr[TypeKind, Any]]
     named: str
     skolemId: str
 

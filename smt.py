@@ -43,10 +43,6 @@ ops_to_smt: Mapping[source.Operator, SMTLIB] = {
     source.Operator.WORD_ARRAY_ACCESS: SMTLIB("select"),
     source.Operator.WORD_ARRAY_UPDATE: SMTLIB("store"),
     source.Operator.MEM_DOM: SMTLIB("mem-dom"),
-    source.Operator.MEM_ACC: SMTLIB("mem-acc"),
-    source.Operator.P_VALID: SMTLIB("mem-valid"),
-    source.Operator.P_GLOBAL_VALID: SMTLIB("global-valid"),
-    source.Operator.MEM_UPDATE: SMTLIB("mem-update")
 }
 
 MEM_SORT = SMTLIB('(Array (_ BitVec 64) (_ BitVec 8))')
@@ -256,6 +252,29 @@ store_word_map: Mapping[int, Identifier] = {
 }
 
 
+def pvalid_helper(htd: source.ExprVarT[assume_prove.VarName], sz: int, start: source.ExprT[assume_prove.VarName], named: str) -> source.ExprT[assume_prove.VarName]:
+
+    i = source.ExprVar(source.type_word64, assume_prove.VarName("i"))
+    end = source.expr_plus(start, source.ExprNum(start.typ, sz))
+
+    quant = source.ExprForall(
+            source.type_bool, 
+            (i,),
+            source.expr_implies(
+                source.expr_and(
+                    # start <= i
+                    # i < end
+                    source.expr_ule(start, i),
+                    source.expr_ult(i, end)
+                ),
+                source.expr_eq(source.ExprOp(source.type_bool, source.Operator.WORD_ARRAY_ACCESS, (htd, i)), source.expr_true)
+            ),
+            None,
+            named,
+            f"skolem_{named}"
+            )
+    return quant
+
 def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
     if isinstance(expr, source.ExprNum):
         return emit_num_with_correct_type(expr)
@@ -314,14 +333,46 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
             return SMTLIB(f"({load_word_map[expr.typ.size]} {emit_expr(mem)} {as_fn_call})")
 
         if expr.operator is source.Operator.P_VALID:
-            return statically_infered_must_be_true
             assert len(expr.operands) == 3
-            # We do not care about the type
-            htd, _, addr = expr.operands
+            htd, ty, addr = expr.operands
+            assert isinstance(htd, source.ExprVar)
+
+            assert isinstance(ty, source.ExprType), "Expected an expr type here"
 
             if not isinstance(addr, source.ExprSymbol | source.ExprVar | source.ExprNum | source.ExprOp):
                 assert False, f"Expression {addr} not supported"
-            return SMTLIB(f"(= (select {emit_expr(htd)} {emit_expr(addr)}) true)")
+
+            if isinstance(ty.val, source.TypeBitVec):
+                assert ty.val.size > 0
+                assert ty.val.size % 8  == 0
+
+                x = pvalid_helper(htd, int(ty.val.size / 8), addr, "rx_ring_cli_named")
+                y = emit_expr(x)
+                return y
+                
+            elif isinstance(ty.val, source.TypeStruct):
+                assert ty.val in pg.safe_structs
+                struct = pg.safe_structs[ty.val]
+                assert struct.size % 8 == 0
+                x = pvalid_helper(htd, int(struct.size / 8), addr, "valid_struct_check")
+                y = emit_expr(x)
+                return y
+            elif isinstance(ty.val, source.TypePtr):
+                x = pvalid_helper(htd, pg.ADDR_SIZE_BYTES, addr, "valid_ptr_check")
+                y = emit_expr(x)
+                return y
+            elif isinstance(ty.val, source.TypeArray):
+                assert False, "not implemented"
+            elif isinstance(ty.val, source.TypeFloatingPoint):
+                assert False, "not implemented"
+            elif isinstance(ty.val, source.TypeBuiltin):
+                assert False, "not implemented"
+            elif isinstance(ty.val, source.TypeWordArray):
+                assert False, "not implemented"
+            elif isinstance(ty.val, source.TypeSpecGhost):
+                assert False, "not implemented"
+            else:
+                assert_never(ty.val)
 
         return SMTLIB(f'({ops_to_smt[expr.operator]} {" ".join(emit_expr(op) for op in expr.operands)})')
     elif isinstance(expr, source.ExprVar):
@@ -584,21 +635,20 @@ def make_smtlib(p: assume_prove.AssumeProveProg, prelude_files: Sequence[str] = 
 
 
 class CheckSatResult(Enum):
-    # TODO: unknown
+    UNKNOWN = 'unknown'
     UNSAT = 'unsat'
     SAT = 'sat'
 
 
 class Solver(Enum):
     Z3 = 'z3'
-    CVC5 = 'cvc5'
 
 
 def get_subprocess_file(solver: Solver, filepath: str) -> Sequence[str]:
     if solver is Solver.Z3:
         return ["z3", "-file:"+filepath]
-    elif solver is Solver.CVC5:
-        return ["cvc5", "--incremental", "--produce-models", filepath]
+    # elif solver is Solver.CVC5:
+    #     return ["cvc5", "--incremental", "--produce-models", filepath]
     else:
         assert_never(solver)
 
@@ -608,6 +658,7 @@ def send_smtlib(smtlib: SMTLIB, solver: Solver) -> Iterator[CheckSatResult]:
     """
 
     with open_temp_file(suffix='.smt2') as (f, fullpath):
+        print("FILE: ", fullpath)
         f.write(smtlib)
         f.close()
         p = subprocess.Popen(get_subprocess_file(
