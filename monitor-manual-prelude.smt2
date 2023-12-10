@@ -1,0 +1,7 @@
+(declare-fun gbadge@global-symbol () (_ BitVec 64))
+(declare-fun tcbs@global-symbol () (_ BitVec 64))
+(declare-fun scheduling_contexts@global-symbol () (_ BitVec 64))
+(declare-fun notification_caps@global-symbol () (_ BitVec 64))
+(declare-fun pd_names@global-symbol () (_ BitVec 64))
+(declare-fun STRINGLITERAL@global-symbol () (_ BitVec 64))
+(declare-fun gregs@global-symbol () (_ BitVec 64))

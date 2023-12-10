@@ -40,7 +40,8 @@ lc_type = {
     'lc_last_handled_notified': ExternType(name='Ch_set', bit_size=64),
     'lc_unhandled_ppcall': ExternType(name='Maybe_Prod_Ch_MsgInfo', bit_size=71),
     'lc_unhandled_reply': ExternType(name='Maybe_MsgInfo', bit_size=65),
-    'lc_last_handled_reply': ExternType(name='Maybe_MsgInfo', bit_size=65)
+    'lc_last_handled_reply': ExternType(name='Maybe_MsgInfo', bit_size=65),
+    'lc_schedstate': ExternType(name='SchedState', bit_size=1)
 }
 
 
@@ -56,3 +57,8 @@ def print_local_context(num: int) -> None:
         else:
             print(name, val)
         top -= field_typ.bit_size
+
+
+if __name__ == '__main__':
+    import sys
+    print_local_context(int(sys.argv[1]))

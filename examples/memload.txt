@@ -1,0 +1,15 @@
+
+Function tmp.main 6 argc___int#v Word 32 argv___ptr_to_ptr_to_char#v Word 64 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__int#v Word 32 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__int#v Word 32 Num 0 Word 32
+4 Basic 3 1 Mem Mem Op MemUpdate Mem 3 Var Mem Mem Symbol x Word 64 Op WordCastSigned Word 8 1 Var argc___int#v Word 32
+5 Cond 4 Err Op PGlobalValid Bool 3 Var HTD HTD Type Word 8 Symbol x Word 64
+EntryPoint 5
+
+Function tmp.loadx 4 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64 5 ret__char#v Word 8 Mem Mem HTD HTD PMS PMS GhostAssertions WordArray 50 64
+1 Basic Ret 0
+2 Cond 1 Err Op False Bool 0
+3 Basic 1 1 ret__char#v Word 8 Op MemAcc Word 8 2 Var Mem Mem Symbol x Word 64
+4 Cond 3 Err Op PGlobalValid Bool 3 Var HTD HTD Type Word 8 Symbol x Word 64
+EntryPoint 4

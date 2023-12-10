@@ -70,6 +70,7 @@ def identifier(illegal_name: assume_prove.VarName) -> Identifier:
     # '#' are disallowed in SMT
     assert '@' not in illegal_name, "# are replaced with @, but some name already contains a @, which might result on conflicts"
     renamed = illegal_name.replace('#', '@')
+    renamed = renamed.replace("StrictC'", "StrictC_")
     assert RE_VALID_SMTLIB_SIMPLE_SYMBOL.match(
         renamed), f"identifier {illegal_name!r} isn't valid"
     return Identifier(renamed)
@@ -269,6 +270,9 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
         if expr.operator in source.nulary_operators:
             return SMTLIB(ops_to_smt[expr.operator])
 
+        if expr.operator is source.Operator.P_GLOBAL_VALID:
+            return statically_infered_must_be_true
+
         if expr.operator is source.Operator.P_ALIGN_VALID:
             assert len(expr.operands) == 2
             typ, val = expr.operands
@@ -279,20 +283,30 @@ def emit_expr(expr: source.ExprT[assume_prove.VarName]) -> SMTLIB:
                 "PAlignValid for non symbols isn't supported")
 
         if expr.operator is source.Operator.MEM_ACC:
+            # mem is always type_mem
+            # symb_or_addr has to be 64 bit integer
             mem, symb_or_addr = expr.operands
-            if not isinstance(symb_or_addr, source.ExprSymbol):
-                raise NotImplementedError(
-                    "MemAcc for non symbols isn't supported yet")
-
-            if not isinstance(symb_or_addr.typ, source.TypeBitVec):
-                assert False, "Only TypBitVec is accepted"
+            assert mem.typ == source.type_mem, "Mem needs to be of type mem"
+            assert symb_or_addr.typ == source.type_word64, "if you care about 32 bit, implement it"
+            assert isinstance(
+                expr.typ, source.TypeBitVec), "Only type bitvec is supported"
 
             as_fn_call = emit_expr(symb_or_addr)
 
-            if symb_or_addr.typ.size not in load_word_map.keys():
+            if expr.typ.size not in load_word_map.keys():
                 raise NotImplementedError(
-                    f"MemAcc for BitVec of size {symb_or_addr.typ.size} is not supported")
-            return SMTLIB(f"({load_word_map[symb_or_addr.typ.size]} {emit_expr(mem)} {as_fn_call})")
+                    f"MemAcc for BitVec of size {expr.typ.size} is not supported")
+
+            return SMTLIB(f"({load_word_map[expr.typ.size]} {emit_expr(mem)} {as_fn_call})")
+
+        if expr.operator is source.Operator.MEM_UPDATE:
+            mem, symb_or_addr, val = expr.operands
+
+            if not isinstance(val.typ, source.TypeBitVec):
+                assert False, "Only type bitvec is supported"
+
+            as_fn_call = emit_expr(symb_or_addr)
+            return SMTLIB(f"({store_word_map[val.typ.size]} {emit_expr(mem)} {as_fn_call} {emit_expr(val)})")
 
         return SMTLIB(f'({ops_to_smt[expr.operator]} {" ".join(emit_expr(op) for op in expr.operands)})')
     elif isinstance(expr, source.ExprVar):

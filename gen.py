@@ -517,6 +517,14 @@ NextRecv = gen_nonrec_data_type('NextRecv', {
 Maybe_MsgInfo = gen_maybe_type(MsgInfo)
 Maybe_Prod_Ch_MsgInfo = gen_maybe_type(Prod_Ch_MsgInfo)
 
+# data SchedState
+#  = BoundTCB
+#  | BoundNotification
+SchedState = gen_nonrec_data_type('SchedState', {
+    'BoundTCB': (),
+    'BoundNotification': ()
+}, assign_values_to_constructors=True)
+
 # data PlatformContext = LC
 #   { ci :: PlatformInvariants
 #   , lc_running_pd :: PD
@@ -526,6 +534,7 @@ Maybe_Prod_Ch_MsgInfo = gen_maybe_type(Prod_Ch_MsgInfo)
 #   , lc_unhandled_ppcall :: Maybe (Ch, MsgInfo)
 #   , lc_unhandled_reply :: Maybe MsgInfo
 #   , lc_last_handled_reply :: Maybe MsgInfo
+#   , lc_schedstate :: SchedState
 #   }
 pc = gen_composite_type('PlatformContext', 'LC', {
     'lc_running_pd': PD,
@@ -534,7 +543,8 @@ pc = gen_composite_type('PlatformContext', 'LC', {
     'lc_last_handled_notified': Set_Ch,
     'lc_unhandled_ppcall': Maybe_Prod_Ch_MsgInfo,
     'lc_unhandled_reply': Maybe_MsgInfo,
-    'lc_last_handled_reply': Maybe_MsgInfo
+    'lc_last_handled_reply': Maybe_MsgInfo,
+    'lc_schedstate': SchedState
 })
 print(define_fun('C_channel_to_SMT_channel', ('(cc (_ BitVec 32))', ),
                  Ch.name, extract('cc', Ch.bit_size - 1, 0)))

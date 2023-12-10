@@ -2,6 +2,8 @@ from typing import Mapping, Any
 import source
 import nip
 import sel4cp_spec
+import monitor_spec
+import microkit_spec
 from ghost_data_helpers import *
 
 
@@ -16,6 +18,7 @@ def get(file_name: str, func_name: str) -> source.Ghost[source.ProgVarName | nip
 testghost = source.ExprVar(source.TypeBitVec(
     32), source.ProgVarName("test#ghost"))
 
+Mem = source.ExprVar(source.type_mem, source.ProgVarName('Mem'))
 
 universe: Mapping[str, Mapping[str, source.Ghost[source.ProgVarName | nip.GuardVarName]]] = {
     "tests/errors/errors.txt": {
@@ -227,5 +230,29 @@ universe: Mapping[str, Mapping[str, source.Ghost[source.ProgVarName | nip.GuardV
             postcondition=eq(testghost, plus(arg(testghost), plus(arg(i32v('n')), i32(1)))))
         # the +1 breaks everything here
     },
-    "tests/libsel4cp_trunc.txt": sel4cp_spec.functions_spec
+    "tests/libsel4cp_trunc.txt": sel4cp_spec.functions_spec,
+    "examples/monitor.txt": monitor_spec.functions_spec,
+    "examples/microkit.txt": microkit_spec.functions_spec,
+    "examples/demo.txt": {
+        "tmp.add": source.Ghost(
+            precondition=conjs(
+                ule(arg(u32v('a')), u32(2147483647)),
+                ule(arg(u32v('b')), u32(2147483647))
+            ),
+            postcondition=eq(u32ret,  plus(arg(u32v('a')), arg(u32v('b')))),
+            loop_iterations={},
+            loop_invariants={}
+        ),
+    },
+    "examples/memload.txt": {
+        "tmp.loadx": source.Ghost(
+            precondition=conjs(
+                mem_acc(source.type_word8, source.ExprSymbol(
+                    source.type_word64, "x"), arg(Mem)),
+            ),
+            postcondition=T,
+            loop_iterations={},
+            loop_invariants={}
+        )
+    }
 }

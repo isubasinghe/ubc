@@ -25,6 +25,7 @@ ite = source.expr_ite
 
 i32ret = source.ExprVar(source.type_word32, source.CRetSpecialVar("c_ret.0"))
 i32ret.name.field_num = 0
+u32ret = source.ExprVar(source.type_word32, source.ProgVarName("ret__int#v"))
 
 
 def conjs(*xs: source.ExprT[source.VarNameKind]) -> source.ExprT[source.VarNameKind]:
@@ -94,7 +95,7 @@ def g(var: source.ExprVarT[source.ProgVarName] | str) -> source.ExprVarT[nip.Gua
 
 
 def charv(n: str) -> source.ExprVarT[source.ProgVarName]:
-    return source.ExprVar(source.type_word8, source.ProgVarName(n))
+    return source.ExprVar(source.type_word8, source.ProgVarName(n + "___char#v"))
 
 
 def char(n: int) -> source.ExprNumT:
@@ -111,3 +112,9 @@ def lh(x: str) -> source.LoopHeaderName:
 
 def arg(v: source.ExprVarT[source.ProgVarName]) -> source.ExprVarT[source.ProgVarName]:
     return source.ExprVar(v.typ, source.ProgVarName(v.name + "/arg"))
+
+
+def mem_acc(ty: source.Type, v: source.ExprT[source.ProgVarName], mem: source.ExprVarT[source.ProgVarName]) -> source.ExprT[source.ProgVarName]:
+
+    assert mem.typ == source.type_mem, "Mem typ is wrong"
+    return source.ExprOp(ty, source.Operator.MEM_ACC, (mem, v, ))

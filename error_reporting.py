@@ -317,27 +317,27 @@ def pretty_node(node: source.Node[source.VarNameKind]) -> str:
 def send_smtlib_model(smtlib: smt.SMTLIB, solver: smt.Solver) -> smt.Responses:
     """Send command to any smt solver and returns a boolean per (check-sat)
     """
-
     with utils.open_temp_file(suffix='.smt2') as (f, fullpath):
         f.write(smtlib)
         f.close()
         p = subprocess.Popen(smt.get_subprocess_file(
             solver, fullpath), stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        p.wait()
-    assert p.stderr is not None
-    assert p.stdout is not None
-    if p.returncode != 0:
-        print("stderr:")
-        print(textwrap.indent(p.stdout.read().decode('utf-8'), '   '))
-        sys.exit(1)
-    lines = p.stdout.read().decode('utf-8')
-    fn = smt_parser.parse_responses()
-    res = fn(lines)
-    assert not isinstance(
-        res, pc.ParseError), "The smt parser doesn't handle the output here, only a small subset of SMT is parsed at the moment"
-    responses, leftover = res
-    assert leftover.strip() == ""
-    return responses
+
+        output, error = p.communicate()
+        ret = p.wait()
+
+        if ret != 0:
+            print("stderr:")
+            print(textwrap.indent(error.decode('utf-8'), '   '))
+            sys.exit(1)
+        lines = output.decode('utf-8')
+        fn = smt_parser.parse_responses()
+        res = fn(lines)
+        assert not isinstance(
+            res, pc.ParseError), "The smt parser doesn't handle the output here, only a small subset of SMT is parsed at the moment"
+        responses, leftover = res
+        assert leftover.strip() == ""
+        return responses
 
 
 def get_relevant_responses(node_vars: Set[source.ExprVarT[ap.VarName]], responses: smt.Responses) -> None:
